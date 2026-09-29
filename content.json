@@ -1,0 +1,260 @@
+{
+  "artist": {
+    "name": "c4milo",
+    "bio": "Artist bio placeholder. A short introduction to your music, your story, and the work you make.",
+    "photo": "",
+    "photoAlt": "Artist portrait",
+    "email": "info@c4milo.com",
+    "placeholder": true,
+    "aboutEnabled": false
+  },
+  "featuredReleaseId": "querida",
+  "releases": [
+    {
+      "id": "querida",
+      "title": "Querida",
+      "type": "Single",
+      "year": "2026",
+      "description": "",
+      "artwork": "/assets/querida.png",
+      "artworkAlt": "Querida single cover",
+      "placeholder": false,
+      "links": [
+        {
+          "label": "Spotify",
+          "url": "https://open.spotify.com/album/4PW1l8X9u7tUq3REsGKe4R",
+          "kind": "release"
+        },
+        {
+          "label": "Apple Music",
+          "url": "https://music.apple.com/us/album/querida/6809278154?i=6809278155",
+          "kind": "release"
+        },
+        {
+          "label": "Pandora",
+          "url": "https://www.pandora.com/search/c4milo%20Querida/all",
+          "kind": "search"
+        },
+        {
+          "label": "Tidal",
+          "url": "https://tidal.com/track/558979437/u",
+          "kind": "release"
+        },
+        {
+          "label": "YouTube Music",
+          "url": "https://music.youtube.com/watch?v=lL6aG0SNCE8",
+          "kind": "release"
+        }
+      ],
+      "embed": {
+        "provider": "spotify",
+        "url": ""
+      },
+      "date": "2026-09-29",
+      "statusLabel": "Out now",
+      "artworkOptional": true,
+      "audio": {
+        "src": "/assets/querida.mp3",
+        "fadeIn": 1,
+        "fadeOut": 1.5
+      }
+    },
+    {
+      "id": "crush",
+      "title": "CRUSH.",
+      "type": "Single",
+      "year": "2026",
+      "date": "2026-01-31",
+      "description": "",
+      "artwork": "/assets/crush.png",
+      "artworkAlt": "CRUSH. single cover",
+      "placeholder": false,
+      "links": [
+        {
+          "label": "Spotify",
+          "url": "https://open.spotify.com/album/5c2g4qmRHAC58m6bksGxq3",
+          "kind": "release"
+        },
+        {
+          "label": "Apple Music",
+          "url": "https://music.apple.com/us/album/crush-single/1868278379",
+          "kind": "release"
+        },
+        {
+          "label": "Pandora",
+          "url": "https://www.pandora.com/TR:188510726",
+          "kind": "release"
+        },
+        {
+          "label": "Tidal",
+          "url": "https://tidal.com/track/488930554/u",
+          "kind": "release"
+        },
+        {
+          "label": "YouTube Music",
+          "url": "https://music.youtube.com/search?q=c4milo%20CRUSH.",
+          "kind": "search"
+        }
+      ],
+      "embed": {
+        "provider": "spotify",
+        "url": "https://open.spotify.com/embed/album/5c2g4qmRHAC58m6bksGxq3?utm_source=oembed"
+      },
+      "artworkOptional": true
+    },
+    {
+      "id": "circles",
+      "title": "circles",
+      "type": "Single",
+      "year": "2025",
+      "date": "2025-09-16",
+      "description": "",
+      "artwork": "/assets/circles.png",
+      "artworkAlt": "circles single cover",
+      "placeholder": false,
+      "links": [
+        {
+          "label": "Spotify",
+          "url": "https://open.spotify.com/album/6F0Tuim1cB0MHlAxLmLkvO",
+          "kind": "release"
+        },
+        {
+          "label": "Apple Music",
+          "url": "https://music.apple.com/us/album/circles-single/1840384241",
+          "kind": "release"
+        },
+        {
+          "label": "Pandora",
+          "url": "https://www.pandora.com/TR:173129757",
+          "kind": "release"
+        },
+        {
+          "label": "Tidal",
+          "url": "https://tidal.com/track/460897420/u",
+          "kind": "release"
+        },
+        {
+          "label": "YouTube Music",
+          "url": "https://music.youtube.com/search?q=c4milo%20circles",
+          "kind": "search"
+        }
+      ],
+      "embed": {
+        "provider": "spotify",
+        "url": "https://open.spotify.com/embed/album/6F0Tuim1cB0MHlAxLmLkvO?utm_source=oembed"
+      },
+      "artworkOptional": true
+    },
+    {
+      "id": "nmf",
+      "title": "NMF",
+      "type": "Single",
+      "year": "2025",
+      "date": "2025-03-07",
+      "description": "",
+      "artwork": "/assets/nmf.png",
+      "artworkAlt": "NMF single cover",
+      "placeholder": false,
+      "links": [
+        {
+          "label": "Spotify",
+          "url": "https://open.spotify.com/album/4i7S4A6goEHwtec3I6VVq9",
+          "kind": "release"
+        },
+        {
+          "label": "Apple Music",
+          "url": "https://music.apple.com/us/album/nmf-single/1800983241",
+          "kind": "release"
+        },
+        {
+          "label": "Pandora",
+          "url": "https://www.pandora.com/AL:45693699",
+          "kind": "release"
+        },
+        {
+          "label": "Tidal",
+          "url": "https://tidal.com/track/422741086/u",
+          "kind": "release"
+        },
+        {
+          "label": "YouTube Music",
+          "url": "https://music.youtube.com/search?q=c4milo%20NMF",
+          "kind": "search"
+        }
+      ],
+      "embed": {
+        "provider": "spotify",
+        "url": "https://open.spotify.com/embed/album/4i7S4A6goEHwtec3I6VVq9?utm_source=oembed"
+      },
+      "artworkOptional": true
+    }
+  ],
+  "links": [
+    {
+      "label": "Spotify",
+      "description": "Stream my music",
+      "url": "https://open.spotify.com/album/4PW1l8X9u7tUq3REsGKe4R"
+    },
+    {
+      "label": "Apple Music",
+      "description": "Stream my music",
+      "url": "https://music.apple.com/us/album/querida/6809278154?i=6809278155"
+    },
+    {
+      "label": "YouTube Music",
+      "description": "Watch my work",
+      "url": "https://music.youtube.com/watch?v=lL6aG0SNCE8"
+    },
+    {
+      "label": "Tidal",
+      "description": "Stream my music",
+      "url": "https://tidal.com/track/558979437/u"
+    },
+    {
+      "label": "TikTok",
+      "description": "Follow along",
+      "url": "https://www.tiktok.com/@allthingsc4milo"
+    },
+    {
+      "label": "Instagram",
+      "description": "Follow along",
+      "url": "https://www.instagram.com/allthingsc4milo/"
+    }
+  ],
+  "listening": {
+    "enabled": false,
+    "demo": true,
+    "period": "1month",
+    "recent": [
+      {
+        "title": "Track placeholder 01",
+        "artist": "Artist placeholder",
+        "note": "Listening time"
+      },
+      {
+        "title": "Track placeholder 02",
+        "artist": "Artist placeholder",
+        "note": "Listening time"
+      },
+      {
+        "title": "Track placeholder 03",
+        "artist": "Artist placeholder",
+        "note": "Listening time"
+      }
+    ],
+    "top": [
+      {
+        "name": "Artist placeholder 01",
+        "note": "Play count"
+      },
+      {
+        "name": "Artist placeholder 02",
+        "note": "Play count"
+      },
+      {
+        "name": "Artist placeholder 03",
+        "note": "Play count"
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "states": [
+    {
+      "state": "stale",
+      "status": "Last.fm is unavailable. Showing the last saved update.",
+      "tracks": 2
+    },
+    {
+      "state": "empty",
+      "status": "No listening activity yet.",
+      "tracks": 1
+    },
+    {
+      "state": "unavailable",
+      "status": "Listening activity is temporarily unavailable. Please try again later.",
+      "tracks": 0
+    },
+    {
+      "state": "unconfigured",
+      "status": "Listening activity is not connected yet.",
+      "tracks": 0
+    }
+  ],
+  "staleWording": {
+    "staleMarker": 1,
+    "falseCurrentMarker": 0
+  }
+}

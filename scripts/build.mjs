@@ -1,0 +1,156 @@
+import { readFile, mkdir, writeFile, cp, access } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { resolve, sep } from 'node:path';
+import { escape as e, externalUrl, assetUrl, embedUrl, validateContent } from '../lib/content.mjs';
+
+export async function buildSite({ directory=fileURLToPath(new URL('../', import.meta.url)) } = {}) {
+const root = resolve(directory) + sep;
+const c = validateContent(JSON.parse(await readFile(`${root}content.json`, 'utf8')));
+const missingArtwork = new Set();
+for (const r of c.releases) if (r.artwork) {
+  try { await access(`${root}public${r.artwork}`); }
+  catch {
+    if (r.artworkOptional) missingArtwork.add(r.artwork);
+    else throw new Error(`Missing artwork for ${r.id}: add public${r.artwork} or leave artwork blank.`);
+  }
+}
+if (c.artist.photo) {
+  try { await access(`${root}public${c.artist.photo}`); }
+  catch { throw new Error(`Missing artist photo: add public${c.artist.photo} or leave photo blank.`); }
+}
+
+const availableAudio = new Set();
+for (const r of c.releases) if (r.audio?.src) {
+  try { await access(`${root}public${r.audio.src}`); availableAudio.add(r.id); }
+  catch { /* A local drop-in file can be supplied later. */ }
+}
+function tapePlayer(r) {
+  const ready = availableAudio.has(r.id);
+  return `<div class="tape-player" data-audio-player data-fade-in="${r.audio.fadeIn ?? 1}" data-fade-out="${r.audio.fadeOut ?? 1.5}">
+    <div class="tape-main"><button class="audio-toggle" aria-label="Play ${e(r.title)}" ${ready ? '' : 'disabled'}><span data-play-symbol aria-hidden="true">▶</span></button>
+      <svg class="tape-loop" viewBox="0 0 600 140" aria-hidden="true">
+        <path class="tape-ribbon" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
+        <path class="tape-travel" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
+        <g class="tape-guides"><circle cx="80" cy="70" r="22"/><circle cx="520" cy="70" r="22"/><circle class="tape-hub" cx="80" cy="70" r="3"/><circle class="tape-hub" cx="520" cy="70" r="3"/></g>
+      </svg>
+      <button class="audio-stop" aria-label="Stop ${e(r.title)}" disabled hidden><span aria-hidden="true">■</span></button>
+    </div>
+    <p class="audio-status sr-only" role="status">${ready ? 'Ready to play' : 'Audio file pending'}</p>
+    <audio preload="none" ${ready ? `src="${e(r.audio.src)}"` : ''}></audio>
+    <noscript><p>Enable JavaScript to use the audio player.</p></noscript>
+  </div>`;
+}
+function logoLink(item) {
+  const logos = {Spotify:'spotify', 'Apple Music':'applemusic', 'Amazon Music':'amazonmusic', 'YouTube Music':'youtubemusic', Pandora:'pandora',Bandcamp:'bandcamp',TikTok:'tiktok',Tidal:'tidal',Instagram:'instagram',YouTube:'youtube'};
+  const logo = logos[item.label];
+  const url = externalUrl(item.url);
+  const icon = logo ? `<img src="/assets/logos/${logo}.svg" alt="" width="32" height="32">` : `<span aria-hidden="true">↗</span>`;
+  return url ? `<a class="platform-logo floating-link" href="${e(url)}" aria-label="${e(item.label)} (opens in a new tab)" target="_blank" rel="noopener noreferrer">${icon}</a>` : `<span class="platform-logo unavailable" role="img" aria-label="${e(item.label)} — link pending" title="${e(item.label)} — link pending">${icon}</span>`;
+}
+
+function image(path, alt, label, className = '') {
+  const src = missingArtwork.has(path) ? '' : assetUrl(path);
+  return src ? `<img class="artwork ${className}" src="${e(src)}" alt="${e(alt)}" width="800" height="800" loading="lazy">` : `<div class="artwork empty-art ${className}" role="img" aria-label="${e(label)}"><span>${e(label)}</span><span class="asset-note">Image placeholder</span></div>`;
+}
+function link(item, row = false) {
+  const url = externalUrl(item.url);
+  const text = `<span>${e(item.label)}${row && item.description ? `<small>${e(item.description)}</small>` : ''}</span>${row ? `<span class="link-state">${url ? '↗' : 'Link placeholder'}</span>` : ''}`;
+  return url ? `<a class="${row ? 'link-row' : 'text-link'}" href="${e(url)}" target="_blank" rel="noopener noreferrer">${text}<span class="sr-only"> (opens in a new tab)</span></a>` : `<span class="${row ? 'link-row missing-link' : 'text-link missing-link'}" aria-label="${e(item.label)}: link placeholder">${text}${!row ? '<small>Link placeholder</small>' : ''}</span>`;
+}
+function player(release) {
+  const src = embedUrl(release.embed?.provider, release.embed?.url);
+  return src ? `<div class="player-slot"><button type="button" class="load-player" data-embed="${e(src)}" data-provider="${e(release.embed.provider)}" data-title="${e(release.title)}">Load ${e(release.embed.provider)} player</button><p class="muted">Loads an external player when you choose. Playback stays under your control.</p></div>` : '<div class="player-placeholder"><span>Music player</span><small>Embed placeholder · Spotify / SoundCloud / YouTube</small></div>';
+}
+function releaseBody(r) { return `${r.description ? `<p>${e(r.description)}</p>` : ''}<div class="release-links">${(r.links ?? []).map(x => link(x)).join('')}</div>${r.audio ? '' : player(r)}`; }
+const streamingServices = ['Spotify', 'Apple Music', 'Pandora', 'Tidal', 'YouTube Music'];
+function pickerId(r) { return `services-${c.releases.indexOf(r)}`; }
+function inlineServicesId(r) { return `services-inline-${c.releases.indexOf(r)}`; }
+function serviceLogoLinks(r) {
+  return streamingServices.map(label => {
+    const item = (r.links ?? []).find(item => item.label === label) || {label, url:''};
+    const action = item.kind === 'search' ? `Search for ${r.title} by ${c.artist.name} on ${label}` : `Listen to ${r.title} on ${label}`;
+    return logoLink(item).replace(`aria-label="${e(label)} (opens in a new tab)"`, `aria-label="${e(action)} (opens in a new tab)" title="${e(action)}"`);
+  }).join('');
+}
+function releaseCover(r, featuredCover = false) {
+  const src = missingArtwork.has(r.artwork) ? '' : assetUrl(r.artwork);
+  const cover = featuredCover ? image(r.artwork, '', 'Release artwork') : src ? `<img class="artwork" src="${e(src)}" alt="" width="800" height="800" loading="lazy">` : `<span class="artwork cover-pending" aria-hidden="true"></span>`;
+  const destination = (r.links ?? []).map(item => externalUrl(item.url)).find(Boolean);
+  if (featuredCover) return `<a class="featured-cover floating-link" href="${e(destination || `#${pickerId(r)}`)}" data-service-picker="${pickerId(r)}" aria-haspopup="dialog" aria-expanded="false" aria-controls="${pickerId(r)}" aria-label="Choose a streaming service for ${e(r.title)}">${cover}</a>`;
+  const id = inlineServicesId(r);
+  return `<div class="release-tile" data-release-tile><a class="release-cover floating-link" href="${e(destination || `#${id}`)}" data-inline-services="${id}" aria-expanded="false" aria-controls="${id}" aria-label="Show streaming services for ${e(r.title)}">${cover}</a><div class="release-services" id="${id}" role="group" aria-label="Streaming services for ${e(r.title)}" hidden><button type="button" class="release-services-close" aria-label="Close streaming services for ${e(r.title)}">×</button><div class="release-services-grid">${serviceLogoLinks(r)}</div></div></div>`;
+}
+function servicePicker(r) {
+  return `<div class="service-picker" role="dialog" popover="auto" id="${pickerId(r)}" aria-labelledby="${pickerId(r)}-heading"><h2 class="sr-only" id="${pickerId(r)}-heading">Choose a streaming service for ${e(r.title)}</h2><button type="button" class="picker-close" data-close-picker aria-label="Close streaming services"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><div class="service-logos">${serviceLogoLinks(r)}</div></div>`;
+}
+const featured = c.releases.find(r => r.id === c.featuredReleaseId);
+const placeholder = c.artist.placeholder || c.releases.some(r => r.placeholder) || (c.listening?.enabled && c.listening?.demo);
+const html = `<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${e(c.artist.name)} · Music & links</title>
+  <meta name="description" content="${e(c.artist.aboutEnabled !== false ? c.artist.bio : `Music and releases by ${c.artist.name}.`)}">
+  ${placeholder ? '<meta name="robots" content="noindex, nofollow">' : ''}
+  <meta name="theme-color" content="#193d00">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  ${placeholder ? '<div class="preview-note" aria-hidden="true"></div>' : ''}
+  <header class="site-header"><a class="wordmark" href="#main">${e(c.artist.name)}</a></header>
+  <main id="main">
+    <section id="early-listen" class="early-listen" aria-label="Next release preview" data-release-teaser>
+      <div class="early-listen-panel">
+        <p class="early-listen-invitation">Sign up for updates and a download of the next release.</p>
+        <div class="upcoming-preview">
+          <div class="upcoming-cover" role="img" aria-label="Cover art placeholder for the next release"></div>
+          <div class="upcoming-identity" data-release-identity aria-hidden="true" inert>
+            <h2 class="upcoming-title">How deep is your love?</h2>
+            <p class="upcoming-credit">Originally by the Bee Gees</p>
+          </div>
+        </div>
+        <div class="early-listen-copy">
+        <form class="early-listen-form" data-preview-signup novalidate>
+          <div class="signup-entry">
+          <div class="signup-method" role="group" aria-label="Choose how to get updates">
+            <button type="button" data-signup-method="email" aria-label="Use email" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></button>
+            <button type="button" data-signup-method="phone" aria-label="Use phone" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></button>
+          </div>
+          <label class="sr-only" for="early-listen-contact" data-contact-label>Your email address</label>
+          <div class="early-listen-controls">
+            <input id="early-listen-contact" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" maxlength="254" required aria-describedby="early-listen-note early-listen-error" disabled>
+            <button type="submit" aria-label="Preview the next release" disabled><span aria-hidden="true">→</span></button>
+          </div>
+          </div>
+          <p id="early-listen-error" class="signup-error" role="alert" hidden></p>
+          <p id="early-listen-note" class="signup-note">Preview only · Nothing is saved or sent.</p>
+        </form>
+        <p class="reveal-note" data-preview-notice hidden>Preview only · No contact was verified or signed up.</p>
+        <p class="sr-only" data-reveal-status role="status"></p>
+        <noscript><p class="signup-note">Enable JavaScript to preview the title reveal. Signup opens soon.</p></noscript>
+        </div>
+      </div>
+    </section>
+    <section id="music" class="featured" aria-labelledby="featured-heading">
+      ${featured ? `<div class="cassette-label">${releaseCover(featured, true)}<div class="featured-copy"><p class="section-label">${e(featured.statusLabel || `Featured release${featured.placeholder ? ' · Placeholder' : ''}`)}</p><h1 id="featured-heading">${e(featured.title)}</h1>${featured.audio ? `${featured.description ? `<p>${e(featured.description)}</p>` : ''}` : releaseBody(featured)}</div></div>${featured.audio ? tapePlayer(featured) : ''}<div class="cassette-base" aria-hidden="true"><i></i><i></i><i></i><i></i></div>` : '<h1 id="featured-heading">Music</h1><p>No releases yet.</p>'}
+    </section>
+    <section id="links" class="links-section" aria-labelledby="links-heading"><h2 id="links-heading">Listen on:</h2><div class="platform-logos">${c.links.map(logoLink).join('')}</div></section>
+    ${c.releases.some(r => r.id !== c.featuredReleaseId) ? `<section id="releases" aria-labelledby="releases-heading"><h2 id="releases-heading" class="sr-only">Other releases</h2><div class="release-covers">${c.releases.filter(r => r.id !== c.featuredReleaseId).map(r => releaseCover(r)).join('')}</div></section>` : ''}
+    ${c.listening?.enabled ? `<section id="listening" aria-labelledby="listening-heading"><div class="section-heading"><h2 id="listening-heading">On my stereo</h2><span id="listening-source" class="muted">${c.listening.demo ? 'Placeholder data' : 'Last.fm'}</span></div><p id="listening-status" class="muted" role="status">${c.listening.demo ? 'Listening layout preview. No account connected.' : 'Loading listening activity…'}</p><div class="listening-tabs" role="tablist" aria-label="Listening activity"><button type="button" id="tab-recent" role="tab" aria-selected="true" aria-controls="panel-recent" data-tab="recent">Recent tracks</button><button type="button" id="tab-top" role="tab" aria-selected="false" aria-controls="panel-top" tabindex="-1" data-tab="top">Top artists</button></div><div id="panel-recent" role="tabpanel" aria-labelledby="tab-recent" tabindex="0"><ol id="recent-list" class="listening-list">${(c.listening.demo ? c.listening.recent : []).map(r=>`<li><div><strong>${e(r.title)}</strong><small>${e(r.artist)}</small></div><span class="muted">${e(r.note)}</span></li>`).join('')}</ol></div><div id="panel-top" role="tabpanel" aria-labelledby="tab-top" tabindex="0" hidden><p class="period muted">${c.listening.demo ? 'Time period placeholder' : `Period: ${e(c.listening.period)}`}</p><ol id="top-list" class="listening-list">${(c.listening.demo ? c.listening.top : []).map(r=>`<li><strong>${e(r.name)}</strong><span class="muted">${e(r.note)}</span></li>`).join('')}</ol></div><noscript><p>Listening tab switching and live updates need JavaScript. Artist music and links remain available.</p></noscript></section>` : ''}
+    ${c.artist.aboutEnabled !== false ? `<section id="about" class="about-section" aria-labelledby="about-heading">${image(c.artist.photo, c.artist.photoAlt, 'Artist portrait', 'portrait')}<div><h2 id="about-heading">About ${e(c.artist.name)}</h2><p>${e(c.artist.bio)}</p>${/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(c.artist.email) ? `<a class="text-link" href="mailto:${e(c.artist.email)}">Contact ${e(c.artist.name)}</a>` : '<span class="muted">Contact email placeholder</span>'}</div></section>` : ''}
+  </main>
+  ${featured ? servicePicker(featured) : ''}
+  <footer><span>${e(c.artist.name)}</span><a href="#main" aria-label="Back to top" title="Back to top"><span aria-hidden="true">↑</span></a></footer>
+</body></html>`;
+await mkdir(`${root}dist`, { recursive: true });
+await cp(`${root}public`, `${root}dist`, { recursive: true });
+await writeFile(`${root}dist/index.html`, html.replace(/^ +$/gm, ''));
+await writeFile(`${root}dist/listening-config.json`, JSON.stringify({demo:!!c.listening?.demo,period:c.listening?.period ?? '1month'}));
+return { placeholder:!!placeholder, outputDirectory:`${root}dist` };
+}
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+await buildSite();
+console.log('Built dist/ from content.json.');
+}

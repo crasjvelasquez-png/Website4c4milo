@@ -1,0 +1,13 @@
+{
+  "name": "artist-home",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "dev": "npm run build && node --env-file-if-exists=.env server.mjs",
+    "test": "node --test"
+  }
+}
