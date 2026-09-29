@@ -18,6 +18,11 @@ if (c.artist.photo) {
   try { await access(`${root}public${c.artist.photo}`); }
   catch { throw new Error(`Missing artist photo: add public${c.artist.photo} or leave photo blank.`); }
 }
+let upcomingCover = '';
+if (c.upcomingRelease?.cover) {
+  try { await access(`${root}public${c.upcomingRelease.cover}`); upcomingCover = c.upcomingRelease.cover; }
+  catch { /* Keep the cover placeholder until the artwork is supplied. */ }
+}
 
 const availableAudio = new Set();
 for (const r of c.releases) if (r.audio?.src) {
@@ -30,10 +35,12 @@ function tapePlayer(r) {
     <div class="tape-main"><button class="audio-toggle" aria-label="Play ${e(r.title)}" ${ready ? '' : 'disabled'}><span data-play-symbol aria-hidden="true">▶</span></button>
       <svg class="tape-loop" viewBox="0 0 600 140" aria-hidden="true">
         <path class="tape-ribbon" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
-        <path class="tape-travel" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
-        <g class="tape-guides"><circle cx="80" cy="70" r="22"/><circle cx="520" cy="70" r="22"/><circle class="tape-hub" cx="80" cy="70" r="3"/><circle class="tape-hub" cx="520" cy="70" r="3"/></g>
+        <path class="tape-travel" pathLength="1220" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
+        <g class="tape-guides">
+          <g class="tape-reel" style="--reel-x:80px;--reel-y:70px"><circle cx="80" cy="70" r="22"/><path d="M80 55 V63 M67 77 L74 73 M93 77 L86 73"/><circle class="tape-hub" cx="80" cy="70" r="3"/></g>
+          <g class="tape-reel" style="--reel-x:520px;--reel-y:70px"><circle cx="520" cy="70" r="22"/><path d="M520 55 V63 M507 77 L514 73 M533 77 L526 73"/><circle class="tape-hub" cx="520" cy="70" r="3"/></g>
+        </g>
       </svg>
-      <button class="audio-stop" aria-label="Stop ${e(r.title)}" disabled hidden><span aria-hidden="true">■</span></button>
     </div>
     <p class="audio-status sr-only" role="status">${ready ? 'Ready to play' : 'Audio file pending'}</p>
     <audio preload="none" ${ready ? `src="${e(r.audio.src)}"` : ''}></audio>
@@ -105,7 +112,7 @@ const html = `<!doctype html>
       <div class="early-listen-panel">
         <p class="early-listen-invitation">Sign up for updates and a download of the next release.</p>
         <div class="upcoming-preview">
-          <div class="upcoming-cover" role="img" aria-label="Cover art placeholder for the next release"></div>
+          <div class="upcoming-cover" ${upcomingCover ? '' : 'role="img" aria-label="Cover art placeholder for the next release"'}>${upcomingCover ? `<img src="${e(upcomingCover)}" alt="How deep is your love? cover" width="800" height="800" loading="lazy">` : ''}</div>
           <div class="upcoming-identity" data-release-identity aria-hidden="true" inert>
             <h2 class="upcoming-title">How deep is your love?</h2>
             <p class="upcoming-credit">Originally by the Bee Gees</p>
@@ -128,6 +135,7 @@ const html = `<!doctype html>
           <p id="early-listen-note" class="signup-note">Preview only · Nothing is saved or sent.</p>
         </form>
         <p class="reveal-note" data-preview-notice hidden>Preview only · No contact was verified or signed up.</p>
+        ${c.upcomingRelease?.downloadUrl ? `<a class="upcoming-download" href="${e(externalUrl(c.upcomingRelease.downloadUrl))}" target="_blank" rel="noopener noreferrer" hidden data-upcoming-download>Download How deep is your love?</a>` : ''}
         <p class="sr-only" data-reveal-status role="status"></p>
         <noscript><p class="signup-note">Enable JavaScript to preview the title reveal. Signup opens soon.</p></noscript>
         </div>

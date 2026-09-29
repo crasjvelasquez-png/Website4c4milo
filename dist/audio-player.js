@@ -54,7 +54,6 @@ export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5
 export function mountPlayer(root) {
   const audio = root.querySelector('audio');
   const toggle = root.querySelector('.audio-toggle');
-  const stop = root.querySelector('.audio-stop');
   const status = root.querySelector('.audio-status');
   const symbol = root.querySelector('[data-play-symbol]');
   if (!audio.getAttribute('src')) return;
@@ -62,51 +61,75 @@ export function mountPlayer(root) {
   if (!Context) { status.textContent = 'This browser cannot use the audio player.'; toggle.disabled = true; return; }
   const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut)});
   let loading = false;
-  let wobbleTimer;
+  let wobbleFrame;
+  let nextRipple = 0;
+  let ripples = [];
+  const tapePaths = [...root.querySelectorAll('.tape-ribbon, .tape-travel')];
+  const restingTape = 'M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z';
   let wasPlaying = false;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   function stopWobble() {
-    clearTimeout(wobbleTimer);
-    root.style.removeProperty('--tape-wobble-y');
-    root.style.removeProperty('--tape-wobble-turn');
-    root.style.removeProperty('--tape-speed');
+    cancelAnimationFrame(wobbleFrame);
+    nextRipple = 0;
+    ripples = [];
+    for (const path of tapePaths) path.setAttribute('d', restingTape);
   }
-  function nudgeTape() {
+  function nudgeTape(now) {
     if (audio.paused || document.hidden || reducedMotion.matches) return;
-    // Small irregular visual changes evoke tape speed drift; audio gain/rate stay untouched.
-    root.style.setProperty('--tape-wobble-y', `${((Math.random() - .5) * 1.1).toFixed(2)}px`);
-    root.style.setProperty('--tape-wobble-turn', `${((Math.random() - .5) * .35).toFixed(2)}deg`);
-    root.style.setProperty('--tape-speed', `${(5.4 + Math.random() * 1.2).toFixed(2)}s`);
-    wobbleTimer = setTimeout(nudgeTape, 1100 + Math.random() * 900);
+    if (!nextRipple) nextRipple = now + 1600 + Math.random() * 1000;
+    if (now >= nextRipple) {
+      // A second ripple follows on the opposite span, well away from the first.
+      ripples.push({start: now, side: 'top'});
+      ripples.push({start: now + 650, side: 'bottom'});
+      nextRipple = now + 6500 + Math.random() * 2500;
+    }
+    ripples = ripples.filter(ripple => now - ripple.start < 2500);
+    const displacement = (x, side) => ripples.reduce((sum, ripple) => {
+      if (ripple.side !== side) return sum;
+      const age = (now - ripple.start) / 2500;
+      if (age < 0 || age > 1) return sum;
+      const center = side === 'top' ? 80 + 440 * age : 520 - 440 * age;
+      const distance = x - center;
+      const envelope = Math.sin(Math.PI * age) ** 2 * Math.exp(-((distance / 115) ** 2));
+      return sum + 8 * envelope * Math.sin(distance * Math.PI / 180);
+    }, 0);
+    const top = Array.from({length: 45}, (_, i) => {
+      const x = 80 + i * 10;
+      return `${x} ${(16 + displacement(x, 'top')).toFixed(2)}`;
+    }).join(' L');
+    const bottom = Array.from({length: 45}, (_, i) => {
+      const x = 520 - i * 10;
+      return `${x} ${(124 + displacement(x, 'bottom')).toFixed(2)}`;
+    }).join(' L');
+    const shape = `M${top} A54 54 0 0 1 520 124 L${bottom} A54 54 0 0 1 80 16 Z`;
+    for (const path of tapePaths) path.setAttribute('d', shape);
+    wobbleFrame = requestAnimationFrame(nudgeTape);
   }
   reducedMotion.addEventListener('change', () => {
     stopWobble();
-    if (!reducedMotion.matches && !audio.paused) nudgeTape();
+    if (!reducedMotion.matches && !audio.paused) wobbleFrame = requestAnimationFrame(nudgeTape);
   });
   function render() {
     const playing = !audio.paused;
     if (playing !== wasPlaying) {
       stopWobble();
-      if (playing) nudgeTape();
+      if (playing && !reducedMotion.matches) wobbleFrame = requestAnimationFrame(nudgeTape);
       wasPlaying = playing;
     }
     root.classList.toggle('is-playing', playing);
     symbol.textContent = playing ? 'Ⅱ' : '▶';
     toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${document.getElementById('featured-heading').textContent}`);
     toggle.setAttribute('aria-pressed', String(playing));
-    stop.disabled = audio.paused && audio.currentTime === 0 && !loading;
-    stop.hidden = stop.disabled;
   }
   toggle.addEventListener('click', async () => {
     if (loading) return;
     if (!audio.paused) { transport.pause(); status.textContent = 'Paused'; render(); return; }
-    loading = true; toggle.disabled = true; stop.disabled = false; stop.hidden = false; status.textContent = 'Loading audio…';
+    loading = true; toggle.disabled = true; status.textContent = 'Loading audio…';
     try { await transport.play(); status.textContent = audio.paused ? 'Stopped' : 'Playing'; }
     catch { transport.stop(); status.textContent = 'Audio could not play. Try again or check the file.'; }
     finally { loading = false; toggle.disabled = false; render(); }
   });
   const exit = () => { transport.stop(); status.textContent = 'Stopped'; render(); };
-  stop.addEventListener('click', exit);
   for (const event of ['timeupdate','loadedmetadata','playing','pause']) audio.addEventListener(event, render);
   audio.addEventListener('waiting', () => { status.textContent = 'Buffering…'; });
   audio.addEventListener('playing', () => { status.textContent = 'Playing'; });

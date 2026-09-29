@@ -9,6 +9,10 @@
     "aboutEnabled": false
   },
   "featuredReleaseId": "querida",
+  "upcomingRelease": {
+    "cover": "/assets/how-deep-is-your-love.png",
+    "downloadUrl": ""
+  },
   "releases": [
     {
       "id": "querida",

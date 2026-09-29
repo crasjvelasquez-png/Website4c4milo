@@ -19,6 +19,7 @@ export function mountReleaseTeaser(section) {
   const invitation = section.querySelector('.early-listen-invitation');
   const error = form.querySelector('.signup-error');
   const notice = section.querySelector('[data-preview-notice]');
+  const download = section.querySelector('[data-upcoming-download]');
   const status = section.querySelector('[data-reveal-status]');
   let mode = 'email';
 
@@ -66,5 +67,6 @@ export function mountReleaseTeaser(section) {
     invitation.hidden = true;
     form.hidden = true;
     notice.hidden = false;
+    if (download) download.hidden = false;
   });
 }

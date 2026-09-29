@@ -29,6 +29,10 @@ The release already points to `/assets/querida.png`. `artworkOptional: true` kee
 
 Place covers in `public/assets/` as `crush.png`, `circles.png` and `nmf.png`, then run `npm run build` and refresh. These optional paths are already configured. Missing covers show blank squares with accessible release names, with no visible placeholder text. No upload service is needed.
 
+### How deep is your love? cover and download
+
+Place the square cover at `public/assets/how-deep-is-your-love.png`, then run `npm run build`. The preview automatically uses it. To add the download, paste its full `https://` URL into `upcomingRelease.downloadUrl` in `content.json` and rebuild. The download link appears after the local title reveal. This preview does not collect contacts or restrict access; a real signup gate requires the planned signup integration.
+
 The other releases show only square covers. Tapping CRUSH., circles or NMF blurs that cover and reveals five smaller logo buttons directly over it, three above two. The featured Querida cover retains its separate streaming picker. Gallery covers keep the platform logos' desktop hover treatment and respect reduced motion. Querida appears only in the featured area. Titles, dates, counts and embedded players are removed from the gallery.
 
 ### Other release edits
