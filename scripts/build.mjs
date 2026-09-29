@@ -24,6 +24,12 @@ if (c.upcomingRelease?.cover) {
   catch { /* Keep the cover placeholder until the artwork is supplied. */ }
 }
 
+let upcomingAudio = '';
+if (c.upcomingRelease?.audio) {
+  try { await access(`${root}public${c.upcomingRelease.audio}`); upcomingAudio = c.upcomingRelease.audio; }
+  catch { /* Playback and download stay unavailable until the MP3 is supplied. */ }
+}
+
 const availableAudio = new Set();
 for (const r of c.releases) if (r.audio?.src) {
   try { await access(`${root}public${r.audio.src}`); availableAudio.add(r.id); }
@@ -32,7 +38,7 @@ for (const r of c.releases) if (r.audio?.src) {
 function tapePlayer(r) {
   const ready = availableAudio.has(r.id);
   return `<div class="tape-player" data-audio-player data-fade-in="${r.audio.fadeIn ?? 1}" data-fade-out="${r.audio.fadeOut ?? 1.5}">
-    <div class="tape-main"><button class="audio-toggle" aria-label="Play ${e(r.title)}" ${ready ? '' : 'disabled'}><span data-play-symbol aria-hidden="true">▶</span></button>
+    <div class="tape-main"><span class="audio-time" role="timer" aria-label="Elapsed time: 0:00"><span data-time-minutes aria-hidden="true">0</span><span class="audio-time-colon" aria-hidden="true">:</span><span data-time-seconds aria-hidden="true">00</span></span><button class="audio-toggle" aria-label="Play ${e(r.title)}" ${ready ? '' : 'disabled'}><span data-play-symbol aria-hidden="true">▶</span></button>
       <svg class="tape-loop" viewBox="0 0 600 140" aria-hidden="true">
         <path class="tape-ribbon" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
         <path class="tape-travel" pathLength="1220" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
@@ -99,25 +105,17 @@ const html = `<!doctype html>
   <title>${e(c.artist.name)} · Music & links</title>
   <meta name="description" content="${e(c.artist.aboutEnabled !== false ? c.artist.bio : `Music and releases by ${c.artist.name}.`)}">
   ${placeholder ? '<meta name="robots" content="noindex, nofollow">' : ''}
-  <meta name="theme-color" content="#193d00">
+  <meta name="theme-color" content="#ffffff">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   ${placeholder ? '<div class="preview-note" aria-hidden="true"></div>' : ''}
-  <header class="site-header"><a class="wordmark" href="#main">${e(c.artist.name)}</a></header>
   <main id="main">
     <section id="early-listen" class="early-listen" aria-label="Next release preview" data-release-teaser>
       <div class="early-listen-panel">
         <p class="early-listen-invitation">Sign up for updates and a download of the next release.</p>
-        <div class="upcoming-preview">
-          <div class="upcoming-cover" ${upcomingCover ? '' : 'role="img" aria-label="Cover art placeholder for the next release"'}>${upcomingCover ? `<img src="${e(upcomingCover)}" alt="How deep is your love? cover" width="800" height="800" loading="lazy">` : ''}</div>
-          <div class="upcoming-identity" data-release-identity aria-hidden="true" inert>
-            <h2 class="upcoming-title">How deep is your love?</h2>
-            <p class="upcoming-credit">Originally by the Bee Gees</p>
-          </div>
-        </div>
         <div class="early-listen-copy">
         <form class="early-listen-form" data-preview-signup novalidate>
           <div class="signup-entry">
@@ -134,10 +132,24 @@ const html = `<!doctype html>
           <p id="early-listen-error" class="signup-error" role="alert" hidden></p>
           <p id="early-listen-note" class="signup-note">Preview only · Nothing is saved or sent.</p>
         </form>
-        <p class="reveal-note" data-preview-notice hidden>Preview only · No contact was verified or signed up.</p>
-        ${c.upcomingRelease?.downloadUrl ? `<a class="upcoming-download" href="${e(externalUrl(c.upcomingRelease.downloadUrl))}" target="_blank" rel="noopener noreferrer" hidden data-upcoming-download>Download How deep is your love?</a>` : ''}
         <p class="sr-only" data-reveal-status role="status"></p>
         <noscript><p class="signup-note">Enable JavaScript to preview the title reveal. Signup opens soon.</p></noscript>
+        </div>
+        <div class="upcoming-preview">
+          <div class="upcoming-cover" ${upcomingCover ? '' : 'role="img" aria-label="Cover art placeholder for the next release"'}>${upcomingCover ? `<img src="${e(upcomingCover)}" alt="How deep is your love? cover" width="800" height="800" loading="lazy">` : ''}</div>
+          <div class="upcoming-identity" data-release-identity aria-hidden="true" inert>
+            <h2 class="upcoming-title" id="upcoming-heading" tabindex="-1">How deep is your love? (Cover)</h2>
+            <p class="upcoming-credit">by c4milo</p>
+          </div>
+        </div>
+        <div class="upcoming-player" data-upcoming-player hidden>
+          <audio preload="none" aria-labelledby="upcoming-heading" ${upcomingAudio ? `data-src="${e(upcomingAudio)}"` : ''}></audio>
+          <div class="secret-transport">
+            <button class="secret-toggle" type="button" aria-label="Play How deep is your love? (Cover)" aria-pressed="false" ${upcomingAudio ? '' : 'disabled'}><svg viewBox="0 0 24 24" aria-hidden="true"><path class="secret-play-icon" d="m9 5 11 7-11 7Z" fill="currentColor" stroke="none"/><path class="secret-pause-icon" d="M9 5v14M16 5v14"/></svg></button>
+            <div class="secret-progress"><input class="secret-seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek in How deep is your love?" disabled></div>
+            ${upcomingAudio ? `<a class="upcoming-download" href="${e(upcomingAudio)}" download="how-deep-is-your-love.mp3" aria-label="Download MP3" title="Download MP3">` : '<button class="upcoming-download" type="button" aria-label="Download MP3 (unavailable)" title="MP3 not available yet" disabled>'}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4"/></svg>${upcomingAudio ? '</a>' : '</button>'}
+          </div>
+          <p class="sr-only" data-upcoming-audio-status role="status"></p>
         </div>
       </div>
     </section>

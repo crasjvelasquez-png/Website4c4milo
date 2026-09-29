@@ -76,13 +76,17 @@ test('signup preview exposes accessible email and phone choices without a real s
   const html = await readFile(join(directory,'dist/index.html'),'utf8');
   assert.match(html,/Sign up for updates and a download of the next release\./);
   assert.match(html,/<div class="preview-note" aria-hidden="true"><\/div>/);
+  assert.match(html,/<meta name="theme-color" content="#ffffff">/);
+  assert.doesNotMatch(html,/<header class="site-header">/);
+  assert.ok(html.indexOf('class="early-listen-invitation"') < html.indexOf('class="signup-entry"'));
+  assert.ok(html.indexOf('class="signup-entry"') < html.indexOf('class="upcoming-preview"'));
   assert.doesNotMatch(html,/Structure preview|Preview includes placeholder content/);
   assert.match(html,/<label class="sr-only" for="early-listen-contact" data-contact-label>Your email address<\/label>/);
   assert.match(html,/data-signup-method="email" aria-label="Use email" aria-pressed="true"><svg[^>]*aria-hidden="true"/);
   assert.match(html,/data-signup-method="phone" aria-label="Use phone" aria-pressed="false"><svg[^>]*aria-hidden="true"/);
   assert.match(html,/type="submit" aria-label="Preview the next release" disabled><span aria-hidden="true">→<\/span>/);
   assert.match(html,/Preview only · Nothing is saved or sent\./);
-  assert.match(html,/data-preview-notice hidden>Preview only · No contact was verified or signed up\./);
+  assert.doesNotMatch(html,/data-preview-notice/);
 }));
 
 
@@ -112,4 +116,22 @@ test('gallery covers have five inline services while featured Querida keeps its 
   assert.match(tiles[1],/Search for circles by c4milo on YouTube Music/);
   assert.match(tiles[2],/Listen to NMF on Spotify/);
   assert.doesNotMatch(html,/Querida <special>/);
+}));
+
+test('secret release enables playback and a local MP3 download only when its file exists',async()=>fixture(async({directory,content,save})=>{
+  content.upcomingRelease = {audio:'/assets/secret-test.mp3',cover:''};
+  await save(); await buildSite({directory});
+  let html = await readFile(join(directory,'dist/index.html'),'utf8');
+  assert.match(html,/data-upcoming-player hidden/);
+  assert.match(html,/aria-label="Download MP3 \(unavailable\)"[^>]*disabled/);
+  assert.doesNotMatch(html,/data-src="\/assets\/secret-test.mp3"/);
+  await writeFile(join(directory,'public/assets/secret-test.mp3'),'test media fixture');
+  await buildSite({directory});
+  html = await readFile(join(directory,'dist/index.html'),'utf8');
+  assert.match(html,/<audio preload="none" aria-labelledby="upcoming-heading" data-src="\/assets\/secret-test.mp3"/);
+  assert.match(html,/href="\/assets\/secret-test.mp3" download="how-deep-is-your-love.mp3"/);
+  assert.doesNotMatch(html,/disabled>Download MP3/);
+  assert.equal(await readFile(join(directory,'dist/assets/secret-test.mp3'),'utf8'),'test media fixture');
+  content.upcomingRelease.audio = '/assets/secret.wav';
+  assert.throws(()=>validateContent(content),/upcomingRelease.audio needs a local MP3/);
 }));

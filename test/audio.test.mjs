@@ -36,6 +36,22 @@ test('leaving while context resumes cancels playback; stop resets media and canc
   assert.equal(p.calls.at(-1)[1],0);
   t.stop();assert.equal(audio.paused,true);assert.equal(audio.currentTime,0);assert.deepEqual(p.calls.at(-1),['set',0,20]);
 });
+test('play starts at three seconds, resumes from pause, and restarts there after stop',async()=>{
+  const audio=new EventTarget();Object.assign(audio,{currentTime:0,duration:174,readyState:1,paused:true});
+  const starts=[];
+  audio.play=async()=>{starts.push(audio.currentTime);audio.paused=false;audio.dispatchEvent(new Event('playing'));};
+  audio.pause=()=>{audio.paused=true;};
+  const p=parameter();
+  const context={currentTime:0,destination:{},createGain:()=>({gain:p,connect(){}}),createMediaElementSource:()=>({connect(){}}),resume:async()=>{}};
+  const transport=createTransport(audio,{createContext:()=>context,startAt:3});
+  await transport.play();
+  assert.equal(starts[0],3);
+  audio.currentTime=12;
+  transport.pause();await transport.play();
+  assert.equal(starts[1],12);
+  transport.stop();await transport.play();
+  assert.equal(starts[2],3);
+});
 test('audio is served with seekable byte ranges, correct media type and invalid-range rejection',async()=>{
   const dir=await mkdtemp(join(tmpdir(),'audio-range-'));
   await writeFile(join(dir,'sample.mp3'),Buffer.from([1,2,3,4,5]));

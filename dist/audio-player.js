@@ -12,8 +12,8 @@ export function scheduleEnvelope(param, now, position, duration, fadeIn, fadeOut
   }
 }
 
-export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5}) {
-  let context, gain, generation = 0;
+export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5, startAt = 0}) {
+  let context, gain, generation = 0, needsStart = true;
   const envelope = () => {
     if (gain && Number.isFinite(audio.duration)) scheduleEnvelope(gain.gain, context.currentTime, audio.currentTime, audio.duration, fadeIn, fadeOut);
   };
@@ -30,6 +30,10 @@ export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5
     }
     await context.resume();
     if (token !== generation) return;
+    if (needsStart) {
+      audio.currentTime = Number.isFinite(audio.duration) ? Math.min(startAt, Math.max(0, audio.duration - 0.1)) : startAt;
+      needsStart = false;
+    }
     // Stay silent while loading; the 'playing' event schedules the fades.
     gain.gain.cancelScheduledValues(context.currentTime);
     gain.gain.setValueAtTime(0, context.currentTime);
@@ -47,6 +51,7 @@ export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5
   function stop() {
     pause();
     if (audio.readyState > 0) audio.currentTime = 0;
+    needsStart = true;
   }
   return {play, pause, stop};
 }
@@ -55,71 +60,25 @@ export function mountPlayer(root) {
   const audio = root.querySelector('audio');
   const toggle = root.querySelector('.audio-toggle');
   const status = root.querySelector('.audio-status');
+  const time = root.querySelector('.audio-time');
   const symbol = root.querySelector('[data-play-symbol]');
   if (!audio.getAttribute('src')) return;
   const Context = window.AudioContext || window.webkitAudioContext;
   if (!Context) { status.textContent = 'This browser cannot use the audio player.'; toggle.disabled = true; return; }
-  const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut)});
+  const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut), startAt:3});
   let loading = false;
-  let wobbleFrame;
-  let nextRipple = 0;
-  let ripples = [];
-  const tapePaths = [...root.querySelectorAll('.tape-ribbon, .tape-travel')];
-  const restingTape = 'M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z';
-  let wasPlaying = false;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  function stopWobble() {
-    cancelAnimationFrame(wobbleFrame);
-    nextRipple = 0;
-    ripples = [];
-    for (const path of tapePaths) path.setAttribute('d', restingTape);
-  }
-  function nudgeTape(now) {
-    if (audio.paused || document.hidden || reducedMotion.matches) return;
-    if (!nextRipple) nextRipple = now + 1600 + Math.random() * 1000;
-    if (now >= nextRipple) {
-      // A second ripple follows on the opposite span, well away from the first.
-      ripples.push({start: now, side: 'top'});
-      ripples.push({start: now + 650, side: 'bottom'});
-      nextRipple = now + 6500 + Math.random() * 2500;
-    }
-    ripples = ripples.filter(ripple => now - ripple.start < 2500);
-    const displacement = (x, side) => ripples.reduce((sum, ripple) => {
-      if (ripple.side !== side) return sum;
-      const age = (now - ripple.start) / 2500;
-      if (age < 0 || age > 1) return sum;
-      const center = side === 'top' ? 80 + 440 * age : 520 - 440 * age;
-      const distance = x - center;
-      const envelope = Math.sin(Math.PI * age) ** 2 * Math.exp(-((distance / 115) ** 2));
-      return sum + 8 * envelope * Math.sin(distance * Math.PI / 180);
-    }, 0);
-    const top = Array.from({length: 45}, (_, i) => {
-      const x = 80 + i * 10;
-      return `${x} ${(16 + displacement(x, 'top')).toFixed(2)}`;
-    }).join(' L');
-    const bottom = Array.from({length: 45}, (_, i) => {
-      const x = 520 - i * 10;
-      return `${x} ${(124 + displacement(x, 'bottom')).toFixed(2)}`;
-    }).join(' L');
-    const shape = `M${top} A54 54 0 0 1 520 124 L${bottom} A54 54 0 0 1 80 16 Z`;
-    for (const path of tapePaths) path.setAttribute('d', shape);
-    wobbleFrame = requestAnimationFrame(nudgeTape);
-  }
-  reducedMotion.addEventListener('change', () => {
-    stopWobble();
-    if (!reducedMotion.matches && !audio.paused) wobbleFrame = requestAnimationFrame(nudgeTape);
-  });
   function render() {
     const playing = !audio.paused;
-    if (playing !== wasPlaying) {
-      stopWobble();
-      if (playing && !reducedMotion.matches) wobbleFrame = requestAnimationFrame(nudgeTape);
-      wasPlaying = playing;
-    }
     root.classList.toggle('is-playing', playing);
     symbol.textContent = playing ? 'Ⅱ' : '▶';
     toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${document.getElementById('featured-heading').textContent}`);
     toggle.setAttribute('aria-pressed', String(playing));
+    const seconds = Number.isFinite(audio.currentTime) ? Math.floor(audio.currentTime) : 0;
+    const minutes = String(Math.floor(seconds / 60));
+    const remainder = String(seconds % 60).padStart(2, '0');
+    time.querySelector('[data-time-minutes]').textContent = minutes;
+    time.querySelector('[data-time-seconds]').textContent = remainder;
+    time.setAttribute('aria-label', `Elapsed time: ${minutes}:${remainder}`);
   }
   toggle.addEventListener('click', async () => {
     if (loading) return;
@@ -130,7 +89,7 @@ export function mountPlayer(root) {
     finally { loading = false; toggle.disabled = false; render(); }
   });
   const exit = () => { transport.stop(); status.textContent = 'Stopped'; render(); };
-  for (const event of ['timeupdate','loadedmetadata','playing','pause']) audio.addEventListener(event, render);
+  for (const event of ['timeupdate','loadedmetadata','seeked','playing','pause']) audio.addEventListener(event, render);
   audio.addEventListener('waiting', () => { status.textContent = 'Buffering…'; });
   audio.addEventListener('playing', () => { status.textContent = 'Playing'; });
   audio.addEventListener('ended', () => { status.textContent = 'Finished'; render(); });

@@ -18,8 +18,48 @@ export function mountReleaseTeaser(section) {
   const identity = section.querySelector('[data-release-identity]');
   const invitation = section.querySelector('.early-listen-invitation');
   const error = form.querySelector('.signup-error');
-  const notice = section.querySelector('[data-preview-notice]');
-  const download = section.querySelector('[data-upcoming-download]');
+  const player = section.querySelector('[data-upcoming-player]');
+  const audio = player?.querySelector('audio');
+  if (audio) {
+    const toggle = player.querySelector('.secret-toggle');
+    const seek = player.querySelector('.secret-seek');
+    const feedback = player.querySelector('[data-upcoming-audio-status]');
+    const render = () => {
+      const playing = !audio.paused && !audio.ended;
+      player.classList.toggle('is-playing', playing);
+      toggle.setAttribute('aria-pressed', String(playing));
+      toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} How deep is your love? (Cover)`);
+      const seconds = Math.floor(audio.currentTime || 0);
+      const elapsed = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+      const ready = Number.isFinite(audio.duration) && audio.duration > 0;
+      seek.disabled = !ready;
+      seek.max = ready ? audio.duration : 100;
+      seek.value = audio.currentTime || 0;
+      seek.setAttribute('aria-valuetext', elapsed);
+    };
+    toggle.addEventListener('click', async () => {
+      if (!audio.paused) { audio.pause(); return; }
+      toggle.disabled = true;
+      feedback.textContent = 'Loading audio…';
+      try { await audio.play(); feedback.textContent = ''; }
+      catch { feedback.textContent = 'Audio could not play. Try again.'; }
+      finally { toggle.disabled = !audio.getAttribute('src'); render(); }
+    });
+    seek.addEventListener('input', () => { audio.currentTime = Number(seek.value); render(); });
+    for (const event of ['play', 'pause', 'ended', 'loadedmetadata', 'timeupdate']) audio.addEventListener(event, render);
+    audio.addEventListener('play', () => {
+      document.querySelectorAll('audio').forEach(other => { if (other !== audio) other.pause(); });
+    });
+    document.querySelectorAll('audio').forEach(other => {
+      if (other !== audio) other.addEventListener('play', () => audio.pause());
+    });
+    audio.addEventListener('error', () => {
+      player.querySelector('[data-upcoming-audio-status]').textContent = 'Audio could not load. Reload the page to try again.';
+    });
+    const stop = () => { audio.pause(); if (audio.readyState > 0) audio.currentTime = 0; };
+    window.addEventListener('pagehide', stop);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+  }
   const status = section.querySelector('[data-reveal-status]');
   let mode = 'email';
 
@@ -62,11 +102,15 @@ export function mountReleaseTeaser(section) {
     section.classList.add('is-revealed');
     identity.removeAttribute('aria-hidden');
     identity.removeAttribute('inert');
-    status.textContent = 'The next release: How deep is your love? Originally by the Bee Gees. Format checked locally; your contact was not verified or signed up.';
+    status.textContent = 'The next release: How deep is your love? (Cover) by c4milo. Format checked locally; your contact was not verified or signed up.';
     input.value = '';
-    invitation.hidden = true;
-    form.hidden = true;
-    notice.hidden = false;
-    if (download) download.hidden = false;
+    invitation.style.visibility = 'hidden';
+    form.style.visibility = 'hidden';
+    form.inert = true;
+    if (player) {
+      player.hidden = false;
+      if (audio?.dataset.src) audio.src = audio.dataset.src;
+    }
+    section.querySelector('#upcoming-heading')?.focus();
   });
 }

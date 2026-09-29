@@ -11,7 +11,8 @@
   "featuredReleaseId": "querida",
   "upcomingRelease": {
     "cover": "/assets/how-deep-is-your-love.png",
-    "downloadUrl": ""
+    "downloadUrl": "",
+    "audio": "/assets/how-deep-is-your-love.mp3"
   },
   "releases": [
     {
