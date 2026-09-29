@@ -11,7 +11,7 @@ export function createApp({ directory=resolve(root,'dist'), listening=createList
     res.setHeader('X-Content-Type-Options','nosniff');
     res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
     res.setHeader('X-Frame-Options','DENY');
-    res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; frame-src https://open.spotify.com https://w.soundcloud.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");
+    res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self' https://accounts.spotify.com https://api.spotify.com; frame-src https://open.spotify.com https://w.soundcloud.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'");
     const send = (code,body,type='text/plain; charset=utf-8') => {res.writeHead(code,{'Content-Type':type});res.end(req.method==='HEAD' ? undefined : body);};
     if (!['GET','HEAD'].includes(req.method)) {res.setHeader('Allow','GET, HEAD');send(405,'Method not allowed');return;}
     try {

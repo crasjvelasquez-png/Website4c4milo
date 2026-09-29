@@ -53,12 +53,22 @@ function tapePlayer(r) {
     <noscript><p>Enable JavaScript to use the audio player.</p></noscript>
   </div>`;
 }
+function spotifyUri(value) {
+  try {
+    const url = new URL(value);
+    if (url.hostname !== 'open.spotify.com') return '';
+    const match = /^\/(album|track|playlist|episode|show|audiobook)\/([A-Za-z0-9]+)\/?$/.exec(url.pathname);
+    return match ? `spotify:${match[1]}:${match[2]}` : '';
+  } catch { return ''; }
+}
 function logoLink(item) {
   const logos = {Spotify:'spotify', 'Apple Music':'applemusic', 'Amazon Music':'amazonmusic', 'YouTube Music':'youtubemusic', Pandora:'pandora',Bandcamp:'bandcamp',TikTok:'tiktok',Tidal:'tidal',Instagram:'instagram',YouTube:'youtube'};
   const logo = logos[item.label];
   const url = externalUrl(item.url);
   const icon = logo ? `<img src="/assets/logos/${logo}.svg" alt="" width="32" height="32">` : `<span aria-hidden="true">↗</span>`;
-  return url ? `<a class="platform-logo floating-link" href="${e(url)}" aria-label="${e(item.label)} (opens in a new tab)" target="_blank" rel="noopener noreferrer">${icon}</a>` : `<span class="platform-logo unavailable" role="img" aria-label="${e(item.label)} — link pending" title="${e(item.label)} — link pending">${icon}</span>`;
+  const save = item.label === 'Spotify' && url ? spotifyUri(url) : '';
+  const saveAttr = save ? ` data-spotify-uri="${e(save)}"` : '';
+  return url ? `<a class="platform-logo floating-link" href="${e(url)}"${saveAttr} aria-label="${e(item.label)} (opens in a new tab)" target="_blank" rel="noopener noreferrer">${icon}</a>` : `<span class="platform-logo unavailable" role="img" aria-label="${e(item.label)} — link pending" title="${e(item.label)} — link pending">${icon}</span>`;
 }
 
 function image(path, alt, label, className = '') {
@@ -76,7 +86,6 @@ function player(release) {
 }
 function releaseBody(r) { return `${r.description ? `<p>${e(r.description)}</p>` : ''}<div class="release-links">${(r.links ?? []).map(x => link(x)).join('')}</div>${r.audio ? '' : player(r)}`; }
 const streamingServices = ['Spotify', 'Apple Music', 'Pandora', 'Tidal', 'YouTube Music'];
-function pickerId(r) { return `services-${c.releases.indexOf(r)}`; }
 function inlineServicesId(r) { return `services-inline-${c.releases.indexOf(r)}`; }
 function serviceLogoLinks(r) {
   return streamingServices.map(label => {
@@ -88,13 +97,10 @@ function serviceLogoLinks(r) {
 function releaseCover(r, featuredCover = false) {
   const src = missingArtwork.has(r.artwork) ? '' : assetUrl(r.artwork);
   const cover = featuredCover ? image(r.artwork, '', 'Release artwork') : src ? `<img class="artwork" src="${e(src)}" alt="" width="800" height="800" loading="lazy">` : `<span class="artwork cover-pending" aria-hidden="true"></span>`;
+  if (featuredCover) return `<span class="featured-cover">${cover}</span>`;
   const destination = (r.links ?? []).map(item => externalUrl(item.url)).find(Boolean);
-  if (featuredCover) return `<a class="featured-cover floating-link" href="${e(destination || `#${pickerId(r)}`)}" data-service-picker="${pickerId(r)}" aria-haspopup="dialog" aria-expanded="false" aria-controls="${pickerId(r)}" aria-label="Choose a streaming service for ${e(r.title)}">${cover}</a>`;
   const id = inlineServicesId(r);
   return `<div class="release-tile" data-release-tile><a class="release-cover floating-link" href="${e(destination || `#${id}`)}" data-inline-services="${id}" aria-expanded="false" aria-controls="${id}" aria-label="Show streaming services for ${e(r.title)}">${cover}</a><div class="release-services" id="${id}" role="group" aria-label="Streaming services for ${e(r.title)}" hidden><button type="button" class="release-services-close" aria-label="Close streaming services for ${e(r.title)}">×</button><div class="release-services-grid">${serviceLogoLinks(r)}</div></div></div>`;
-}
-function servicePicker(r) {
-  return `<div class="service-picker" role="dialog" popover="auto" id="${pickerId(r)}" aria-labelledby="${pickerId(r)}-heading"><h2 class="sr-only" id="${pickerId(r)}-heading">Choose a streaming service for ${e(r.title)}</h2><button type="button" class="picker-close" data-close-picker aria-label="Close streaming services"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><div class="service-logos">${serviceLogoLinks(r)}</div></div>`;
 }
 const featured = c.releases.find(r => r.id === c.featuredReleaseId);
 const placeholder = c.artist.placeholder || c.releases.some(r => r.placeholder) || (c.listening?.enabled && c.listening?.demo);
@@ -156,18 +162,18 @@ const html = `<!doctype html>
     <section id="music" class="featured" aria-labelledby="featured-heading">
       ${featured ? `<div class="cassette-label">${releaseCover(featured, true)}<div class="featured-copy"><p class="section-label">${e(featured.statusLabel || `Featured release${featured.placeholder ? ' · Placeholder' : ''}`)}</p><h1 id="featured-heading">${e(featured.title)}</h1>${featured.audio ? `${featured.description ? `<p>${e(featured.description)}</p>` : ''}` : releaseBody(featured)}</div></div>${featured.audio ? tapePlayer(featured) : ''}<div class="cassette-base" aria-hidden="true"><i></i><i></i><i></i><i></i></div>` : '<h1 id="featured-heading">Music</h1><p>No releases yet.</p>'}
     </section>
-    <section id="links" class="links-section" aria-labelledby="links-heading"><h2 id="links-heading">Listen on:</h2><div class="platform-logos">${c.links.map(logoLink).join('')}</div></section>
+    <section id="links" class="links-section" aria-labelledby="links-heading"><h2 id="links-heading">Listen on:</h2><div class="platform-logos">${c.links.map(logoLink).join('')}</div><p class="save-status muted" data-spotify-save-status role="status" hidden></p></section>
     ${c.releases.some(r => r.id !== c.featuredReleaseId) ? `<section id="releases" aria-labelledby="releases-heading"><h2 id="releases-heading" class="sr-only">Other releases</h2><div class="release-covers">${c.releases.filter(r => r.id !== c.featuredReleaseId).map(r => releaseCover(r)).join('')}</div></section>` : ''}
     ${c.listening?.enabled ? `<section id="listening" aria-labelledby="listening-heading"><div class="section-heading"><h2 id="listening-heading">On my stereo</h2><span id="listening-source" class="muted">${c.listening.demo ? 'Placeholder data' : 'Last.fm'}</span></div><p id="listening-status" class="muted" role="status">${c.listening.demo ? 'Listening layout preview. No account connected.' : 'Loading listening activity…'}</p><div class="listening-tabs" role="tablist" aria-label="Listening activity"><button type="button" id="tab-recent" role="tab" aria-selected="true" aria-controls="panel-recent" data-tab="recent">Recent tracks</button><button type="button" id="tab-top" role="tab" aria-selected="false" aria-controls="panel-top" tabindex="-1" data-tab="top">Top artists</button></div><div id="panel-recent" role="tabpanel" aria-labelledby="tab-recent" tabindex="0"><ol id="recent-list" class="listening-list">${(c.listening.demo ? c.listening.recent : []).map(r=>`<li><div><strong>${e(r.title)}</strong><small>${e(r.artist)}</small></div><span class="muted">${e(r.note)}</span></li>`).join('')}</ol></div><div id="panel-top" role="tabpanel" aria-labelledby="tab-top" tabindex="0" hidden><p class="period muted">${c.listening.demo ? 'Time period placeholder' : `Period: ${e(c.listening.period)}`}</p><ol id="top-list" class="listening-list">${(c.listening.demo ? c.listening.top : []).map(r=>`<li><strong>${e(r.name)}</strong><span class="muted">${e(r.note)}</span></li>`).join('')}</ol></div><noscript><p>Listening tab switching and live updates need JavaScript. Artist music and links remain available.</p></noscript></section>` : ''}
     ${c.artist.aboutEnabled !== false ? `<section id="about" class="about-section" aria-labelledby="about-heading">${image(c.artist.photo, c.artist.photoAlt, 'Artist portrait', 'portrait')}<div><h2 id="about-heading">About ${e(c.artist.name)}</h2><p>${e(c.artist.bio)}</p>${/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(c.artist.email) ? `<a class="text-link" href="mailto:${e(c.artist.email)}">Contact ${e(c.artist.name)}</a>` : '<span class="muted">Contact email placeholder</span>'}</div></section>` : ''}
   </main>
-  ${featured ? servicePicker(featured) : ''}
   <footer><span>${e(c.artist.name)}</span><a href="#main" aria-label="Back to top" title="Back to top"><span aria-hidden="true">↑</span></a></footer>
 </body></html>`;
 await mkdir(`${root}dist`, { recursive: true });
 await cp(`${root}public`, `${root}dist`, { recursive: true });
 await writeFile(`${root}dist/index.html`, html.replace(/^ +$/gm, ''));
 await writeFile(`${root}dist/listening-config.json`, JSON.stringify({demo:!!c.listening?.demo,period:c.listening?.period ?? '1month'}));
+await writeFile(`${root}dist/spotify-config.json`, JSON.stringify({clientId:(process.env.SPOTIFY_CLIENT_ID ?? '').trim()}));
 return { placeholder:!!placeholder, outputDirectory:`${root}dist` };
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

@@ -90,11 +90,14 @@ test('signup preview exposes accessible email and phone choices without a real s
 }));
 
 
-test('gallery covers have five inline services while featured Querida keeps its picker',async()=>fixture(async({directory,content,save})=>{
+test('gallery covers have five inline services while featured Querida has no popup',async()=>fixture(async({directory,content,save})=>{
   content.releases[0].title = 'Querida <special>';
   await save(); await buildSite({directory});
   const html = await readFile(join(directory,'dist/index.html'),'utf8');
-  assert.equal((html.match(/data-service-picker=/g) ?? []).length,1);
+  assert.equal((html.match(/data-service-picker=/g) ?? []).length,0);
+  assert.doesNotMatch(html,/class="service-picker"/);
+  assert.match(html,/<span class="featured-cover">/);
+  assert.doesNotMatch(html,/featured-cover floating-link|aria-haspopup="dialog"/);
   const gallery = html.match(/<div class="release-covers">([\s\S]*?)<\/section>/)?.[1];
   assert.ok(gallery);
   assert.doesNotMatch(gallery,/featured-cover|Image placeholder|Release artwork/);
@@ -106,12 +109,8 @@ test('gallery covers have five inline services while featured Querida keeps its 
     assert.equal((tile.match(/<a class="platform-logo/g) ?? []).length,5);
     for (const name of ['spotify','applemusic','pandora','tidal','youtubemusic']) assert.ok(tile.includes(`/logos/${name}.svg`));
   }
-  const dialogs = [...html.matchAll(/<div class="service-picker" role="dialog" popover="auto"[\s\S]*?<\/div><\/div>/g)].map(x=>x[0]);
-  assert.equal(dialogs.length,1);
-  assert.match(dialogs[0],/id="services-0"/);
-  assert.equal((dialogs[0].match(/<a class="platform-logo/g) ?? []).length,5);
   assert.doesNotMatch(gallery,/<img[^>]*alt="[^"\s]+/);
-  assert.match(dialogs[0],/Listen to Querida &lt;special&gt; on Spotify/);
+  assert.match(html,/<h1 id="featured-heading">Querida &lt;special&gt;<\/h1>/);
   assert.match(tiles[0],/Listen to CRUSH. on Tidal/);
   assert.match(tiles[1],/Search for circles by c4milo on YouTube Music/);
   assert.match(tiles[2],/Listen to NMF on Spotify/);

@@ -1,5 +1,6 @@
 import { mountReleaseTeaser } from './release-teaser.js';
 import { mountPlayer } from './audio-player.js';
+import { mountSpotifySave } from './spotify-save.js';
 document.documentElement.classList.remove('no-js');
 const tabs = [...document.querySelectorAll('[role=tab]')];
 function selectTab(tab, focus = false) {
@@ -73,54 +74,6 @@ updateListening();
 
 for (const root of document.querySelectorAll('[data-audio-player]')) mountPlayer(root);
 
-// A nonmodal dialogue stays anchored to its cover while the page can scroll.
-const mobilePicker = window.matchMedia('(max-width:760px)');
-let activePicker = null;
-function positionPicker() {
-  if (!activePicker) return;
-  const {trigger, picker} = activePicker;
-  const rect = trigger.getBoundingClientRect();
-  const width = picker.offsetWidth, height = picker.offsetHeight;
-  const center = rect.left + rect.width / 2;
-  const left = Math.max(16, Math.min(center - width / 2, window.innerWidth - width - 16));
-  const top = mobilePicker.matches ? rect.bottom + 16 : rect.top - height - 16;
-  picker.style.left = `${left + window.scrollX}px`;
-  picker.style.top = `${Math.max(16, top + window.scrollY)}px`;
-  picker.style.setProperty('--pointer-left', `${Math.max(20, Math.min(center - left, width - 20))}px`);
-}
-window.addEventListener('resize', positionPicker);
-mobilePicker.addEventListener('change', positionPicker);
-for (const trigger of document.querySelectorAll('[data-service-picker]')) {
-  const picker = document.getElementById(trigger.dataset.servicePicker);
-  if (!picker || typeof picker.showPopover !== 'function') continue;
-  let openAtPointerDown = false;
-  trigger.addEventListener('pointerdown', () => { openAtPointerDown = picker.matches(':popover-open'); });
-  trigger.addEventListener('click', event => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    const shouldClose = openAtPointerDown || picker.matches(':popover-open');
-    openAtPointerDown = false;
-    if (shouldClose) { if (picker.matches(':popover-open')) picker.hidePopover(); return; }
-    picker.showPopover();
-    activePicker = {trigger, picker};
-    trigger.setAttribute('aria-expanded', 'true');
-    positionPicker();
-    picker.querySelector('a')?.focus({preventScroll:true});
-    // Make room in the viewport without changing the above/below placement.
-    const top = parseFloat(picker.style.top) - window.scrollY;
-    const bottom = top + picker.offsetHeight;
-    if (top < 16) window.scrollBy({top:top - 16,behavior:'instant'});
-    else if (bottom > window.innerHeight - 16) window.scrollBy({top:bottom - window.innerHeight + 16,behavior:'instant'});
-  });
-  picker.querySelector('[data-close-picker]').addEventListener('click', () => picker.hidePopover());
-  picker.addEventListener('toggle', event => {
-    if (event.newState !== 'closed') return;
-    trigger.setAttribute('aria-expanded', 'false');
-    if (activePicker?.picker === picker) activePicker = null;
-    if (picker.contains(document.activeElement) || document.activeElement === document.body) trigger.focus({preventScroll:true});
-  });
-}
-
 const releaseTiles = [...document.querySelectorAll('[data-release-tile]')];
 function closeReleaseTile(tile, restoreFocus = false) {
   const panel = tile.querySelector('.release-services');
@@ -161,3 +114,4 @@ document.addEventListener('keydown', event => {
 });
 
 for (const teaser of document.querySelectorAll('[data-release-teaser]')) mountReleaseTeaser(teaser);
+mountSpotifySave();
