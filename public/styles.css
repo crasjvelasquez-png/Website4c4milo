@@ -175,3 +175,22 @@ main>section.early-listen{margin-top:0;margin-bottom:72px}
 }
 
 @media(max-width:360px){.is-revealed .upcoming-preview{grid-template-columns:minmax(0,1fr);right:136px}.is-revealed .upcoming-cover{display:none}.is-revealed .upcoming-title{font-size:.875rem}.upcoming-player{width:108px}}
+
+/* Mobile-only: Querida row fills its row, with even vertical rhythm. */
+@media(max-width:760px){
+  #music.featured{width:100%;gap:32px}
+  #music .cassette-label{width:100%;justify-self:stretch;align-items:center;gap:16px}
+  #music .cassette-label .featured-copy{width:auto;max-width:none;justify-self:stretch;min-width:0}
+  #music.featured .tape-player{width:100%;max-width:none;justify-self:stretch;margin-inline:0}
+  #music .tape-loop{width:100%}
+  #links.links-section{margin-top:32px}
+  #links-heading{margin-bottom:13.8px}
+}
+@media(max-width:480px){
+  #music.featured{gap:32px}
+  #music .cassette-label{grid-template-columns:72px minmax(0,1fr);gap:16px}
+  #music .cassette-label .featured-cover{width:72px}
+  #music .cassette-label .featured-cover .artwork{width:72px;height:72px}
+  #music .cassette-label h1{font-size:clamp(2rem,10.5vw,2.5rem);line-height:1.05}
+  #music .cassette-label .section-label{font-size:.8125rem;margin-bottom:6px}
+}
