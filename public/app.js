@@ -2,6 +2,18 @@ import { mountReleaseTeaser } from './release-teaser.js';
 import { mountPlayer } from './audio-player.js';
 import { mountSpotifySave } from './spotify-save.js';
 document.documentElement.classList.remove('no-js');
+const featured = document.getElementById('music');
+if (featured && window.IntersectionObserver && window.matchMedia('(max-width: 760px)').matches) {
+  featured.classList.add('is-reveal-pending');
+  document.documentElement.classList.add('motion-initialized');
+  document.documentElement.classList.remove('motion-reveal-ready');
+  const observer = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    featured.classList.replace('is-reveal-pending', 'is-revealed');
+    observer.disconnect();
+  }, {rootMargin:'0px 0px -10% 0px', threshold:0.1});
+  observer.observe(featured);
+}
 const tabs = [...document.querySelectorAll('[role=tab]')];
 function selectTab(tab, focus = false) {
   for (const item of tabs) {

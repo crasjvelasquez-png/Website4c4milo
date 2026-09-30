@@ -134,6 +134,9 @@ a.floating-link[aria-expanded=true]{transform:none;filter:none;transition:none}
 .featured .audio-volume::-webkit-slider-thumb{appearance:none;width:7px;height:7px;margin-top:-3px;border:0;border-radius:50%;background:#fff}
 .featured .audio-volume::-moz-range-thumb{width:7px;height:7px;border:0;border-radius:50%;background:#fff}
 .featured .audio-volume:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.featured .progressive-player .tape-guides,.featured .progressive-player .audio-time,.featured .progressive-player .audio-volume-label{transition:opacity 250ms cubic-bezier(.22,1,.36,1)}
+.player-reveal-ready #music .tape-guides,.player-reveal-ready #music .audio-time,.player-reveal-ready #music .audio-volume-label,.featured .progressive-player:not(.is-playing) .tape-guides,.featured .progressive-player:not(.is-playing) .audio-time,.featured .progressive-player:not(.is-playing) .audio-volume-label{opacity:0}
+@media(prefers-reduced-motion:reduce){.featured .progressive-player .tape-guides,.featured .progressive-player .audio-time,.featured .progressive-player .audio-volume-label{transition:opacity 150ms ease-out}}
 .is-playing .audio-time-colon{animation:time-colon-blink 1s steps(1,end) infinite}
 @keyframes time-colon-blink{0%,100%{opacity:1}50%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.is-playing .audio-time-colon{animation:none}}
@@ -160,11 +163,6 @@ main>section.early-listen{margin-top:0;margin-bottom:72px}
 .is-revealed .upcoming-identity{filter:none;user-select:auto;pointer-events:auto}
 .early-listen-invitation{font-size:.8125rem;line-height:1.5;margin:0;white-space:nowrap}
 .signup-entry{display:flex;align-items:center;gap:18px;width:100%;border-bottom:1px solid var(--ink)}
-.signup-method{display:flex;align-items:center;gap:12px}
-.signup-method button{display:grid;place-items:center;width:44px;height:44px;padding:8px;border:0;background:none;color:var(--ink);opacity:.42}
-.signup-method svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.signup-method button[aria-pressed=true]{opacity:1}
-.signup-method button:hover{background:none;opacity:1}
 .early-listen-controls{display:flex;flex:1;min-width:0;align-items:center}
 .early-listen-controls input{flex:1;min-width:0;width:100%;height:44px;border:0;border-radius:0;background:transparent;color:var(--ink);font:inherit;font-size:1rem;padding:8px 0}
 .early-listen-controls input::placeholder{color:var(--ink);opacity:.48}
@@ -173,10 +171,14 @@ main>section.early-listen{margin-top:0;margin-bottom:72px}
 .early-listen-controls button:hover:not(:disabled){background:transparent;text-decoration:underline;text-underline-offset:4px}
 .early-listen-controls button:disabled{cursor:default;color:var(--muted)}
 .signup-note,.signup-error{font-size:.6875rem;line-height:1.5;margin:6px 0 0;color:var(--muted)}
+.signup-consent{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:.6875rem;line-height:1.45;color:var(--muted);cursor:pointer}
+.signup-consent input{flex:0 0 auto;margin:1px 0 0;accent-color:var(--ink)}
+.signup-confirmed{color:var(--ink)}
+.signup-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
 .reveal-note{font-size:.6875rem;line-height:1.5;margin:12px 0 0;color:var(--muted)}
 .signup-error{color:var(--ink)}
 @media(max-width:760px){main{padding-top:32px}main>section.early-listen{margin-bottom:48px}.early-listen-invitation{white-space:normal}}
-@media(max-width:560px){.early-listen-panel{padding:16px 24px}.upcoming-preview{grid-template-columns:40px minmax(0,1fr);gap:8px}.upcoming-cover{width:40px}.upcoming-title{font-size:1.125rem}.signup-entry{gap:8px}.signup-method{gap:0}}
+@media(max-width:560px){.early-listen-panel{padding:16px 24px}.upcoming-preview{grid-template-columns:40px minmax(0,1fr);gap:8px}.upcoming-cover{width:40px}.upcoming-title{font-size:1.125rem}.signup-entry{gap:8px}}
 @media(max-width:480px){main>section.early-listen{margin-bottom:48px}}
 @media(prefers-reduced-motion:reduce){.upcoming-identity{transition:none}}
 
@@ -232,10 +234,12 @@ main>section.early-listen{margin-top:0;margin-bottom:72px}
   #music .tape-loop{width:100%}
   #links.links-section{margin-top:48px}
   #links-heading{margin-bottom:12px}
-  #music .cassette-label .section-label{opacity:.65;animation:out-now-enter 1.6s ease-out both}
+  #music .cassette-label .section-label{opacity:.65}
+  #music .cassette-label .featured-cover,#music .cassette-label h1,#music .cassette-label .section-label{transition:opacity 400ms cubic-bezier(.22,1,.36,1),transform 400ms cubic-bezier(.22,1,.36,1)}
+  #music .cassette-label .section-label{transition-delay:70ms}
+  .motion-reveal-ready #music .cassette-label .featured-cover,.motion-reveal-ready #music .cassette-label h1,.motion-reveal-ready #music .cassette-label .section-label,#music.is-reveal-pending .cassette-label .featured-cover,#music.is-reveal-pending .cassette-label h1,#music.is-reveal-pending .cassette-label .section-label{opacity:0;transform:translateY(6px)}
 }
-@keyframes out-now-enter{from{opacity:0;transform:translateY(4px)}to{opacity:.65;transform:none}}
-@media(prefers-reduced-motion:reduce){#music .cassette-label .section-label{animation:none}}
+@media(prefers-reduced-motion:reduce){#music .cassette-label .featured-cover,#music .cassette-label h1,#music .cassette-label .section-label{transition:opacity 150ms ease-out;transform:none!important}}
 @media(max-width:480px){
   #music.featured{gap:32px}
   #music .cassette-label{grid-template-columns:72px minmax(0,1fr);gap:16px}

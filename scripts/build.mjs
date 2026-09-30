@@ -114,7 +114,9 @@ const html = `<!doctype html>
   <meta name="description" content="${e(c.artist.aboutEnabled !== false ? c.artist.bio : `Music and releases by ${c.artist.name}.`)}">
   ${placeholder ? '<meta name="robots" content="noindex, nofollow">' : ''}
   <meta name="theme-color" content="#ffffff">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>document.documentElement.classList.add('player-reveal-ready');window.addEventListener('load',()=>{if(!document.querySelector('.progressive-player'))document.documentElement.classList.remove('player-reveal-ready')});if(window.IntersectionObserver&&matchMedia('(max-width:760px)').matches){document.documentElement.classList.add('motion-reveal-ready');window.addEventListener('load',()=>{if(!document.documentElement.classList.contains('motion-initialized'))document.documentElement.classList.remove('motion-reveal-ready')})}</script>
+  <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
 </head>
 <body>
@@ -123,25 +125,27 @@ const html = `<!doctype html>
   <main id="main">
     <section id="early-listen" class="early-listen" aria-label="Next release preview" data-release-teaser>
       <div class="early-listen-panel">
-        <p class="early-listen-invitation">Sign up for updates and a download of the next release.</p>
+        <p class="early-listen-invitation">Get new music and show announcements from c4milo.</p>
         <div class="early-listen-copy">
         <form class="early-listen-form" data-preview-signup novalidate>
           <div class="signup-entry">
-          <div class="signup-method" role="group" aria-label="Choose how to get updates">
+          <div class="signup-method" role="group" aria-label="Choose email or text updates">
             <button type="button" data-signup-method="email" aria-label="Use email" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></button>
-            <button type="button" data-signup-method="phone" aria-label="Use phone" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></button>
+            <button type="button" data-signup-method="phone" aria-label="Use text messages" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></button>
           </div>
           <label class="sr-only" for="early-listen-contact" data-contact-label>Your email address</label>
           <div class="early-listen-controls">
-            <input id="early-listen-contact" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" maxlength="254" required aria-describedby="early-listen-note early-listen-error" disabled>
-            <button type="submit" aria-label="Preview the next release" disabled><span aria-hidden="true">→</span></button>
+            <input id="early-listen-contact" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" maxlength="254" required aria-describedby="early-listen-note early-listen-error">
+            <button type="submit" aria-label="Subscribe to email updates"><span aria-hidden="true">→</span></button>
           </div>
           </div>
+          <label class="signup-consent"><input name="consent" type="checkbox" required><span data-consent-copy>Send me occasional email updates about c4milo releases and shows. Unsubscribe anytime.</span></label>
+          <div class="signup-honeypot" aria-hidden="true"><label for="signup-website">Leave this field empty</label><input id="signup-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
           <p id="early-listen-error" class="signup-error" role="alert" hidden></p>
-          <p id="early-listen-note" class="signup-note">Preview only · Nothing is saved or sent.</p>
+          <p id="early-listen-note" class="signup-note" role="status" aria-live="polite">Join the list for release news and upcoming shows.</p>
         </form>
-        <p class="sr-only" data-reveal-status role="status"></p>
-        <noscript><p class="signup-note">Enable JavaScript to preview the title reveal. Signup opens soon.</p></noscript>
+        <p class="signup-note signup-confirmed" data-signup-confirmed role="status" aria-live="polite" hidden></p>
+        <noscript><p class="signup-note">Enable JavaScript to join the updates list.</p></noscript>
         </div>
         <div class="upcoming-preview">
           <div class="upcoming-cover" ${upcomingCover ? '' : 'role="img" aria-label="Cover art placeholder for the next release"'}>${upcomingCover ? `<img src="${e(upcomingCover)}" alt="How deep is your love? cover" width="800" height="800" loading="lazy">` : ''}</div>

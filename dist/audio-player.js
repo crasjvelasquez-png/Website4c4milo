@@ -68,11 +68,17 @@ export function mountPlayer(root) {
   volume.addEventListener('input', () => { audio.volume = Number(volume.value); });
   const Context = window.AudioContext || window.webkitAudioContext;
   if (!Context) { status.textContent = 'This browser cannot use the audio player.'; toggle.disabled = true; return; }
+  const volumeLabel = root.querySelector('.audio-volume-label');
+  root.classList.add('progressive-player');
+  document.documentElement.classList.remove('player-reveal-ready');
   const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut), startAt:3});
   let loading = false;
   function render() {
     const playing = !audio.paused;
     root.classList.toggle('is-playing', playing);
+    volumeLabel.inert = !playing;
+    if (playing) time.removeAttribute('aria-hidden');
+    else time.setAttribute('aria-hidden', 'true');
     symbol.textContent = playing ? 'Ⅱ' : '▶';
     toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${document.getElementById('featured-heading').textContent}`);
     toggle.setAttribute('aria-pressed', String(playing));

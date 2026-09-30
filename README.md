@@ -24,7 +24,7 @@ There are no third-party npm dependencies and no `npm install` step. `npm run bu
 
 For Querida audio, place `querida.mp3` in `public/assets/`, run `npm run build`, and refresh. Place its cover at `public/assets/querida.png` in the same way. No chat upload or agent artwork inspection is needed. Play is disabled until the audio file exists. Fade-in is 1 second and fade-out is 1.5 seconds; these values are editable in `content.json`.
 
-A Laylo signup has been discussed but is not connected. Hosting preferences and final links remain pending. See [verified destinations](docs/LINKS.md) and [editing instructions](docs/CONTENT.md).
+The email/SMS updates form connects to Brevo through the Cloudflare Worker in `worker.js`, with static site assets served from `dist/`. The two non-secret Brevo names are in `wrangler.jsonc`; set `BREVO_API_KEY` as an encrypted Worker secret in Cloudflare. The SMS path also requires a Brevo text contact attribute named `SMS_CONSENT_RECORD` and an approved sender. See [verified destinations](docs/LINKS.md) and [editing instructions](docs/CONTENT.md).
 
 ## Source map
 
