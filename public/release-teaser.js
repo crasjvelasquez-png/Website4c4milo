@@ -219,8 +219,11 @@ export function mountReleaseTeaser(section) {
       note.classList.add('signup-confirmed');
       input.value = '';
       consent.checked = false;
-      confirmedNote.textContent = note.textContent;
-      confirmedNote.hidden = false;
+      section.querySelector('.early-listen-invitation').hidden = true;
+      if (submittedMode === 'phone') {
+        confirmedNote.textContent = note.textContent;
+        confirmedNote.hidden = false;
+      }
       revealRelease();
     }).catch(failure => {
       note.hidden = true;
