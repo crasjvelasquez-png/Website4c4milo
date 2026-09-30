@@ -20,10 +20,10 @@ Blank destinations render as labeled inactive text, rather than misleading butto
 
 Querida by c4milo is configured as a single dated September 29, 2026, with the explicit label "Out now". This label is not scheduled; it follows the requested wording.
 
-1. Place your cover PNG at `public/assets/querida.png`. Keep the original artwork unchanged. No chat upload or agent image inspection is needed.
+1. Place your cover at `public/assets/querida.webp` (800 × 800 WebP). Keep the original artwork unchanged. No chat upload or agent image inspection is needed.
 2. Run `npm run build` from the website folder and refresh the local preview. A running local server serves the rebuilt page without restarting.
 
-The release already points to `/assets/querida.png`. `artworkOptional: true` keeps the artwork placeholder while the file is absent; a later build picks up the local file automatically. For future artwork that must exist before a build can pass, omit `artworkOptional` or set it to false. The agent should not view this PNG or include it in screenshots without a later explicit request from the user.
+The release already points to `/assets/querida.webp`. `artworkOptional: true` keeps the artwork placeholder while the file is absent; a later build picks up the local file automatically. For future artwork that must exist before a build can pass, omit `artworkOptional` or set it to false. The agent should not view this artwork or include it in screenshots without a later explicit request from the user.
 
 ### Other covers, local drop-in
 

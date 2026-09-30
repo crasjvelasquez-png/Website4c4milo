@@ -71,9 +71,11 @@ function logoLink(item) {
   return url ? `<a class="platform-logo floating-link" href="${e(url)}"${saveAttr} aria-label="${e(item.label)} (opens in a new tab)" target="_blank" rel="noopener noreferrer">${icon}</a>` : `<span class="platform-logo unavailable" role="img" aria-label="${e(item.label)} — link pending" title="${e(item.label)} — link pending">${icon}</span>`;
 }
 
-function image(path, alt, label, className = '') {
+function image(path, alt, label, className = '', eager = false) {
   const src = missingArtwork.has(path) ? '' : assetUrl(path);
-  return src ? `<img class="artwork ${className}" src="${e(src)}" alt="${e(alt)}" width="800" height="800" loading="lazy">` : `<div class="artwork empty-art ${className}" role="img" aria-label="${e(label)}"><span>${e(label)}</span><span class="asset-note">Image placeholder</span></div>`;
+  const loading = eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+  const loaded = eager ? ' onload="this.classList.add(\'is-loaded\')" onerror="this.classList.add(\'is-loaded\')"' : '';
+  return src ? `<img class="artwork ${className}" src="${e(src)}" alt="${e(alt)}" width="800" height="800" ${loading} decoding="async"${loaded}>` : `<div class="artwork empty-art ${className}" role="img" aria-label="${e(label)}"><span>${e(label)}</span><span class="asset-note">Image placeholder</span></div>`;
 }
 function link(item, row = false) {
   const url = externalUrl(item.url);
@@ -96,7 +98,7 @@ function serviceLogoLinks(r) {
 }
 function releaseCover(r, featuredCover = false) {
   const src = missingArtwork.has(r.artwork) ? '' : assetUrl(r.artwork);
-  const cover = featuredCover ? image(r.artwork, '', 'Release artwork') : src ? `<img class="artwork" src="${e(src)}" alt="" width="800" height="800" loading="lazy">` : `<span class="artwork cover-pending" aria-hidden="true"></span>`;
+  const cover = featuredCover ? image(r.artwork, '', 'Release artwork', '', true) : src ? `<img class="artwork" src="${e(src)}" alt="" width="800" height="800" loading="lazy" decoding="async">` : `<span class="artwork cover-pending" aria-hidden="true"></span>`;
   if (featuredCover) return `<span class="featured-cover">${cover}</span>`;
   const destination = (r.links ?? []).map(item => externalUrl(item.url)).find(Boolean);
   const id = inlineServicesId(r);

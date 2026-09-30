@@ -189,6 +189,16 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){
   html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation-duration:850ms}
 }
+/* Featured artwork is above the fold and can finish loading after its section
+   has already faded in. Keep the same fade on the image itself so the large
+   cover never pops in abruptly on mobile or desktop. */
+@media(prefers-reduced-motion:no-preference){
+  html:not(.no-js) .featured-cover img{opacity:0;transition:opacity 700ms ease-out}
+  html:not(.no-js) .featured-cover img.is-loaded{opacity:1}
+}
+@media(max-width:760px) and (prefers-reduced-motion:no-preference){
+  html:not(.no-js) .featured-cover img{transition-duration:850ms}
+}
 .early-listen-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;width:100%;padding:16px 24px;border:1px solid color-mix(in srgb,var(--ink),transparent 54%);background:transparent}
 .early-listen-invitation{grid-column:1;grid-row:1}
 .upcoming-preview{display:grid;grid-template-columns:64px minmax(0,1fr);grid-column:1;grid-row:2;align-items:center;gap:16px;min-width:0;min-height:88px;z-index:0;pointer-events:none}
@@ -309,10 +319,11 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .release-tile.is-open .release-services{opacity:1;transition-duration:240ms}
 .release-services-grid .platform-logo{opacity:0;transform:translateY(5px);transition:opacity 140ms ease-out,transform 180ms cubic-bezier(.22,1,.36,1)}
 .release-tile.is-open .release-services-grid .platform-logo{opacity:1;transform:none;transition-duration:200ms,240ms;transition-delay:var(--service-delay,0ms)}
-.release-services-grid .platform-logo:nth-child(2){--service-delay:20ms}
-.release-services-grid .platform-logo:nth-child(3){--service-delay:40ms}
-.release-services-grid .platform-logo:nth-child(4){--service-delay:60ms}
-.release-services-grid .platform-logo:nth-child(5){--service-delay:80ms}
+.release-services-grid .platform-logo:nth-child(2){--service-delay:55ms}
+/* 4 sits bottom-left, visually before top-right 3 on the diagonal. */
+.release-services-grid .platform-logo:nth-child(4){--service-delay:110ms}
+.release-services-grid .platform-logo:nth-child(3){--service-delay:165ms}
+.release-services-grid .platform-logo:nth-child(5){--service-delay:220ms}
 @media(prefers-reduced-motion:reduce){
   .release-services,.release-services-grid .platform-logo,.release-tile.is-open .release-services-grid .platform-logo{transition:none;transform:none}
 }

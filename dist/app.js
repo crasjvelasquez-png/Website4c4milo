@@ -2,6 +2,14 @@ import { mountReleaseTeaser } from './release-teaser.js';
 import { mountPlayer } from './audio-player.js';
 import { mountSpotifySave } from './spotify-save.js';
 document.documentElement.classList.remove('no-js');
+// Cached featured artwork may already be complete before its load event runs.
+for (const img of document.querySelectorAll('.featured-cover img')) {
+  if (img.complete && img.naturalWidth > 0) img.classList.add('is-loaded');
+  else {
+    img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
+    img.addEventListener('error', () => img.classList.add('is-loaded'), { once: true });
+  }
+}
 function syncBackgroundMotion() {
   document.body.classList.toggle('background-paused', document.hidden);
 }
