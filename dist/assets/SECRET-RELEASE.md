@@ -9,4 +9,4 @@ Run `npm run build` after adding or replacing files, then deploy the rebuilt sit
 
 Paths are configured under `upcomingRelease` in `content.json`. To use a JPG or WebP cover, change `cover` to match that filename. The local MP3 powers downloads; the older `downloadUrl` setting is not used by this player.
 
-The form currently provides a local preview only: it checks contact format and reveals the player without collecting or verifying signups. Files in `public/assets/` are public URLs, not protected downloads. Real subscriber-only access needs a signup backend and protected file delivery.
+The form sends signups to Brevo through `/api/subscribe`. Email subscribers unlock the player when they return from the confirmation email; text subscribers unlock it after Brevo accepts their signup. Configure the encrypted `BREVO_API_KEY` Worker secret, the list and active double-opt-in template named in `wrangler.jsonc`, and the `SMS_CONSENT_RECORD` contact attribute for text signups. Files in `public/assets/` are public URLs, not protected downloads; the reveal is a visual gate.

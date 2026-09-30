@@ -1,4 +1,4 @@
-// Local reveal preview. No contact details are stored or sent to a service.
+// Brevo signup and the public early-listen reveal. Never autoplay.
 export function validatePreviewContact(mode, value) {
   const contact = value.trim();
   if (mode === 'email') return contact.length <= 254 && /^[^\s@<>]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(contact);
@@ -93,9 +93,53 @@ export function mountReleaseTeaser(section) {
   const error = form.querySelector('.signup-error');
   const note = form.querySelector('.signup-note');
   const confirmedNote = section.querySelector('[data-signup-confirmed]');
+  const player = section.querySelector('[data-upcoming-player]');
+  const audio = player.querySelector('audio');
+  const toggle = player.querySelector('.secret-toggle');
+  const seek = player.querySelector('.secret-seek');
+  const audioStatus = player.querySelector('[data-upcoming-audio-status]');
+  function renderPlayer() {
+    player.classList.toggle('is-playing', !audio.paused);
+    toggle.setAttribute('aria-pressed', String(!audio.paused));
+    toggle.setAttribute('aria-label', `${audio.paused ? 'Play' : 'Pause'} How deep is your love? (Cover)`);
+    seek.disabled = !Number.isFinite(audio.duration) || audio.duration <= 0;
+    seek.value = seek.disabled ? 0 : audio.currentTime / audio.duration * 100;
+  }
+  toggle.addEventListener('click', async () => {
+    if (!audio.paused) { audio.pause(); return; }
+    for (const other of document.querySelectorAll('audio')) if (other !== audio) other.pause();
+    try {
+      audioStatus.textContent = '';
+      await audio.play();
+    } catch { audioStatus.textContent = 'The track could not play. Please try again or reload the page.'; }
+  });
+  seek.addEventListener('input', () => {
+    if (Number.isFinite(audio.duration)) audio.currentTime = Number(seek.value) / 100 * audio.duration;
+  });
+  for (const event of ['play', 'pause', 'ended', 'timeupdate', 'loadedmetadata']) audio.addEventListener(event, renderPlayer);
+  audio.addEventListener('error', () => { audioStatus.textContent = 'The track is temporarily unavailable. Please try reloading the page.'; });
+  document.addEventListener('play', event => { if (event.target !== audio && event.target instanceof HTMLMediaElement) audio.pause(); }, true);
+  function stopAudio() {
+    audio.pause();
+    if (audio.readyState > 0) audio.currentTime = 0;
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopAudio(); });
+  window.addEventListener('pagehide', stopAudio);
+  function revealRelease() {
+    form.hidden = true;
+    confirmedNote.classList.add('sr-only');
+    section.classList.add('is-revealed');
+    const identity = section.querySelector('[data-release-identity]');
+    identity.removeAttribute('aria-hidden');
+    identity.inert = false;
+    player.hidden = false;
+    if (audio.dataset.src) audio.src = audio.dataset.src;
+    else audioStatus.textContent = 'The full track is coming soon.';
+    section.querySelector('#upcoming-heading').focus({preventScroll: true});
+  }
   const params = new URLSearchParams(window.location.search);
   if (params.get('signup') === 'confirmed') {
-    form.hidden = true;
+    revealRelease();
     confirmedNote.textContent = 'You’re subscribed. Watch your inbox for release news and show announcements.';
     confirmedNote.hidden = false;
   }
@@ -103,6 +147,7 @@ export function mountReleaseTeaser(section) {
   form.dataset.signupMode = mode;
   countryCodeWrap.hidden = true;
   for (const button of methods) button.addEventListener('click', () => {
+    if (form.getAttribute('aria-busy') === 'true') return;
     const next = button.dataset.signupMethod;
     if (next === mode) return;
     mode = next;
@@ -135,6 +180,7 @@ export function mountReleaseTeaser(section) {
   consent.addEventListener('change', () => { error.hidden = true; });
   form.addEventListener('submit', event => {
     event.preventDefault();
+    if (form.getAttribute('aria-busy') === 'true') return;
     clearError();
     const contact = mode === 'phone'
       ? `+${countryCode.value}${input.value.replace(/\D/g, '')}`
@@ -149,12 +195,13 @@ export function mountReleaseTeaser(section) {
       return;
     }
     if (!consent.checked) {
-      error.textContent = 'Please check the box to agree to receive email updates.';
+      error.textContent = `Please check the box to agree to receive ${mode === 'email' ? 'email' : 'text'} updates.`;
       error.hidden = false;
       consent.focus();
       return;
     }
     submit.disabled = true;
+    const submittedMode = mode;
     form.setAttribute('aria-busy', 'true');
     note.hidden = false;
     note.classList.remove('signup-confirmed');
@@ -165,15 +212,24 @@ export function mountReleaseTeaser(section) {
       body: JSON.stringify({channel: mode, contact, consent: consent.checked, website: honeypot.value})
     }).then(async response => {
       const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.ok) throw new Error('subscribe_failed');
-      note.textContent = mode === 'email'
+      if (!response.ok || !result.ok) throw new Error(result.code || 'subscribe_failed');
+      note.textContent = submittedMode === 'email'
         ? 'Check your inbox and confirm your email to finish subscribing.'
         : 'You’re signed up for text updates. Reply STOP anytime to unsubscribe.';
       note.classList.add('signup-confirmed');
       input.value = '';
       consent.checked = false;
-    }).catch(() => {
-      error.textContent = 'We couldn’t add you right now. Please try again in a moment.';
+      if (submittedMode === 'phone') {
+        confirmedNote.textContent = note.textContent;
+        confirmedNote.hidden = false;
+        revealRelease();
+      }
+    }).catch(failure => {
+      note.hidden = true;
+      note.textContent = '';
+      error.textContent = String(failure.message).startsWith('configuration_')
+        ? 'Signup is not available yet. Please try again later.'
+        : 'We couldn’t add you right now. Please try again in a moment.';
       error.hidden = false;
     }).finally(() => {
       submit.disabled = false;
