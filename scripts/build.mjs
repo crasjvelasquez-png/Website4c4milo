@@ -108,6 +108,7 @@ const featured = c.releases.find(r => r.id === c.featuredReleaseId);
 const placeholder = c.artist.placeholder || c.releases.some(r => r.placeholder) || (c.listening?.enabled && c.listening?.demo);
 const streamingLogos = c.links.filter(x => x.label !== 'TikTok' && x.label !== 'Instagram');
 const socialLogos = c.links.filter(x => x.label === 'TikTok' || x.label === 'Instagram');
+const showSignup = c.signup?.enabled === true;
 const html = `<!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -129,7 +130,7 @@ const html = `<!doctype html>
       ${featured ? `<div class="cassette-label">${releaseCover(featured, true)}<div class="featured-copy"><p class="section-label">${e(featured.statusLabel || `Featured release${featured.placeholder ? ' · Placeholder' : ''}`)}</p><h1 id="featured-heading">${e(featured.title)}</h1>${featured.audio ? `${featured.description ? `<p>${e(featured.description)}</p>` : ''}` : releaseBody(featured)}</div></div>${featured.audio ? tapePlayer(featured) : ''}<div class="cassette-base" aria-hidden="true"><i></i><i></i><i></i><i></i></div>` : '<h1 id="featured-heading">Music</h1><p>No releases yet.</p>'}
     </section>
     <section id="links" class="links-section" aria-labelledby="links-heading"><h2 id="links-heading">Listen on:</h2><div class="platform-logos">${streamingLogos.map(logoLink).join('')}</div><p class="save-status muted" data-spotify-save-status role="status" hidden></p></section>
-    <section id="early-listen" class="early-listen" aria-label="Next release preview" data-release-teaser>
+    ${showSignup ? `<section id="early-listen" class="early-listen" aria-label="Next release preview" data-release-teaser>
       <div class="early-listen-panel">
         <p class="early-listen-invitation">Sign up to unlock the next single.</p>
         <div class="early-listen-copy">
@@ -171,7 +172,7 @@ const html = `<!doctype html>
           <p class="sr-only" data-upcoming-audio-status role="status"></p>
         </div>
       </div>
-    </section>
+    </section>` : ''}
     ${c.releases.some(r => r.id !== c.featuredReleaseId) ? `<section id="releases" aria-labelledby="releases-heading"><h2 id="releases-heading" class="sr-only">Other releases</h2><div class="release-covers">${c.releases.filter(r => r.id !== c.featuredReleaseId).map(r => releaseCover(r)).join('')}</div></section>` : ''}
     ${socialLogos.length ? `<section id="socials" class="socials-section" aria-label="Social media"><div class="social-logos">${socialLogos.map(logoLink).join('')}</div></section>` : ''}
     ${c.listening?.enabled ? `<section id="listening" aria-labelledby="listening-heading"><div class="section-heading"><h2 id="listening-heading">On my stereo</h2><span id="listening-source" class="muted">${c.listening.demo ? 'Placeholder data' : 'Last.fm'}</span></div><p id="listening-status" class="muted" role="status">${c.listening.demo ? 'Listening layout preview. No account connected.' : 'Loading listening activity…'}</p><div class="listening-tabs" role="tablist" aria-label="Listening activity"><button type="button" id="tab-recent" role="tab" aria-selected="true" aria-controls="panel-recent" data-tab="recent">Recent tracks</button><button type="button" id="tab-top" role="tab" aria-selected="false" aria-controls="panel-top" tabindex="-1" data-tab="top">Top artists</button></div><div id="panel-recent" role="tabpanel" aria-labelledby="tab-recent" tabindex="0"><ol id="recent-list" class="listening-list">${(c.listening.demo ? c.listening.recent : []).map(r=>`<li><div><strong>${e(r.title)}</strong><small>${e(r.artist)}</small></div><span class="muted">${e(r.note)}</span></li>`).join('')}</ol></div><div id="panel-top" role="tabpanel" aria-labelledby="tab-top" tabindex="0" hidden><p class="period muted">${c.listening.demo ? 'Time period placeholder' : `Period: ${e(c.listening.period)}`}</p><ol id="top-list" class="listening-list">${(c.listening.demo ? c.listening.top : []).map(r=>`<li><strong>${e(r.name)}</strong><span class="muted">${e(r.note)}</span></li>`).join('')}</ol></div><noscript><p>Listening tab switching and live updates need JavaScript. Artist music and links remain available.</p></noscript></section>` : ''}

@@ -71,7 +71,8 @@ test('invalid link and asset edits explain the affected content field',()=>{
   assert.throws(()=>validateContent(content),/enabled must be true or false, without quotes/);
 });
 
-test('signup form exposes accessible email and text choices',async()=>fixture(async({directory,save})=>{
+test('signup form exposes accessible email and text choices',async()=>fixture(async({directory,content,save})=>{
+  content.signup = {enabled:true};
   await save(); await buildSite({directory});
   const html = await readFile(join(directory,'dist/index.html'),'utf8');
   assert.match(html,/Sign up to unlock the next single\./);
@@ -120,7 +121,17 @@ test('gallery covers have five inline services while featured Querida has no pop
   assert.doesNotMatch(html,/Querida <special>/);
 }));
 
+test('hidden signup omits the early-listen box while keeping page spacing',async()=>fixture(async({directory,content,save})=>{
+  content.signup = {enabled:false};
+  await save(); await buildSite({directory});
+  const html = await readFile(join(directory,'dist/index.html'),'utf8');
+  assert.doesNotMatch(html,/id="early-listen"|Sign up to unlock the next single/);
+  assert.match(html,/id="links"/);
+  assert.match(html,/id="releases"/);
+}));
+
 test('secret release enables playback and a local MP3 download only when its file exists',async()=>fixture(async({directory,content,save})=>{
+  content.signup = {enabled:true};
   content.upcomingRelease = {audio:'/assets/secret-test.mp3',cover:''};
   await save(); await buildSite({directory});
   let html = await readFile(join(directory,'dist/index.html'),'utf8');
