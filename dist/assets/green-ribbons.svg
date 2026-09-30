@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="ribbon-a" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#87b85d" stop-opacity="0"/>
+      <stop offset=".35" stop-color="#87b85d" stop-opacity=".3"/>
+      <stop offset=".65" stop-color="#6d9e49" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#6d9e49" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ribbon-b" x1="0" y1="1" x2="1" y2="0">
+      <stop stop-color="#709d4b" stop-opacity="0"/>
+      <stop offset=".4" stop-color="#709d4b" stop-opacity=".24"/>
+      <stop offset=".7" stop-color="#8ab563" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#8ab563" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path d="M-120 690C100 430 300 465 410 290S650 125 820 220C660 148 527 163 430 310S99 462-120 690Z" fill="url(#ribbon-a)"/>
+  <path d="M840 1030C1050 910 1250 845 1160 650S1200 325 1720 255C1230 346 1101 464 1185 642S1070 928 840 1030Z" fill="url(#ribbon-b)"/>
+</svg>

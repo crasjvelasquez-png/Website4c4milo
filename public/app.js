@@ -7,17 +7,38 @@ function syncBackgroundMotion() {
 }
 document.addEventListener('visibilitychange', syncBackgroundMotion);
 syncBackgroundMotion();
-const featured = document.getElementById('music');
-if (featured && window.IntersectionObserver && window.matchMedia('(max-width: 760px)').matches) {
-  featured.classList.add('is-reveal-pending');
-  document.documentElement.classList.add('motion-initialized');
-  document.documentElement.classList.remove('motion-reveal-ready');
+const pageReveal = document.documentElement.classList.contains('page-reveal-preparing')
+  && window.IntersectionObserver
+  && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (pageReveal) {
+  const revealableSections = [...document.querySelectorAll('main > section, body > footer')];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const observer = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
-    featured.classList.replace('is-reveal-pending', 'is-revealed');
+    const entering = entries.filter(entry => entry.isIntersecting)
+      .sort((a, b) => revealableSections.indexOf(a.target) - revealableSections.indexOf(b.target));
+    for (const [index, entry] of entering.entries()) {
+      entry.target.style.setProperty('--reveal-delay', `${Math.min(index * 110, 330)}ms`);
+      entry.target.classList.add('is-page-revealed');
+      observer.unobserve(entry.target);
+    }
+  }, { rootMargin: '0px 0px -32px 0px', threshold: 0 });
+  for (const section of revealableSections) observer.observe(section);
+  document.documentElement.classList.replace('page-reveal-preparing', 'page-reveal-running');
+  document.addEventListener('focusin', event => {
+    const section = revealableSections.find(section => section.contains(event.target));
+    if (!section) return;
+    // Keep it visible after focus leaves, without restarting the entrance.
+    section.style.animation = 'none';
+    section.classList.add('is-page-revealed');
+    observer.unobserve(section);
+  });
+  function stopRevealForReducedMotion(event) {
+    if (!event.matches) return;
+    document.documentElement.classList.remove('page-reveal-preparing', 'page-reveal-running');
     observer.disconnect();
-  }, {rootMargin:'0px 0px -10% 0px', threshold:0.1});
-  observer.observe(featured);
+  }
+  if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', stopRevealForReducedMotion);
+  else reducedMotion.addListener(stopRevealForReducedMotion);
 }
 const tabs = [...document.querySelectorAll('[role=tab]')];
 function selectTab(tab, focus = false) {

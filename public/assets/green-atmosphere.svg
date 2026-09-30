@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="none">
+  <defs>
+    <filter id="defocus" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="48"/>
+    </filter>
+    <filter id="ribbon-softness" x="-35%" y="-50%" width="170%" height="200%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="25"/>
+    </filter>
+    <linearGradient id="light" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#1d5725"/>
+      <stop offset=".55" stop-color="#4d853b"/>
+      <stop offset="1" stop-color="#294b1b"/>
+    </linearGradient>
+    <linearGradient id="ribbon" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#6d9750" stop-opacity="0"/>
+      <stop offset=".4" stop-color="#7da45e" stop-opacity=".48"/>
+      <stop offset=".7" stop-color="#628e43" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#42692d" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path fill="#091809" d="M0 0h1600v1000H0z"/>
+  <g filter="url(#defocus)">
+    <path d="M-160 290C100 15 330 35 485 190S610 480 795 485 1100 215 1320 170 1650 305 1750 510L1700 900C1400 650 1230 760 1030 845S700 865 620 630 225 515-100 685Z" fill="url(#light)"/>
+    <ellipse cx="1450" cy="785" rx="300" ry="215" fill="#3e702a" opacity=".65"/>
+    <!-- Six generous shadow pockets interrupt the light rather than outlining it. -->
+    <ellipse cx="170" cy="165" rx="325" ry="195" fill="#030c07"/>
+    <ellipse cx="770" cy="90" rx="260" ry="245" fill="#051009"/>
+    <ellipse cx="1460" cy="140" rx="285" ry="180" fill="#040d07"/>
+    <ellipse cx="285" cy="805" rx="345" ry="285" fill="#030c07"/>
+    <ellipse cx="1030" cy="530" rx="195" ry="215" fill="#041008"/>
+    <ellipse cx="1220" cy="1040" rx="355" ry="235" fill="#030c07"/>
+  </g>
+  <g fill="url(#ribbon)" filter="url(#ribbon-softness)">
+    <path d="M-100 540C180 345 365 485 535 360S705 250 840 340C660 300 630 360 545 405S185 400-100 540Z"/>
+    <path d="M1120 1100C1340 910 1515 800 1385 600S1400 405 1720 360C1450 445 1335 485 1430 585S1510 910 1120 1100Z"/>
+  </g>
+</svg>
