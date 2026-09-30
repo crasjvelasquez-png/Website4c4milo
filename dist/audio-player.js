@@ -62,7 +62,10 @@ export function mountPlayer(root) {
   const status = root.querySelector('.audio-status');
   const time = root.querySelector('.audio-time');
   const symbol = root.querySelector('[data-play-symbol]');
+  const volume = root.querySelector('.audio-volume');
   if (!audio.getAttribute('src')) return;
+  audio.volume = Number(volume.value);
+  volume.addEventListener('input', () => { audio.volume = Number(volume.value); });
   const Context = window.AudioContext || window.webkitAudioContext;
   if (!Context) { status.textContent = 'This browser cannot use the audio player.'; toggle.disabled = true; return; }
   const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut), startAt:3});
