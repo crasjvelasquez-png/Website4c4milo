@@ -1,0 +1,58 @@
+[
+  {
+    "width": 320,
+    "reducedMotion": false,
+    "cpuThrottle": 4,
+    "checks": "passed: layout, reveal, audio play/pause, menu timing, keyboard/focus, interrupted exit/reopen, tile switch, close button, outside click",
+    "pageErrors": []
+  },
+  {
+    "width": 320,
+    "reducedMotion": true,
+    "cpuThrottle": 4,
+    "checks": "passed: layout, reveal, audio play/pause, menu timing, keyboard/focus, interrupted exit/reopen, tile switch, close button, outside click",
+    "pageErrors": []
+  },
+  {
+    "width": 390,
+    "reducedMotion": false,
+    "cpuThrottle": 4,
+    "checks": "passed: layout, reveal, audio play/pause, menu timing, keyboard/focus, interrupted exit/reopen, tile switch, close button, outside click",
+    "pageErrors": []
+  },
+  {
+    "width": 390,
+    "reducedMotion": true,
+    "cpuThrottle": 4,
+    "checks": "passed: layout, reveal, audio play/pause, menu timing, keyboard/focus, interrupted exit/reopen, tile switch, close button, outside click",
+    "pageErrors": []
+  },
+  {
+    "width": 760,
+    "reducedMotion": false,
+    "cpuThrottle": 4,
+    "checks": "passed: layout, reveal, audio play/pause, menu timing, keyboard/focus, interrupted exit/reopen, tile switch, close button, outside click",
+    "pageErrors": []
+  },
+  {
+    "width": 760,
+    "reducedMotion": true,
+    "cpuThrottle": 4,
+    "checks": "passed: layout, reveal, audio play/pause, menu timing, keyboard/focus, interrupted exit/reopen, tile switch, close button, outside click",
+    "pageErrors": []
+  },
+  {
+    "width": 1280,
+    "reducedMotion": false,
+    "cpuThrottle": 4,
+    "checks": "passed: layout, reveal, audio play/pause, menu timing, keyboard/focus, interrupted exit/reopen, tile switch, close button, outside click",
+    "pageErrors": []
+  },
+  {
+    "width": 1280,
+    "reducedMotion": true,
+    "cpuThrottle": 4,
+    "checks": "passed: layout, reveal, audio play/pause, menu timing, keyboard/focus, interrupted exit/reopen, tile switch, close button, outside click",
+    "pageErrors": []
+  }
+]

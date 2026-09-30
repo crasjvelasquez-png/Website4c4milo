@@ -113,14 +113,22 @@ updateListening();
 for (const root of document.querySelectorAll('[data-audio-player]')) mountPlayer(root);
 
 const releaseTiles = [...document.querySelectorAll('[data-release-tile]')];
+const releaseClosures = new WeakMap();
 function closeReleaseTile(tile, restoreFocus = false) {
   const panel = tile.querySelector('.release-services');
-  if (panel.hidden) return;
-  panel.hidden = true;
+  if (panel.hidden || !tile.classList.contains('is-open')) return;
+  const closing = {};
+  releaseClosures.set(tile, closing);
+  const focusInside = panel.contains(document.activeElement);
+  panel.inert = true;
   tile.classList.remove('is-open');
   const trigger = tile.querySelector('[data-inline-services]');
   trigger.setAttribute('aria-expanded', 'false');
-  if (restoreFocus) trigger.focus({preventScroll:true});
+  if (restoreFocus || focusInside) trigger.focus({preventScroll:true});
+  // Keep the panel painted through its exit; reopening invalidates this completion.
+  Promise.allSettled(panel.getAnimations({subtree:true}).map(animation => animation.finished)).then(() => {
+    if (releaseClosures.get(tile) === closing) panel.hidden = true;
+  });
 }
 for (const tile of releaseTiles) {
   const trigger = tile.querySelector('[data-inline-services]');
@@ -128,9 +136,13 @@ for (const tile of releaseTiles) {
   trigger.addEventListener('click', event => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    if (!panel.hidden) { closeReleaseTile(tile, true); return; }
+    if (tile.classList.contains('is-open')) { closeReleaseTile(tile, true); return; }
     for (const other of releaseTiles) if (other !== tile) closeReleaseTile(other);
+    releaseClosures.delete(tile);
     panel.hidden = false;
+    panel.inert = false;
+    // Resolve the starting opacity before transitioning out of display:none.
+    getComputedStyle(panel).opacity;
     tile.classList.add('is-open');
     trigger.setAttribute('aria-expanded', 'true');
     if (event.detail === 0) panel.querySelector('a')?.focus({preventScroll:true});
