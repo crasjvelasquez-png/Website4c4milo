@@ -2,6 +2,11 @@ import { mountReleaseTeaser } from './release-teaser.js';
 import { mountPlayer } from './audio-player.js';
 import { mountSpotifySave } from './spotify-save.js';
 document.documentElement.classList.remove('no-js');
+function syncBackgroundMotion() {
+  document.body.classList.toggle('background-paused', document.hidden);
+}
+document.addEventListener('visibilitychange', syncBackgroundMotion);
+syncBackgroundMotion();
 const featured = document.getElementById('music');
 if (featured && window.IntersectionObserver && window.matchMedia('(max-width: 760px)').matches) {
   featured.classList.add('is-reveal-pending');
