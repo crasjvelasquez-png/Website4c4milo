@@ -17,7 +17,7 @@
   <main id="main">
     <section id="early-listen" class="early-listen" aria-label="Next release preview" data-release-teaser>
       <div class="early-listen-panel">
-        <p class="early-listen-invitation">Get new music and show announcements from c4milo.</p>
+        <p class="early-listen-invitation">Sign up to unlock the next single.</p>
         <div class="early-listen-copy">
         <form class="early-listen-form" data-preview-signup novalidate>
           <div class="signup-entry">
@@ -27,14 +27,15 @@
           </div>
           <label class="sr-only" for="early-listen-contact" data-contact-label>Your email address</label>
           <div class="early-listen-controls">
-            <input id="early-listen-contact" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" maxlength="254" required aria-describedby="early-listen-note early-listen-error">
+            <span class="country-code" hidden><label class="sr-only" for="early-listen-country">Country calling code</label><select id="early-listen-country" name="countryCode" autocomplete="tel-country-code"><option value="1">US +1</option><option value="1">Canada +1</option><option value="61">Australia +61</option><option value="55">Brazil +55</option><option value="33">France +33</option><option value="49">Germany +49</option><option value="91">India +91</option><option value="81">Japan +81</option><option value="52">Mexico +52</option><option value="64">New Zealand +64</option><option value="63">Philippines +63</option><option value="34">Spain +34</option><option value="44">United Kingdom +44</option></select></span>
+            <input id="early-listen-contact" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Your email" maxlength="254" required aria-describedby="early-listen-error">
             <button type="submit" aria-label="Subscribe to email updates"><span aria-hidden="true">→</span></button>
           </div>
           </div>
           <label class="signup-consent"><input name="consent" type="checkbox" required><span data-consent-copy>Send me occasional email updates about c4milo releases and shows. Unsubscribe anytime.</span></label>
           <div class="signup-honeypot" aria-hidden="true"><label for="signup-website">Leave this field empty</label><input id="signup-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
           <p id="early-listen-error" class="signup-error" role="alert" hidden></p>
-          <p id="early-listen-note" class="signup-note" role="status" aria-live="polite">Join the list for release news and upcoming shows.</p>
+          <p id="early-listen-note" class="signup-note" role="status" aria-live="polite" hidden></p>
         </form>
         <p class="signup-note signup-confirmed" data-signup-confirmed role="status" aria-live="polite" hidden></p>
         <noscript><p class="signup-note">Enable JavaScript to join the updates list.</p></noscript>

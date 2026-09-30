@@ -15,6 +15,78 @@ export function mountReleaseTeaser(section) {
   const submit = form.querySelector('button[type="submit"]');
   const label = form.querySelector('[data-contact-label]');
   const methods = [...form.querySelectorAll('[data-signup-method]')];
+  const countryCode = form.querySelector('[name="countryCode"]');
+  const countryCodeWrap = countryCode.closest('.country-code');
+  const countryTrigger = document.createElement('button');
+  countryTrigger.type = 'button';
+  countryTrigger.className = 'country-trigger';
+  countryTrigger.setAttribute('aria-haspopup', 'listbox');
+  countryTrigger.setAttribute('aria-expanded', 'false');
+  countryTrigger.setAttribute('aria-controls', 'country-options');
+  const countryMenu = document.createElement('div');
+  countryMenu.id = 'country-options';
+  countryMenu.className = 'country-menu';
+  countryMenu.setAttribute('role', 'listbox');
+  countryMenu.setAttribute('aria-label', 'Country calling code');
+  countryMenu.hidden = true;
+  const countryOptions = [...countryCode.options];
+  const optionButtons = countryOptions.map((option, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'country-option';
+    button.textContent = option.text;
+    button.setAttribute('role', 'option');
+    button.addEventListener('click', () => {
+      countryCode.selectedIndex = index;
+      updateCountry();
+      closeCountries(true);
+      clearError();
+    });
+    countryMenu.append(button);
+    return button;
+  });
+  function updateCountry() {
+    const option = countryOptions[countryCode.selectedIndex];
+    const countryAbbreviations = ['US', 'CA', 'AU', 'BR', 'FR', 'DE', 'IN', 'JP', 'MX', 'NZ', 'PH', 'ES', 'GB'];
+    countryTrigger.textContent = `${countryAbbreviations[countryCode.selectedIndex]} +${option.value}`;
+    countryTrigger.setAttribute('aria-label', `Country calling code: ${option.text}`);
+    optionButtons.forEach((button, index) => button.setAttribute('aria-selected', String(index === countryCode.selectedIndex)));
+  }
+  function closeCountries(restoreFocus = false) {
+    countryMenu.hidden = true;
+    countryTrigger.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) countryTrigger.focus();
+  }
+  function openCountries() {
+    countryMenu.hidden = false;
+    countryTrigger.setAttribute('aria-expanded', 'true');
+    optionButtons[countryCode.selectedIndex].focus();
+  }
+  countryTrigger.addEventListener('click', () => countryMenu.hidden ? openCountries() : closeCountries());
+  countryTrigger.addEventListener('keydown', event => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      openCountries();
+    }
+  });
+  countryMenu.addEventListener('keydown', event => {
+    const index = optionButtons.indexOf(document.activeElement);
+    if (event.key === 'Escape') { event.preventDefault(); closeCountries(true); }
+    else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+      event.preventDefault();
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? optionButtons.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + optionButtons.length) % optionButtons.length;
+      optionButtons[next].focus();
+    }
+  });
+  document.addEventListener('pointerdown', event => {
+    if (!countryCodeWrap.contains(event.target)) closeCountries();
+  });
+  countryCodeWrap.addEventListener('focusout', event => {
+    if (!countryCodeWrap.contains(event.relatedTarget)) closeCountries();
+  });
+  countryCode.hidden = true;
+  countryCodeWrap.append(countryTrigger, countryMenu);
+  updateCountry();
   const consent = form.querySelector('[name="consent"]');
   const consentCopy = form.querySelector('[data-consent-copy]');
   const honeypot = form.querySelector('[name="website"]');
@@ -28,20 +100,25 @@ export function mountReleaseTeaser(section) {
     confirmedNote.hidden = false;
   }
   let mode = 'email';
+  form.dataset.signupMode = mode;
+  countryCodeWrap.hidden = true;
   for (const button of methods) button.addEventListener('click', () => {
     const next = button.dataset.signupMethod;
     if (next === mode) return;
     mode = next;
+    closeCountries();
+    form.dataset.signupMode = mode;
     methods.forEach(choice => choice.setAttribute('aria-pressed', String(choice === button)));
     input.value = '';
     consent.checked = false;
+    countryCodeWrap.hidden = mode !== 'phone';
     input.type = mode === 'email' ? 'email' : 'tel';
     input.name = mode === 'email' ? 'email' : 'phone';
     input.inputMode = mode === 'email' ? 'email' : 'tel';
     input.autocomplete = mode === 'email' ? 'email' : 'tel';
     input.maxLength = mode === 'email' ? 254 : 30;
-    input.placeholder = mode === 'email' ? 'Your email' : 'Your phone (+country code)';
-    label.textContent = mode === 'email' ? 'Your email address' : 'Your phone number, including country code';
+    input.placeholder = mode === 'email' ? 'Your email' : 'Your mobile number';
+    label.textContent = mode === 'email' ? 'Your email address' : 'Your mobile number';
     submit.setAttribute('aria-label', mode === 'email' ? 'Subscribe to email updates' : 'Subscribe to text updates');
     consentCopy.textContent = mode === 'email'
       ? 'Send me occasional email updates about c4milo releases and shows. Unsubscribe anytime.'
@@ -54,14 +131,18 @@ export function mountReleaseTeaser(section) {
     error.hidden = true;
   }
   input.addEventListener('input', clearError);
+  countryCode.addEventListener('change', clearError);
   consent.addEventListener('change', () => { error.hidden = true; });
   form.addEventListener('submit', event => {
     event.preventDefault();
     clearError();
-    if (!validatePreviewContact(mode, input.value)) {
+    const contact = mode === 'phone'
+      ? `+${countryCode.value}${input.value.replace(/\D/g, '')}`
+      : input.value.trim();
+    if (!validatePreviewContact(mode, contact)) {
       error.textContent = mode === 'email'
         ? 'Enter a valid email address.'
-        : 'Enter a valid phone number starting with + and your country code.';
+        : 'Enter a valid mobile number.';
       error.hidden = false;
       input.setAttribute('aria-invalid', 'true');
       input.focus();
@@ -75,11 +156,13 @@ export function mountReleaseTeaser(section) {
     }
     submit.disabled = true;
     form.setAttribute('aria-busy', 'true');
+    note.hidden = false;
+    note.classList.remove('signup-confirmed');
     note.textContent = 'Adding you to the list…';
     fetch('/api/subscribe', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({channel: mode, contact: input.value.trim(), consent: consent.checked, website: honeypot.value})
+      body: JSON.stringify({channel: mode, contact, consent: consent.checked, website: honeypot.value})
     }).then(async response => {
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error('subscribe_failed');

@@ -71,10 +71,10 @@ test('invalid link and asset edits explain the affected content field',()=>{
   assert.throws(()=>validateContent(content),/enabled must be true or false, without quotes/);
 });
 
-test('signup preview exposes accessible email and phone choices without a real submission',async()=>fixture(async({directory,save})=>{
+test('signup form exposes accessible email and text choices',async()=>fixture(async({directory,save})=>{
   await save(); await buildSite({directory});
   const html = await readFile(join(directory,'dist/index.html'),'utf8');
-  assert.match(html,/Sign up for updates and a download of the next release\./);
+  assert.match(html,/Sign up to unlock the next single\./);
   assert.match(html,/<div class="preview-note" aria-hidden="true"><\/div>/);
   assert.match(html,/<meta name="theme-color" content="#ffffff">/);
   assert.doesNotMatch(html,/<header class="site-header">/);
@@ -83,10 +83,13 @@ test('signup preview exposes accessible email and phone choices without a real s
   assert.doesNotMatch(html,/Structure preview|Preview includes placeholder content/);
   assert.match(html,/<label class="sr-only" for="early-listen-contact" data-contact-label>Your email address<\/label>/);
   assert.match(html,/data-signup-method="email" aria-label="Use email" aria-pressed="true"><svg[^>]*aria-hidden="true"/);
-  assert.match(html,/data-signup-method="phone" aria-label="Use phone" aria-pressed="false"><svg[^>]*aria-hidden="true"/);
-  assert.match(html,/type="submit" aria-label="Preview the next release" disabled><span aria-hidden="true">→<\/span>/);
-  assert.match(html,/Preview only · Nothing is saved or sent\./);
-  assert.doesNotMatch(html,/data-preview-notice/);
+  assert.match(html,/data-signup-method="phone" aria-label="Use text messages" aria-pressed="false"><svg[^>]*aria-hidden="true"/);
+  assert.match(html,/<select id="early-listen-country" name="countryCode" autocomplete="tel-country-code">/);
+  assert.match(html,/<option value="1">US \+1<\/option>/);
+  assert.match(html,/type="submit" aria-label="Subscribe to email updates"><span aria-hidden="true">→<\/span>/);
+  assert.match(html,/<input name="consent" type="checkbox" required>/);
+  assert.match(html,/<p id="early-listen-note" class="signup-note" role="status" aria-live="polite" hidden><\/p>/);
+  assert.doesNotMatch(html,/Join the list for release news and upcoming shows\./);
 }));
 
 
