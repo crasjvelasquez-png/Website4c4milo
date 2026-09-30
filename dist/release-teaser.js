@@ -214,16 +214,14 @@ export function mountReleaseTeaser(section) {
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error(result.code || 'subscribe_failed');
       note.textContent = submittedMode === 'email'
-        ? 'Check your inbox and confirm your email to finish subscribing.'
+        ? 'The song is unlocked. Check your inbox to confirm email updates.'
         : 'You’re signed up for text updates. Reply STOP anytime to unsubscribe.';
       note.classList.add('signup-confirmed');
       input.value = '';
       consent.checked = false;
-      if (submittedMode === 'phone') {
-        confirmedNote.textContent = note.textContent;
-        confirmedNote.hidden = false;
-        revealRelease();
-      }
+      confirmedNote.textContent = note.textContent;
+      confirmedNote.hidden = false;
+      revealRelease();
     }).catch(failure => {
       note.hidden = true;
       note.textContent = '';

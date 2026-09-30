@@ -157,7 +157,7 @@ main>section.early-listen{margin-top:0;margin-bottom:72px}
 .upcoming-preview{display:grid;grid-template-columns:64px minmax(0,1fr);grid-column:1;grid-row:2;align-items:center;gap:16px;min-width:0;min-height:88px;z-index:0;pointer-events:none}
 .upcoming-cover{width:64px;aspect-ratio:1;background:color-mix(in srgb,var(--bg),var(--ink) 8%);border-radius:var(--cover-radius-sm,10px);overflow:hidden}
 .early-listen-copy{position:relative;grid-column:1;grid-row:2;z-index:1;width:100%;min-width:0}
-.upcoming-identity{filter:blur(9px);user-select:none;pointer-events:none;transition:filter 350ms ease-out}
+.upcoming-identity{filter:blur(9px);user-select:none;pointer-events:none;transition:filter 1s ease-out}
 .upcoming-title{font:400 1.25rem/1.2 Georgia,"Times New Roman",serif;letter-spacing:0;margin:0;overflow-wrap:anywhere;text-wrap:pretty}
 .upcoming-credit{font-size:.6875rem;line-height:1.4;color:var(--muted);margin:4px 0 0}
 .is-revealed .upcoming-identity{filter:none;user-select:auto;pointer-events:auto}

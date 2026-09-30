@@ -12,6 +12,23 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
   }
 });
 
+async function providerFailure(response, stage) {
+  const details = await response.json().catch(() => ({}));
+  // Provider explanations stay in private Worker logs, never in browser responses.
+  const message = typeof details?.message === 'string'
+    ? details.message.replace(/[^\s<>"']+@[^\s<>"']+/g, '[email redacted]')
+      .replace(/xkeysib-[\w-]+/gi, '[key redacted]').slice(0, 500)
+    : 'No provider explanation returned';
+  console.error('Brevo request rejected', { stage, status: response.status, message });
+  const knownCodes = ['invalid_parameter', 'missing_parameter', 'unauthorized', 'permission_denied', 'document_not_found', 'duplicate_parameter', 'method_not_allowed', 'out_of_range'];
+  return json({
+    ok: false,
+    code: `brevo_${stage}`,
+    providerStatus: response.status,
+    ...(knownCodes.includes(details?.code) ? { providerCode: details.code } : {})
+  }, 502);
+}
+
 export async function onRequestPost({ request, env }) {
   const origin = request.headers.get('Origin');
   if (origin && origin !== new URL(request.url).origin) return json({ ok: false }, 403);
@@ -39,6 +56,7 @@ export async function onRequestPost({ request, env }) {
   const contact = typeof body.contact === 'string' ? body.contact.trim() : '';
   const listName = env.BREVO_LIST_NAME?.trim().toLowerCase();
   const templateName = env.BREVO_DOI_TEMPLATE_NAME?.trim().toLowerCase();
+  const configuredTemplateId = String(env.BREVO_DOI_TEMPLATE_ID ?? '').trim();
   if (body.consent !== true) return json({ ok: false }, 400);
 
   if (channel === 'email') {
@@ -53,7 +71,10 @@ export async function onRequestPost({ request, env }) {
 
   if (!env.BREVO_API_KEY) return json({ ok: false, code: 'configuration_api_key' }, 503);
   if (!listName) return json({ ok: false, code: 'configuration_list' }, 503);
-  if (channel === 'email' && !templateName) return json({ ok: false, code: 'configuration_template' }, 503);
+  if (channel === 'email' && ((!configuredTemplateId && !templateName) ||
+    (configuredTemplateId && (!/^[1-9]\d*$/.test(configuredTemplateId) || !Number.isSafeInteger(Number(configuredTemplateId)))))) {
+    return json({ ok: false, code: 'configuration_template' }, 503);
+  }
 
   const confirmation = new URL(request.url);
   confirmation.pathname = '/';
@@ -62,7 +83,7 @@ export async function onRequestPost({ request, env }) {
   try {
     const apiHeaders = { 'accept': 'application/json', 'api-key': env.BREVO_API_KEY };
     const listsResponse = await fetch(`${BREVO_API}/contacts/lists?limit=50&offset=0`, { headers: apiHeaders });
-    if (!listsResponse.ok) return json({ ok: false }, 502);
+    if (!listsResponse.ok) return providerFailure(listsResponse, 'lists');
     const listsData = await listsResponse.json();
     const list = listsData.lists?.find(item => item.name?.trim().toLowerCase() === listName);
     if (!list) return json({ ok: false, code: 'configuration_list' }, 503);
@@ -80,21 +101,26 @@ export async function onRequestPost({ request, env }) {
           updateEnabled: true
         })
       });
-      if (!response.ok) return json({ ok: false }, 502);
+      if (!response.ok) return providerFailure(response, 'phone_signup');
       return json({ ok: true });
     }
 
     const email = contact.toLowerCase();
-    const templatesResponse = await fetch(`${BREVO_API}/smtp/templates?limit=50&offset=0&templateStatus=true`, { headers: apiHeaders });
-    if (!templatesResponse.ok) return json({ ok: false }, 502);
-    const templatesData = await templatesResponse.json();
-    const template = templatesData.templates?.find(item => item.name?.trim().toLowerCase() === templateName && item.isActive);
-    if (!template) return json({ ok: false, code: 'configuration_template' }, 503);
+    let templateId = Number(configuredTemplateId);
+    if (!configuredTemplateId) {
+      const templatesResponse = await fetch(`${BREVO_API}/smtp/templates?limit=50&offset=0&templateStatus=true`, { headers: apiHeaders });
+      if (!templatesResponse.ok) return providerFailure(templatesResponse, 'templates');
+      const templatesData = await templatesResponse.json();
+      const template = templatesData.templates?.find(item => item.name?.trim().toLowerCase() === templateName && item.isActive);
+      if (!template) return json({ ok: false, code: 'configuration_template' }, 503);
+      templateId = template.id;
+    }
 
-    const templateResponse = await fetch(`${BREVO_API}/smtp/templates/${template.id}`, { headers: apiHeaders });
-    if (!templateResponse.ok) return json({ ok: false }, 502);
+    const templateResponse = await fetch(`${BREVO_API}/smtp/templates/${templateId}`, { headers: apiHeaders });
+    if (!templateResponse.ok) return providerFailure(templateResponse, 'template_details');
     const templateDetails = await templateResponse.json();
-    if (templateDetails.doiTemplate !== true) return json({ ok: false, code: 'configuration_double_opt_in' }, 503);
+    if (templateDetails.isActive !== true) return json({ ok: false, code: 'configuration_template_inactive', templateId }, 503);
+    if (templateDetails.doiTemplate !== true) return json({ ok: false, code: 'configuration_double_opt_in', templateId }, 503);
 
     const response = await fetch(BREVO_DOI_ENDPOINT, {
       method: 'POST',
@@ -106,14 +132,14 @@ export async function onRequestPost({ request, env }) {
       body: JSON.stringify({
         email,
         includeListIds: [list.id],
-        templateId: template.id,
+        templateId,
         redirectionUrl: confirmation.toString()
       })
     });
-    if (!response.ok) return json({ ok: false }, 502);
+    if (!response.ok) return providerFailure(response, 'email_confirmation');
     return json({ ok: true });
   } catch {
-    return json({ ok: false }, 502);
+    return json({ ok: false, code: 'brevo_request_failed' }, 502);
   }
 }
 
