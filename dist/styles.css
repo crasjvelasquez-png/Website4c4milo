@@ -140,12 +140,14 @@ main>section.early-listen{margin-top:0;margin-bottom:72px}
 /* Keep the listening links grouped and evenly spaced at both viewport sizes. */
 #links.links-section{margin-top:72px;max-width:680px;margin-inline:auto}
 #links-heading{margin-bottom:18px}
-#links .platform-logos{max-width:none;justify-content:center;gap:clamp(12px,3vw,32px)}
+#links .platform-logos{max-width:none;display:flex;align-items:center;justify-content:center;gap:clamp(24px,4.5vw,44px)}
 .save-status{font-size:.875rem;text-align:center;margin:12px 0 0;min-height:1.5em}
 .save-status a{text-decoration:underline;text-underline-offset:.25em}
 #releases{margin-top:72px}
-@media(max-width:760px){#links.links-section{margin-top:48px}#links-heading{margin-bottom:12px}#links .platform-logos{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;width:100%}#links .platform-logo{width:100%;min-width:0;height:48px}}
-@media(max-width:760px){#releases{margin-top:48px}}
+#socials.socials-section{margin-top:clamp(36px,5vw,56px);display:flex;justify-content:center}
+.social-logos{display:flex;align-items:center;justify-content:center;gap:20px}
+@media(max-width:760px){#links.links-section{margin-top:48px}#links-heading{margin-bottom:12px}#links .platform-logos{display:flex;justify-content:center;align-items:center;gap:24px;width:100%}#links .platform-logo{width:44px;height:48px}}
+@media(max-width:760px){#releases{margin-top:48px}#socials.socials-section{margin-top:32px}.social-logos{gap:16px}}
 
 .upcoming-cover img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
 /* Keep the form's layout footprint when the release replaces it. */

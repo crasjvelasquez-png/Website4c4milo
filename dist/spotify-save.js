@@ -120,8 +120,6 @@ async function saveUri(clientId, uri) {
   return 'network';
 }
 
-function openSpotify(href) { window.open(href, '_blank', 'noopener'); }
-
 async function handleCallback(clientId) {
   const url = new URL(location.href);
   const code = url.searchParams.get('code');
@@ -163,27 +161,29 @@ export async function mountSpotifySave() {
   if (!clientId) return;
   if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
   await handleCallback(clientId);
-  document.addEventListener('click', async event => {
+  document.addEventListener('click', event => {
     const anchor = event.target.closest('a[data-spotify-uri]');
     if (!anchor) return;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-    event.preventDefault();
+    // Never block navigation: the browser opens the Spotify album/app tab first.
+    // The save runs in the background; OAuth consent (if needed) happens in this
+    // tab only after the album tab is already open.
     const uri = anchor.dataset.spotifyUri;
     const href = anchor.href;
-    say('Saving to your Spotify library…');
-    const result = await saveUri(clientId, uri);
-    if (result === 'saved') say('Saved to your Spotify library ✓ Opening Spotify…');
-    else if (result === 'auth') {
-      try { sessionStorage.setItem(PENDING_KEY, JSON.stringify({ uri, href })); }
-      catch { openSpotify(href); return; }
-      say('Connecting to Spotify…');
-      await startAuth(clientId);
-      return;
-    } else if (result === 'denied') {
-      say('Spotify blocked the auto-save — opened Spotify instead, tap ♥ to save.');
-    } else {
-      say('Connection hiccup — opened Spotify instead, tap ♥ to save.');
-    }
-    openSpotify(href);
+    void (async () => {
+      say('Saving to your Spotify library…');
+      const result = await saveUri(clientId, uri);
+      if (result === 'saved') { say('Saved to your Spotify library ✓'); return; }
+      if (result === 'auth') {
+        try { sessionStorage.setItem(PENDING_KEY, JSON.stringify({ uri, href })); }
+        catch { say('Spotify needs permission — opened the album, tap ♥ to save.'); return; }
+        say('Spotify needs permission — approving it saves the release automatically…');
+        await startAuth(clientId);
+        return;
+      }
+      say(result === 'denied'
+        ? 'Spotify blocked the auto-save — tap ♥ in Spotify to save.'
+        : 'Auto-save unavailable — tap ♥ in Spotify to save.');
+    })();
   });
 }
