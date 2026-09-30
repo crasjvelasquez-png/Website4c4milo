@@ -1,6 +1,6 @@
 # Visual direction
 
-The visitor opens an artist's home from a social profile, with music and artwork as the focus. A deep green canvas (#193d00) follows the restraint of the supplied mkgee.com reference. The provisional design uses a Georgia serif wordmark and a system sans for controls, both local fonts with no external font requests. Final type and colors wait for artist branding.
+The visitor opens an artist's home from a social profile, with music and artwork as the focus. A deep green canvas (#193d00) follows the restraint of the supplied mkgee.com reference. Slow, overlapping green topographic blobs with nested contour bands add fluid movement while keeping the whole background green; hidden tabs pause the motion and reduced-motion settings use the static composition. The provisional design uses a Georgia serif wordmark and a system sans for controls, both local fonts with no external font requests. Final type and colors wait for artist branding.
 
 Two-color palette: deep green (#193d00) background and pure white (#fff) text, secondary text, outlines, player strokes, focus rings and surfaces. Green text on white surfaces preserves contrast; disabled controls retain their white color and communicate availability through behavior and accessible labels. Spacing organizes the cover gallery; square artwork keeps the record-sleeve proportion. No decorative cards or invented artwork. The featured image slot labels missing artwork; catalogue slots use blank squares with accessible labels until covers are supplied.
 
