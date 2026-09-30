@@ -6,3 +6,13 @@ node_modules/
 .wrangler/
 .dev.vars*
 !.dev.vars.example
+public/assets/green-orbs/green-orb-5.png
+public/assets/green-orbs/green-orb-4.png
+public/assets/green-orbs/green-orb-3.png
+public/assets/green-orbs/green-orb-2.png
+public/assets/green-orbs/green-orb-1.png
+dist/assets/green-orbs/green-orb-1.png
+dist/assets/green-orbs/green-orb-2.png
+dist/assets/green-orbs/green-orb-3.png
+dist/assets/green-orbs/green-orb-4.png
+dist/assets/green-orbs/green-orb-5.png
