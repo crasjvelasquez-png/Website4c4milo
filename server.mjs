@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { createListeningService } from './lib/lastfm.mjs';
 
 const root = fileURLToPath(new URL('./',import.meta.url));
-const types = {'.mp3':'audio/mpeg','.wav':'audio/wav','.m4a':'audio/mp4','.ogg':'audio/ogg','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.woff2':'font/woff2'};
+const types = {'.mp4':'video/mp4','.webm':'video/webm','.mp3':'audio/mpeg','.wav':'audio/wav','.m4a':'audio/mp4','.ogg':'audio/ogg','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.woff2':'font/woff2'};
 export function createApp({ directory=resolve(root,'dist'), listening=createListeningService(), } = {}) {
   return createServer(async (req,res) => {
     res.setHeader('X-Content-Type-Options','nosniff');
@@ -31,7 +31,7 @@ export function createApp({ directory=resolve(root,'dist'), listening=createList
       if (!actual.startsWith(canonicalDirectory + sep) || !(await stat(actual)).isFile()) {send(404,'Not found');return;}
       const body = await readFile(actual);
       res.setHeader('Cache-Control','no-cache');
-      if (types[extname(actual)]?.startsWith('audio/')) {
+      if (/^(audio|video)\//.test(types[extname(actual)] ?? '')) {
         res.setHeader('Accept-Ranges','bytes');
         if (req.headers.range) {
           const match = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range);

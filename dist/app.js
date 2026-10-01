@@ -1,6 +1,8 @@
 import { mountReleaseTeaser } from './release-teaser.js';
 import { mountPlayer } from './audio-player.js';
 import { mountSpotifySave } from './spotify-save.js';
+import { mountNoiseVideo } from './noise-video.js';
+mountNoiseVideo();
 document.documentElement.classList.remove('no-js');
 // Cached featured artwork may already be complete before its load event runs.
 for (const img of document.querySelectorAll('.featured-cover img')) {

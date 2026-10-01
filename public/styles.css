@@ -10,6 +10,41 @@ body{
   background-size:180px 180px;
   background-blend-mode:soft-light;
 }
+/* One decoded video supplies repeated, native-size grain across the viewport. */
+.vhs-noise-source{
+  position:fixed;
+  width:1px;
+  height:1px;
+  pointer-events:none;
+  opacity:0;
+}
+.vhs-noise{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+  pointer-events:none;
+  mix-blend-mode:screen;
+  opacity:0;
+}
+body.video-noise-playing{background-image:none}
+body.video-noise-playing .vhs-noise{opacity:.4}
+.vhs-noise-bar{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  mix-blend-mode:multiply;
+  filter:invert(1);
+  opacity:0;
+}
+body.video-noise-playing .vhs-noise-bar{opacity:.4}
+@media(prefers-reduced-motion:reduce){
+  .vhs-noise,.vhs-noise-bar{display:none}
+  body.video-noise-playing{background-image:url("/assets/film-grain.svg")}
+}
 body::before,body::after{
   content:"";
   position:fixed;
@@ -82,16 +117,35 @@ main>section#links{margin-top:0}
 .audio-toggle [data-play-symbol]{translate:1px 0}.audio-toggle[aria-pressed=true] [data-play-symbol]{translate:0}
 .audio-toggle:disabled{opacity:1;cursor:default}.audio-toggle:not(:disabled):hover{background:transparent;color:#fff}.audio-toggle:not(:disabled):active{scale:.96}
 .tape-loop{display:block;flex:1;width:calc(100% - 68px);min-width:0;height:auto;max-height:72px;overflow:visible}
-.tape-ribbon,.tape-travel{fill:none;stroke-width:1}.tape-ribbon{stroke:#fff}.tape-travel{stroke:#fff;stroke-width:2.5;stroke-dasharray:28 1192;animation:tape-travel 5s linear infinite;animation-play-state:paused}
+.tape-ribbon,.tape-travel{fill:none;stroke-width:1}.tape-ribbon{stroke:#fff}.tape-travel{stroke:#fff;stroke-width:2.5;stroke-dasharray:28 1172;animation:tape-travel 5s linear infinite;animation-play-state:paused}
+/* Keep the same tape stroke throughout: its arcs expand from radius 44 to 48
+   and become the outer reel rims. No masks, fades, or replacement strokes.
+   Separate wrappers let continuous reel rotation survive interrupted reveals. */
+.tape-player{--reel-reveal-duration:480ms;--reel-reveal-easing:cubic-bezier(.22,1,.36,1)}
+.tape-ribbon,.tape-travel{d:path("M80 22 H520 A48 48 0 0 1 520 118 H80 A48 48 0 0 1 80 22 Z");transition:d var(--reel-reveal-duration) var(--reel-reveal-easing)}
+.player-reveal-ready #music .tape-ribbon,.player-reveal-ready #music .tape-travel,.progressive-player:not(.is-playing) .tape-ribbon,.progressive-player:not(.is-playing) .tape-travel{d:path("M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z")}
+/* Path directions draw the left inner arc downward and the right upward.
+   Morph their endpoints with the tape, outside the spokes' radial reveal. */
+.tape-inner-rim{stroke-dasharray:1 1;stroke-dashoffset:0;transition:stroke-dashoffset var(--reel-reveal-duration) var(--reel-reveal-easing),d var(--reel-reveal-duration) var(--reel-reveal-easing)}
+.tape-inner-rim-left{d:path("M80 22 A48 48 0 0 1 80 118")}
+.tape-inner-rim-right{d:path("M520 118 A48 48 0 0 1 520 22")}
+.player-reveal-ready #music .tape-inner-rim,.progressive-player:not(.is-playing) .tape-inner-rim{stroke-dashoffset:1}
+.player-reveal-ready #music .tape-inner-rim-left,.progressive-player:not(.is-playing) .tape-inner-rim-left{d:path("M80 26 A44 44 0 0 1 80 114")}
+.player-reveal-ready #music .tape-inner-rim-right,.progressive-player:not(.is-playing) .tape-inner-rim-right{d:path("M520 114 A44 44 0 0 1 520 26")}
+.tape-reel-reveal{clip-path:circle(49px at var(--reel-x) var(--reel-y)) view-box;transition:clip-path var(--reel-reveal-duration) var(--reel-reveal-easing)}
+.player-reveal-ready #music .tape-reel-reveal,.progressive-player:not(.is-playing) .tape-reel-reveal{clip-path:circle(0px at var(--reel-x) var(--reel-y)) view-box}
+@media(prefers-reduced-motion:reduce){.tape-reel-reveal,.tape-ribbon,.tape-travel,.tape-inner-rim{transition:none}}
 .tape-guides{fill:none;stroke:#fff;stroke-width:1}.tape-guides circle:nth-child(n+3){fill:#fff;stroke:none}.tape-heads{fill:none;stroke:#fff;stroke-width:2}
-.tape-reel{transform-origin:var(--reel-x) var(--reel-y);animation:tape-reel-turn 3.2s linear infinite;animation-play-state:paused}
+/* Match clockwise reel rotation to the expanded clockwise tape loop:
+   (2 * PI * 48) / ((880 + 2 * PI * 48) / 5) = 1.276s per revolution. */
+.tape-reel{transform-box:view-box;transform-origin:var(--reel-x) var(--reel-y);animation:tape-reel-turn 1.276s linear infinite;animation-play-state:paused}
 .tape-reel .tape-hub{fill:#fff;stroke:none}
 .is-playing .tape-travel,.is-playing .tape-reel{animation-play-state:running}
 .tape-readout{display:flex;align-items:center;margin-top:10px;gap:12px}
 .audio-time{font-size:.6875rem;font-variant-numeric:tabular-nums;color:#fff;white-space:nowrap}
 .audio-seek{appearance:none;display:block;flex:1;min-width:0;width:100%;height:28px;margin:0;background:transparent;cursor:pointer}.audio-seek::-webkit-slider-runnable-track{height:1px;background:#fff}.audio-seek::-moz-range-track{height:1px;background:#fff}.audio-seek::-webkit-slider-thumb{appearance:none;width:7px;height:7px;margin-top:-3px;background:#fff;border-radius:50%}.audio-seek::-moz-range-thumb{width:7px;height:7px;background:#fff;border:0;border-radius:50%}.audio-seek:disabled{opacity:1;cursor:default}.audio-seek:focus-visible{outline:2px solid #fff;outline-offset:4px}
 .audio-status{font-size:.6875rem;color:#fff;margin:0;min-height:18px}.tape-player audio{display:none}
-@keyframes tape-travel{to{stroke-dashoffset:-1220}}
+@keyframes tape-travel{to{stroke-dashoffset:-1200}}
 @keyframes tape-reel-turn{to{transform:rotate(360deg)}}
 @media(hover:hover) and (pointer:fine){a.floating-link{transition:transform 240ms cubic-bezier(.22,1,.36,1)}a.floating-link:hover{transform:translateY(-3px) scale(1.02);text-decoration:none}a.floating-link:active{transform:translateY(-2px) scale(.96);transition-duration:120ms}a.floating-link.platform-logo:hover{transform:translateY(-2px) scale(1.02)}a.floating-link.platform-logo:active{transform:translateY(-1px) scale(.99)}}
 @media(max-width:760px){.featured{grid-template-columns:minmax(0,1fr);gap:32px}.featured>.featured-cover{max-width:280px}.featured-copy{width:100%;max-width:440px;justify-self:center}.platform-logos{gap:0}.platform-logo{width:44px}.tape-main{gap:14px}}
@@ -159,9 +213,9 @@ a.floating-link[aria-expanded=true]{transform:none;filter:none;transition:none}
 .featured .audio-volume::-webkit-slider-thumb{appearance:none;width:7px;height:7px;margin-top:-3px;border:0;border-radius:50%;background:#fff}
 .featured .audio-volume::-moz-range-thumb{width:7px;height:7px;border:0;border-radius:50%;background:#fff}
 .featured .audio-volume:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.featured .progressive-player .tape-guides,.featured .progressive-player .audio-time,.featured .progressive-player .audio-volume-label{transition:opacity 250ms cubic-bezier(.22,1,.36,1)}
-.player-reveal-ready #music .tape-guides,.player-reveal-ready #music .audio-time,.player-reveal-ready #music .audio-volume-label,.featured .progressive-player:not(.is-playing) .tape-guides,.featured .progressive-player:not(.is-playing) .audio-time,.featured .progressive-player:not(.is-playing) .audio-volume-label{opacity:0}
-@media(prefers-reduced-motion:reduce){.featured .progressive-player .tape-guides,.featured .progressive-player .audio-time,.featured .progressive-player .audio-volume-label{transition:opacity 150ms ease-out}}
+.featured .progressive-player .audio-time,.featured .progressive-player .audio-volume-label{transition:opacity 250ms cubic-bezier(.22,1,.36,1)}
+.player-reveal-ready #music .audio-time,.player-reveal-ready #music .audio-volume-label,.featured .progressive-player:not(.is-playing) .audio-time,.featured .progressive-player:not(.is-playing) .audio-volume-label{opacity:0}
+@media(prefers-reduced-motion:reduce){.featured .progressive-player .audio-time,.featured .progressive-player .audio-volume-label{transition:opacity 150ms ease-out}}
 .is-playing .audio-time-colon{animation:time-colon-blink 1s steps(1,end) infinite}
 @keyframes time-colon-blink{0%,100%{opacity:1}50%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.is-playing .audio-time-colon{animation:none}}
@@ -172,7 +226,7 @@ a.floating-link[aria-expanded=true]{transform:none;filter:none;transition:none}
 @media(max-width:480px){.featured{grid-template-columns:minmax(0,1fr);gap:20px}.cassette-label{grid-template-columns:48px minmax(0,1fr);gap:10px}.cassette-label .featured-cover{width:48px}.cassette-label .empty-art{padding:4px;font-size:.5625rem}.cassette-label h1{font-size:1.5rem}.featured .tape-player{width:min(100%,300px)}.featured .tape-main{min-height:44px;display:flex;align-items:center}.featured .audio-toggle{width:44px;height:44px}}
 
 /* Small release teaser, aligned with the existing music player. */
-.preview-note{height:40px;padding:0;background:#fff}
+.preview-note{position:relative;isolation:isolate;overflow:hidden;height:40px;padding:0;background:#fff}
 html{background:#193d00}
 main{padding-top:48px}
 main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}

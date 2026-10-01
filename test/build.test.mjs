@@ -17,6 +17,17 @@ async function fixture(run) {
   finally { await rm(directory,{recursive:true}); }
 }
 
+test('noise video is optional and copied into the build when supplied',async()=>fixture(async({directory})=>{
+  await rm(join(directory,'public/assets/vhs-noise.mp4'),{force:true});
+  await buildSite({directory});
+  assert.doesNotMatch(await readFile(join(directory,'dist/index.html'),'utf8'),/data-noise-video/);
+  await writeFile(join(directory,'public/assets/vhs-noise.mp4'),'video fixture');
+  await buildSite({directory});
+  const html = await readFile(join(directory,'dist/index.html'),'utf8');
+  assert.match(html,/data-noise-video data-src="\/assets\/vhs-noise.mp4" muted loop playsinline preload="none"/);
+  assert.equal(await readFile(join(directory,'dist/assets/vhs-noise.mp4'),'utf8'),'video fixture');
+}));
+
 test('bad content edits fail before replacing the working generated page',async()=>fixture(async({directory,content,save})=>{
   await buildSite({directory});
   const previous = await readFile(join(directory,'dist/index.html'),'utf8');
@@ -76,7 +87,7 @@ test('signup form exposes accessible email and text choices',async()=>fixture(as
   await save(); await buildSite({directory});
   const html = await readFile(join(directory,'dist/index.html'),'utf8');
   assert.match(html,/Sign up to unlock the next single\./);
-  assert.match(html,/<div class="preview-note" aria-hidden="true"><\/div>/);
+  assert.match(html,/<div class="preview-note" aria-hidden="true">(?:<canvas class="vhs-noise-bar" data-noise-bar><\/canvas>)?<\/div>/);
   assert.match(html,/<meta name="theme-color" content="#ffffff">/);
   assert.doesNotMatch(html,/<header class="site-header">/);
   assert.ok(html.indexOf('class="early-listen-invitation"') < html.indexOf('class="signup-entry"'));

@@ -5,6 +5,9 @@ import { escape as e, externalUrl, assetUrl, embedUrl, validateContent } from '.
 
 export async function buildSite({ directory=fileURLToPath(new URL('../', import.meta.url)) } = {}) {
 const root = resolve(directory) + sep;
+let noiseVideo = '';
+try { await access(`${root}public/assets/vhs-noise.mp4`); noiseVideo = '/assets/vhs-noise.mp4'; }
+catch { /* Use the still texture until a noise loop is supplied. */ }
 const c = validateContent(JSON.parse(await readFile(`${root}content.json`, 'utf8')));
 const missingArtwork = new Set();
 for (const r of c.releases) if (r.artwork) {
@@ -40,11 +43,17 @@ function tapePlayer(r) {
   return `<div class="tape-player" data-audio-player data-fade-in="${r.audio.fadeIn ?? 1}" data-fade-out="${r.audio.fadeOut ?? 1.5}">
     <div class="tape-main"><span class="audio-time" role="timer" aria-label="Elapsed time: 0:00"><span data-time-minutes aria-hidden="true">0</span><span class="audio-time-colon" aria-hidden="true">:</span><span data-time-seconds aria-hidden="true">00</span></span><button class="audio-toggle" aria-label="Play ${e(r.title)}" ${ready ? '' : 'disabled'}><span data-play-symbol aria-hidden="true">▶</span></button><label class="audio-volume-label"><span class="sr-only">Volume</span><input class="audio-volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume" ${ready ? '' : 'disabled'}></label>
       <svg class="tape-loop" viewBox="0 0 600 140" aria-hidden="true">
-        <path class="tape-ribbon" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
-        <path class="tape-travel" pathLength="1220" d="M80 16 H520 A54 54 0 0 1 520 124 H80 A54 54 0 0 1 80 16 Z"/>
+        <!-- The continuous tape outline expands into the outer reel edges.
+             Only the inner halves are added, so no stroke is hidden or doubled. -->
+        <g class="tape-thread">
+          <path class="tape-ribbon" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
+          <path class="tape-travel" pathLength="1200" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
+        </g>
         <g class="tape-guides">
-          <g class="tape-reel" style="--reel-x:80px;--reel-y:70px"><circle cx="80" cy="70" r="22"/><path d="M80 55 V63 M67 77 L74 73 M93 77 L86 73"/><circle class="tape-hub" cx="80" cy="70" r="3"/></g>
-          <g class="tape-reel" style="--reel-x:520px;--reel-y:70px"><circle cx="520" cy="70" r="22"/><path d="M520 55 V63 M507 77 L514 73 M533 77 L526 73"/><circle class="tape-hub" cx="520" cy="70" r="3"/></g>
+          <path class="tape-inner-rim tape-inner-rim-left" pathLength="1" d="M80 22 A48 48 0 0 1 80 118"/>
+          <path class="tape-inner-rim tape-inner-rim-right" pathLength="1" d="M520 118 A48 48 0 0 1 520 22"/>
+          <g class="tape-reel-reveal" style="--reel-x:80px;--reel-y:70px"><g class="tape-reel"><path d="M80 32 V50 M47.09 89 L62.68 80 M112.91 89 L97.32 80"/><circle class="tape-hub" cx="80" cy="70" r="5"/></g></g>
+          <g class="tape-reel-reveal" style="--reel-x:520px;--reel-y:70px"><g class="tape-reel"><path d="M520 32 V50 M487.09 89 L502.68 80 M552.91 89 L537.32 80"/><circle class="tape-hub" cx="520" cy="70" r="5"/></g></g>
         </g>
       </svg>
     </div>
@@ -123,8 +132,9 @@ const html = `<!doctype html>
   <script type="module" src="/app.js"></script>
 </head>
 <body>
+  ${noiseVideo ? `<video class="vhs-noise-source" data-noise-video data-src="${noiseVideo}" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"></video><canvas class="vhs-noise" data-noise-canvas aria-hidden="true"></canvas>` : ''}
   <a class="skip-link" href="#main">Skip to content</a>
-  ${placeholder ? '<div class="preview-note" aria-hidden="true"></div>' : ''}
+  ${placeholder ? `<div class="preview-note" aria-hidden="true">${noiseVideo ? '<canvas class="vhs-noise-bar" data-noise-bar></canvas>' : ''}</div>` : ''}
   <main id="main">
     <section id="music" class="featured" aria-labelledby="featured-heading">
       ${featured ? `<div class="cassette-label">${releaseCover(featured, true)}<div class="featured-copy"><p class="section-label">${e(featured.statusLabel || `Featured release${featured.placeholder ? ' · Placeholder' : ''}`)}</p><h1 id="featured-heading">${e(featured.title)}</h1>${featured.audio ? `${featured.description ? `<p>${e(featured.description)}</p>` : ''}` : releaseBody(featured)}</div></div>${featured.audio ? tapePlayer(featured) : ''}<div class="cassette-base" aria-hidden="true"><i></i><i></i><i></i><i></i></div>` : '<h1 id="featured-heading">Music</h1><p>No releases yet.</p>'}

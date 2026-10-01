@@ -1,0 +1,148 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile, mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { runInNewContext } from 'node:vm';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createApp } from '../server.mjs';
+
+const source = (await readFile(new URL('../public/noise-video.js',import.meta.url),'utf8')).replace('export function','function');
+function fixture({ reduced = false, reject = false, videoFrames = true, hasBar = true } = {}) {
+  const video = new EventTarget();
+  const classes = new Set();
+  const callbacks = new Map();
+  let callbackId = 0;
+  const draws = [];
+  const context = {createPattern:(source,repeat)=>({source,repeat}),setTransform:()=>{},fillRect:(...args)=>draws.push(args)};
+  const canvas = {width:0,height:0,getContext:()=>context};
+  const barDraws = [];
+  const barContext = {setTransform:()=>{},fillRect:(...args)=>barDraws.push(args)};
+  const bar = {width:0,height:0,clientHeight:40,getContext:()=>barContext};
+  Object.assign(video, {dataset:{src:'/assets/vhs-noise.mp4'},src:'',plays:0,paused:true,videoWidth:640,videoHeight:360,
+    requestVideoFrameCallback:callback=>{callbacks.set(++callbackId,callback);return callbackId;},
+    cancelVideoFrameCallback:id=>callbacks.delete(id),
+    getAttribute:() => video.src,
+    play:() => {
+      video.plays++;
+      if (reject) return Promise.reject(new Error('Autoplay denied'));
+      video.paused = false;
+      video.dispatchEvent(new Event('playing'));
+      return Promise.resolve();
+    },
+    pause:() => {video.paused = true;video.dispatchEvent(new Event('pause'));}
+  });
+  if (!videoFrames) {
+    delete video.requestVideoFrameCallback;
+    delete video.cancelVideoFrameCallback;
+  }
+  const motion = new EventTarget();motion.matches = reduced;
+  const document = new EventTarget();
+  Object.assign(document, {hidden:false,querySelector:selector => selector === '[data-noise-video]' ? video : selector === '[data-noise-bar]' ? (hasBar ? bar : null) : canvas,body:{classList:{add:c=>classes.add(c),remove:c=>classes.delete(c)}}});
+  const window = new EventTarget();Object.assign(window,{matchMedia:() => motion,innerWidth:1280,innerHeight:900,devicePixelRatio:2,
+    requestAnimationFrame:callback=>{callbacks.set(++callbackId,callback);return callbackId;},
+    cancelAnimationFrame:id=>callbacks.delete(id)
+  });
+  runInNewContext(`${source}\nmountNoiseVideo();`, {document,window});
+  return {video,document,window,motion,classes,canvas,context,callbacks,draws,bar,barContext,barDraws};
+}
+
+test('noise pauses while hidden and exited, and resumes when visible or restored',()=>{
+  const f = fixture();
+  assert.equal(f.video.muted,true);
+  assert.equal(f.video.src,'/assets/vhs-noise.mp4');
+  assert.ok(f.classes.has('video-noise-playing'));
+  f.document.hidden = true;f.document.dispatchEvent(new Event('visibilitychange'));
+  assert.equal(f.video.paused,true);
+  assert.equal(f.classes.size,0);
+  assert.equal(f.callbacks.size,0);
+  f.document.hidden = false;f.document.dispatchEvent(new Event('visibilitychange'));
+  assert.equal(f.video.paused,false);
+  f.window.dispatchEvent(new Event('pagehide'));
+  assert.equal(f.video.paused,true);
+  f.window.dispatchEvent(new Event('pageshow'));
+  assert.equal(f.video.paused,false);
+});
+
+test('video frames tile the full viewport at native scale and resize without extra playback',()=>{
+  const f = fixture();
+  assert.equal(f.context.fillStyle.source,f.video);
+  assert.equal(f.context.fillStyle.repeat,'repeat');
+  assert.deepEqual(f.draws[0],[0,0,1280,900]);
+  assert.equal(f.canvas.width,2560);
+  assert.equal(f.canvas.height,1800);
+  assert.equal(f.barContext.fillStyle,f.context.fillStyle);
+  assert.deepEqual(f.barDraws[0],[0,0,1280,40]);
+  assert.equal(f.bar.height,80);
+  f.window.innerWidth = 390;f.window.innerHeight = 844;
+  const [id,callback] = [...f.callbacks][0];
+  f.callbacks.delete(id);callback();
+  assert.deepEqual(f.draws.at(-1),[0,0,390,844]);
+  assert.equal(f.canvas.width,780);
+  assert.equal(f.canvas.height,1688);
+  assert.equal(f.bar.width,780);
+  assert.deepEqual(f.barDraws.at(-1),[0,0,390,40]);
+  assert.equal(f.video.plays,1);
+  assert.equal(f.callbacks.size,1);
+});
+
+test('reduced motion avoids downloading the video and responds to preference changes',()=>{
+  const f = fixture({reduced:true});
+  assert.equal(f.video.src,'');assert.equal(f.video.plays,0);
+  f.motion.matches = false;f.motion.dispatchEvent(new Event('change'));
+  assert.ok(f.classes.has('video-noise-playing'));
+  f.motion.matches = true;f.motion.dispatchEvent(new Event('change'));
+  assert.equal(f.video.paused,true);assert.equal(f.classes.size,0);
+});
+
+test('phone sizes and orientation changes keep the bar covered and cap high-density rendering',()=>{
+  const f = fixture();
+  for (const [width,height] of [[320,568],[390,844],[430,932],[844,390]]) {
+    Object.assign(f.window,{innerWidth:width,innerHeight:height,devicePixelRatio:3});
+    const [id,callback] = [...f.callbacks][0];
+    f.callbacks.delete(id);callback();
+    assert.equal(f.canvas.width,width * 2);
+    assert.equal(f.canvas.height,height * 2);
+    assert.equal(f.bar.width,width * 2);
+    assert.equal(f.bar.height,80);
+    assert.deepEqual(f.barDraws.at(-1),[0,0,width,40]);
+  }
+  assert.equal(f.video.plays,1);
+});
+
+test('older browsers use animation frames and pages without a white bar still work',()=>{
+  const f = fixture({videoFrames:false,hasBar:false});
+  assert.ok(f.classes.has('video-noise-playing'));
+  assert.equal(f.callbacks.size,1);
+  f.window.dispatchEvent(new Event('pagehide'));
+  assert.equal(f.callbacks.size,0);
+  assert.equal(f.classes.size,0);
+});
+
+test('autoplay rejection and media errors keep the still fallback',async()=>{
+  const rejected = fixture({reject:true});
+  await Promise.resolve();
+  assert.equal(rejected.classes.size,0);
+  const f = fixture();
+  f.video.dispatchEvent(new Event('error'));
+  assert.equal(f.classes.size,0);
+  const starts = f.video.plays;
+  f.document.dispatchEvent(new Event('visibilitychange'));
+  assert.equal(f.video.plays,starts);
+});
+
+test('local video serving supports byte ranges and the correct MIME type',async()=>{
+  const dir = await mkdtemp(join(tmpdir(),'noise-video-'));
+  await writeFile(join(dir,'noise.mp4'),Buffer.from([1,2,3,4,5]));
+  const server = createApp({directory:dir});
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  try {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/noise.mp4`,{headers:{Range:'bytes=1-3'}});
+    assert.equal(response.status,206);
+    assert.equal(response.headers.get('content-type'),'video/mp4');
+    assert.equal(response.headers.get('content-range'),'bytes 1-3/5');
+    assert.deepEqual([...new Uint8Array(await response.arrayBuffer())],[2,3,4]);
+  } finally {
+    await new Promise(resolve=>server.close(resolve));
+    await rm(dir,{recursive:true});
+  }
+});
