@@ -80,3 +80,34 @@ Gallery menus now fade in over 240ms, with a 20ms icon stagger finishing by 320m
 Integrated with the newer main branch while preserving its baked background images, background pause behavior, page reveals, external motion setup, teaser and signup changes. Rebuilding also synchronizes the previously stale generated release-teaser.js with its existing source.
 
 Build and all 23 Node tests pass. Local Chromium checks at 320, 390, 760 and 1280px cover normal/reduced motion under 4× CPU throttling, layout overflow, audio play/pause, menu opening and dismissal, keyboard focus, repeated interrupted exits/reopening, switching tiles and outside clicks. Results are saved in qa/motion-browser-results.json. These mobile checks use touch and viewport emulation; physical phones and Safari are not tested. Cloudflare deployment is not verified.
+
+## Cassette player mobile fixes, October 1, 2026
+
+The tape outline used CSS `d:path()` to expand from radius 44 to 48, while the
+SVG inner rims defaulted to radius 48. Browsers without CSS path morphing left
+the rims disconnected, matching the reported phone screenshot. The player now
+animates SVG `d` attributes with one radius shared by the tape, travel marker,
+and both inner rims. Reduced motion applies the final geometry immediately.
+
+Volume now has a separate Web Audio gain after the fade gain, so it works when
+iOS ignores `HTMLMediaElement.volume`. Changes ramp over 20ms. Media playback
+and AudioContext resume are both invoked synchronously within the play gesture.
+The startup seek no longer restarts the fade, and buffering recovery reschedules
+the end fade without another attack. Cancelled startup completion cannot pause
+a newer playback request.
+
+`npm run build` and all 37 Node tests pass, including regressions for the gain
+routing, mute, startup seek, buffering recovery, gesture activation, cancellation,
+and shared reel endpoints. Local Chromium interaction checks cover 320, 390,
+760 and 1280px, normal/reduced motion, and 4× CPU throttling. They deliberately
+disable CSS path morphing and make media-element volume assignments ineffective.
+Checks cover joined rims during expansion and interrupted reveals, touch/mouse
+volume dragging, keyboard mute/restore, measured audio output, play/pause/resume,
+layout overflow and browser errors.
+
+Results: `qa/cassette-browser-results.json`. Screenshots:
+`qa/cassette-mobile-fixed.png`, `qa/cassette-desktop-fixed.png`, and
+`qa/cassette-mobile-morph-disabled-before.png` (a compatibility reproduction).
+These are local browser checks with mobile touch/viewport emulation and output
+measurements; physical iPhones, Safari/Instagram's browser, subjective listening,
+and production deployment were not tested.

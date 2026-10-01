@@ -118,20 +118,11 @@ main>section#links{margin-top:0}
 .audio-toggle:disabled{opacity:1;cursor:default}.audio-toggle:not(:disabled):hover{background:transparent;color:#fff}.audio-toggle:not(:disabled):active{scale:.96}
 .tape-loop{display:block;flex:1;width:calc(100% - 68px);min-width:0;height:auto;max-height:72px;overflow:visible}
 .tape-ribbon,.tape-travel{fill:none;stroke-width:1}.tape-ribbon{stroke:#fff}.tape-travel{stroke:#fff;stroke-width:2.5;stroke-dasharray:28 1172;animation:tape-travel 5s linear infinite;animation-play-state:paused}
-/* Keep the same tape stroke throughout: its arcs expand from radius 44 to 48
-   and become the outer reel rims. No masks, fades, or replacement strokes.
-   Separate wrappers let continuous reel rotation survive interrupted reveals. */
+/* SVG attributes share one animated radius across the tape and inner rims.
+   CSS d:path() is not supported reliably by mobile Safari. */
 .tape-player{--reel-reveal-duration:480ms;--reel-reveal-easing:cubic-bezier(.22,1,.36,1)}
-.tape-ribbon,.tape-travel{d:path("M80 22 H520 A48 48 0 0 1 520 118 H80 A48 48 0 0 1 80 22 Z");transition:d var(--reel-reveal-duration) var(--reel-reveal-easing)}
-.player-reveal-ready #music .tape-ribbon,.player-reveal-ready #music .tape-travel,.progressive-player:not(.is-playing) .tape-ribbon,.progressive-player:not(.is-playing) .tape-travel{d:path("M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z")}
-/* Path directions draw the left inner arc downward and the right upward.
-   Morph their endpoints with the tape, outside the spokes' radial reveal. */
-.tape-inner-rim{stroke-dasharray:1 1;stroke-dashoffset:0;transition:stroke-dashoffset var(--reel-reveal-duration) var(--reel-reveal-easing),d var(--reel-reveal-duration) var(--reel-reveal-easing)}
-.tape-inner-rim-left{d:path("M80 22 A48 48 0 0 1 80 118")}
-.tape-inner-rim-right{d:path("M520 118 A48 48 0 0 1 520 22")}
+.tape-inner-rim{stroke-dasharray:1 1;stroke-dashoffset:0;transition:stroke-dashoffset var(--reel-reveal-duration) var(--reel-reveal-easing)}
 .player-reveal-ready #music .tape-inner-rim,.progressive-player:not(.is-playing) .tape-inner-rim{stroke-dashoffset:1}
-.player-reveal-ready #music .tape-inner-rim-left,.progressive-player:not(.is-playing) .tape-inner-rim-left{d:path("M80 26 A44 44 0 0 1 80 114")}
-.player-reveal-ready #music .tape-inner-rim-right,.progressive-player:not(.is-playing) .tape-inner-rim-right{d:path("M520 114 A44 44 0 0 1 520 26")}
 .tape-reel-reveal{clip-path:circle(49px at var(--reel-x) var(--reel-y)) view-box;transition:clip-path var(--reel-reveal-duration) var(--reel-reveal-easing)}
 .player-reveal-ready #music .tape-reel-reveal,.progressive-player:not(.is-playing) .tape-reel-reveal{clip-path:circle(0px at var(--reel-x) var(--reel-y)) view-box}
 @media(prefers-reduced-motion:reduce){.tape-reel-reveal,.tape-ribbon,.tape-travel,.tape-inner-rim{transition:none}}
