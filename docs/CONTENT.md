@@ -27,7 +27,7 @@ The release already points to `/assets/querida.webp`. `artworkOptional: true` ke
 
 ### Other covers, local drop-in
 
-Place covers in `public/assets/` as `crush.png`, `circles.png` and `nmf.png`, then run `npm run build` and refresh. These optional paths are already configured. Missing covers show blank squares with accessible release names, with no visible placeholder text. No upload service is needed.
+Place covers in `public/assets/` as `crush.webp`, `circles.webp` and `nmf.webp`, then run `npm run build` and refresh. These optional paths are already configured. Use 800×800 WebP images for sharp covers with smaller downloads; retain full-resolution originals separately. Missing covers show blank squares with accessible release names, with no visible placeholder text. No upload service is needed.
 
 ### How deep is your love? cover and download
 

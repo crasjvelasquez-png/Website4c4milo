@@ -74,7 +74,7 @@
       "year": "2026",
       "date": "2026-01-31",
       "description": "",
-      "artwork": "/assets/crush.png",
+      "artwork": "/assets/crush.webp",
       "artworkAlt": "CRUSH. single cover",
       "placeholder": false,
       "links": [
@@ -117,7 +117,7 @@
       "year": "2025",
       "date": "2025-09-16",
       "description": "",
-      "artwork": "/assets/circles.png",
+      "artwork": "/assets/circles.webp",
       "artworkAlt": "circles single cover",
       "placeholder": false,
       "links": [
@@ -160,7 +160,7 @@
       "year": "2025",
       "date": "2025-03-07",
       "description": "",
-      "artwork": "/assets/nmf.png",
+      "artwork": "/assets/nmf.webp",
       "artworkAlt": "NMF single cover",
       "placeholder": false,
       "links": [
@@ -207,6 +207,11 @@
       "label": "Apple Music",
       "description": "Stream my music",
       "url": "https://music.apple.com/us/album/querida/6809278154?i=6809278155"
+    },
+    {
+      "label": "Amazon Music",
+      "description": "Stream my music",
+      "url": "https://music.amazon.com/albums/B0HJ19TNK5?trackAsin=B0HJ174D35"
     },
     {
       "label": "YouTube Music",

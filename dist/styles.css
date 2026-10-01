@@ -105,7 +105,7 @@ html.no-js [role=tabpanel][hidden]{display:block!important}
 .featured>.featured-cover{max-width:360px;justify-self:center}
 .platform-logos{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:nowrap;max-width:820px;margin-inline:auto;justify-content:space-between}
 main>section#links{margin-top:0}
-#links-heading{font:400 1rem/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center;margin:0 0 clamp(48px,7vw,84px)}
+.streaming-heading{font:400 1rem/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center;margin:0 0 24px}
 .platform-logo{color:#fff;width:52px;height:56px;display:grid;place-items:center}
 .platform-logo img{display:block;object-fit:contain;width:30px;height:30px}
 .platform-logo.unavailable{cursor:default}
@@ -192,9 +192,9 @@ a.floating-link[aria-expanded=true]{transform:none;filter:none;transition:none}
 .cassette-label{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:20px}
 .cassette-label .featured-cover{width:64px;max-width:100%}
 .cassette-label .empty-art{padding:8px;font-size:.75rem}.cassette-label .asset-note{display:none}
-.cassette-label .featured-copy{width:auto;max-width:none;justify-self:stretch}
-.cassette-label h1{font-size:2rem;letter-spacing:0;line-height:1.1}
-.cassette-label .section-label{margin-bottom:4px;font-size:.75rem}
+.cassette-label .featured-copy{width:auto;max-width:none;justify-self:stretch;text-align:left}
+.cassette-label h1{font-size:2rem;letter-spacing:0;line-height:1.1;text-indent:-.035em}
+#music .cassette-label .section-label{margin-bottom:4px;margin-inline:0;padding-inline:0;font-size:.75rem;opacity:.5}
 .featured .tape-player{min-width:0;max-width:none;margin:0;padding:0}
 .featured .tape-main{position:relative;display:block}
 .featured .tape-loop{width:100%;height:auto;max-height:none}
@@ -226,7 +226,20 @@ a.floating-link[aria-expanded=true]{transform:none;filter:none;transition:none}
 @media(max-width:480px){.featured{grid-template-columns:minmax(0,1fr);gap:20px}.cassette-label{grid-template-columns:48px minmax(0,1fr);gap:10px}.cassette-label .featured-cover{width:48px}.cassette-label .empty-art{padding:4px;font-size:.5625rem}.cassette-label h1{font-size:1.5rem}.featured .tape-player{width:min(100%,300px)}.featured .tape-main{min-height:44px;display:flex;align-items:center}.featured .audio-toggle{width:44px;height:44px}}
 
 /* Small release teaser, aligned with the existing music player. */
-.preview-note{position:relative;isolation:isolate;overflow:hidden;height:40px;padding:0;background:#fff}
+.preview-note{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  height:160px;
+  margin-bottom:-120px;
+  padding:0;
+  background:rgba(255,255,255,.65);
+  /* Feather the white and its grain together over the moving green fields.
+     The negative margin preserves the original 40px strip's layout space. */
+  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.8) 0%,rgba(0,0,0,.56) 15%,rgba(0,0,0,.32) 30%,rgba(0,0,0,.15) 48%,rgba(0,0,0,.055) 67%,rgba(0,0,0,.012) 85%,transparent 100%);
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.8) 0%,rgba(0,0,0,.56) 15%,rgba(0,0,0,.32) 30%,rgba(0,0,0,.15) 48%,rgba(0,0,0,.055) 67%,rgba(0,0,0,.012) 85%,transparent 100%);
+  pointer-events:none;
+}
 html{background:#193d00}
 main{padding-top:48px}
 main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
@@ -303,15 +316,15 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 
 /* Keep the listening links grouped and evenly spaced at both viewport sizes. */
 #links.links-section{margin-top:64px;max-width:680px;margin-inline:auto}
-#links-heading{margin-bottom:16px}
+.streaming-heading{margin-bottom:24px}
 #links .platform-logos{max-width:none;display:flex;align-items:center;justify-content:center;gap:clamp(24px,4.5vw,44px)}
 .save-status{font-size:.875rem;text-align:center;margin:12px 0 0;min-height:1.5em}
 .save-status a{text-decoration:underline;text-underline-offset:.25em}
-#releases{margin-top:64px}
+#releases{margin-top:24px}
 #socials.socials-section{margin-top:48px;display:flex;justify-content:center}
 .social-logos{display:flex;align-items:center;justify-content:center;gap:24px}
-@media(max-width:760px){#links.links-section{margin-top:48px}#links-heading{margin-bottom:12px}#links .platform-logos{display:flex;justify-content:center;align-items:center;gap:24px;width:100%}#links .platform-logo{width:44px;height:48px}}
-@media(max-width:760px){#releases{margin-top:48px}#socials.socials-section{margin-top:32px}.social-logos{gap:16px}}
+@media(max-width:760px){#links.links-section{margin-top:48px}.streaming-heading{margin-bottom:16px}#links .platform-logos{display:flex;justify-content:center;align-items:center;gap:24px;width:100%}#links .platform-logo{width:44px;height:48px}}
+@media(max-width:760px){#releases{margin-top:16px}#socials.socials-section{margin-top:32px}.social-logos{gap:16px}}
 
 .upcoming-cover img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
 /* Keep the form's layout footprint when the release replaces it. */
@@ -352,8 +365,7 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
   #music.featured .tape-player{width:100%;max-width:none;justify-self:stretch;margin-inline:0}
   #music .tape-loop{width:100%}
   #links.links-section{margin-top:48px}
-  #links-heading{margin-bottom:12px}
-  #music .cassette-label .section-label{opacity:.65}
+  .streaming-heading{margin-bottom:16px}
 }
 @media(max-width:480px){
   #music.featured{gap:32px}
