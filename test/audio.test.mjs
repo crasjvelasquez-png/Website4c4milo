@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {scheduleEnvelope, createTransport} from '../public/audio-player.js';
+import {scheduleEnvelope, createTransport, tapeGeometry} from '../public/audio-player.js';
 import {createApp} from '../server.mjs';
 import {mkdtemp,writeFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -8,7 +8,7 @@ import {join} from 'node:path';
 
 function parameter() {
   const calls=[];
-  return {calls,cancelScheduledValues:t=>calls.push(['cancel',t]),setValueAtTime:(v,t)=>calls.push(['set',v,t]),linearRampToValueAtTime:(v,t)=>calls.push(['ramp',v,t])};
+  return {value:1,calls,cancelScheduledValues:t=>calls.push(['cancel',t]),setValueAtTime:(v,t)=>calls.push(['set',v,t]),linearRampToValueAtTime:(v,t)=>calls.push(['ramp',v,t])};
 }
 test('fade envelope begins silent and reaches silence at the actual end, including late seeks',()=>{
   const p=parameter();
@@ -29,10 +29,10 @@ test('leaving while context resumes cancels playback; stop resets media and canc
   const context={currentTime:20,destination:{},createGain:()=>({gain:p,connect(){}}),createMediaElementSource:()=>({connect(){}}),resume:()=>new Promise(r=>resolveResume=r)};
   const t=createTransport(audio,{createContext:()=>context});
   const playing=t.play();t.stop();resolveResume();await playing;
-  assert.equal(starts,0);assert.equal(audio.currentTime,0);assert.equal(audio.paused,true);
+  assert.equal(starts,1);assert.equal(audio.currentTime,0);assert.equal(audio.paused,true);
   const next=t.play();resolveResume();await next;
-  assert.equal(starts,1);assert.equal(audio.paused,false);
-  audio.currentTime=179;audio.dispatchEvent(new Event('seeked'));
+  assert.equal(starts,2);assert.equal(audio.paused,false);
+  audio.currentTime=179;audio.dispatchEvent(new Event('seeked'));audio.dispatchEvent(new Event('playing'));
   assert.equal(p.calls.at(-1)[1],0);
   t.stop();assert.equal(audio.paused,true);assert.equal(audio.currentTime,0);assert.deepEqual(p.calls.at(-1),['set',0,20]);
 });
@@ -65,4 +65,75 @@ test('audio is served with seekable byte ranges, correct media type and invalid-
     assert.equal((await fetch(url,{headers:{Range:'bytes=99-'}})).status,416);
     assert.deepEqual([...new Uint8Array(await (await fetch(url,{headers:{Range:'bytes=-2'}})).arrayBuffer())],[4,5]);
   } finally {await new Promise(r=>server.close(r));await rm(dir,{recursive:true});}
+});
+
+function transportFixture(options = {}) {
+  const audio = new EventTarget();
+  Object.assign(audio, {currentTime:0,duration:180,readyState:1,paused:true});
+  const order=[], nodes=[];
+  audio.play=async()=>{order.push('play');audio.paused=false;audio.dispatchEvent(new Event('playing'));};
+  audio.pause=()=>{audio.paused=true;};
+  const source={connect:node=>order.push(['source',node])};
+  const context={currentTime:10,destination:{},createGain:()=>{
+    const node={gain:parameter(),connect:target=>order.push([node,target])};nodes.push(node);return node;
+  },createMediaElementSource:()=>source,resume:()=>{order.push('resume');return options.resume?.() ?? Promise.resolve();}};
+  const transport=createTransport(audio,{createContext:()=>context,volume:0.8,...options});
+  return {audio,order,nodes,context,transport};
+}
+
+test('resume and media play run synchronously within the user activation',async()=>{
+  let resume;
+  const f=transportFixture({resume:()=>new Promise(r=>resume=r)});
+  const pending=f.transport.play();
+  assert.deepEqual(f.order.slice(-2),['resume','play']);
+  f.transport.stop();resume();await pending;
+  assert.equal(f.audio.paused,true);
+});
+
+test('start seek completion and buffer recovery do not restart the fade attack',async()=>{
+  const f=transportFixture({startAt:3});await f.transport.play();
+  const fade=f.nodes[0].gain;
+  const count=fade.calls.length;
+  f.audio.dispatchEvent(new Event('seeked'));
+  assert.equal(fade.calls.length,count);
+  f.audio.currentTime=20;
+  f.audio.dispatchEvent(new Event('waiting'));f.audio.dispatchEvent(new Event('playing'));
+  assert.deepEqual(fade.calls.slice(count),[['cancel',10],['cancel',10],['set',1,10],['set',1,168.5],['ramp',0,170]]);
+});
+
+test('volume uses a separate gain after the fade, including mute and pre-play changes',async()=>{
+  const f=transportFixture();f.transport.setVolume(0.25);await f.transport.play();
+  const [fade,volume]=f.nodes;
+  assert.ok(f.order.some(x=>Array.isArray(x)&&x[0]===fade&&x[1]===volume));
+  assert.ok(f.order.some(x=>Array.isArray(x)&&x[0]===volume&&x[1]===f.context.destination));
+  assert.deepEqual(volume.gain.calls,[['set',0.25,10]]);
+  const fadeCalls=fade.gain.calls.length;
+  f.transport.setVolume(0);
+  assert.deepEqual(volume.gain.calls.at(-1),['ramp',0,10.02]);
+  assert.equal(fade.gain.calls.length,fadeCalls);
+  f.audio.dispatchEvent(new Event('playing'));
+  assert.deepEqual(volume.gain.calls.at(-1),['ramp',0,10.02]);
+  f.transport.setVolume(2);assert.deepEqual(volume.gain.calls.at(-1),['ramp',1,10.02]);
+  // Cancelling an in-flight ramp can restore its old start value. Sample first.
+  volume.gain.value=0.4;
+  volume.gain.cancelScheduledValues=()=>{volume.gain.value=1;};
+  f.transport.setVolume(0.1);
+  assert.deepEqual(volume.gain.calls.at(-2),['set',0.4,10]);
+});
+
+test('a cancelled play completion cannot pause a newer playback',async()=>{
+  const resumes=[];
+  const f=transportFixture({resume:()=>new Promise(r=>resumes.push(r))});
+  const first=f.transport.play();f.transport.stop();const second=f.transport.play();
+  resumes[0]();await first;assert.equal(f.audio.paused,false);
+  resumes[1]();await second;assert.equal(f.audio.paused,false);
+});
+
+test('all tape and reel endpoints share a radius throughout the reveal',()=>{
+  for(const r of [44,44.125,46,47.99,48]) {
+    const p=tapeGeometry(r), top=70-r, bottom=70+r;
+    assert.equal(p.loop,`M80 ${top} H520 A${r} ${r} 0 0 1 520 ${bottom} H80 A${r} ${r} 0 0 1 80 ${top} Z`);
+    assert.equal(p.left,`M80 ${top} A${r} ${r} 0 0 1 80 ${bottom}`);
+    assert.equal(p.right,`M520 ${bottom} A${r} ${r} 0 0 1 520 ${top}`);
+  }
 });

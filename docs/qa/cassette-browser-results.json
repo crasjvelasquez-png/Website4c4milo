@@ -1,0 +1,642 @@
+[
+  {
+    "width": 320,
+    "mobile": true,
+    "reducedMotion": false,
+    "cpuThrottle": 4,
+    "cssPathMorphing": false,
+    "mediaElementVolumeIgnored": true,
+    "revealRadii": [
+      44,
+      46.57841435186587,
+      47.5967394059667,
+      47.97354482418356
+    ],
+    "volumeAfterDrag": 0.1,
+    "outputRMS": {
+      "playing": 0.11313060217788345,
+      "muted": 0,
+      "restored": 0.10265883978506461
+    },
+    "pausedAt": 6.090757,
+    "resumedAt": 6.882667,
+    "events": [
+      {
+        "type": "play",
+        "time": 1586.9000000003725,
+        "position": 3
+      },
+      {
+        "type": "waiting",
+        "time": 1587.0999999996275,
+        "position": 3
+      },
+      {
+        "type": "seeking",
+        "time": 1675.9000000003725,
+        "position": 3
+      },
+      {
+        "type": "seeked",
+        "time": 1733.699999999255,
+        "position": 3.064
+      },
+      {
+        "type": "playing",
+        "time": 1736.7999999988824,
+        "position": 3.064
+      },
+      {
+        "type": "pause",
+        "time": 4784.199999999255,
+        "position": 6.090757
+      },
+      {
+        "type": "play",
+        "time": 5414.5999999996275,
+        "position": 6.130667
+      },
+      {
+        "type": "playing",
+        "time": 5415.699999999255,
+        "position": 6.130667
+      },
+      {
+        "type": "pause",
+        "time": 6350.4000000003725,
+        "position": 7.050667
+      },
+      {
+        "type": "play",
+        "time": 6655.5,
+        "position": 7.061333
+      },
+      {
+        "type": "playing",
+        "time": 6655.699999999255,
+        "position": 7.061333
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "width": 320,
+    "mobile": true,
+    "reducedMotion": true,
+    "cpuThrottle": 4,
+    "cssPathMorphing": false,
+    "mediaElementVolumeIgnored": true,
+    "revealRadii": [
+      48,
+      48,
+      48,
+      48
+    ],
+    "volumeAfterDrag": 0.1,
+    "outputRMS": {
+      "playing": 0.037694657838564946,
+      "muted": 0,
+      "restored": 0.029184056854087186
+    },
+    "pausedAt": 5.272,
+    "resumedAt": 5.949333,
+    "events": [
+      {
+        "type": "play",
+        "time": 958.5999999996275,
+        "position": 3
+      },
+      {
+        "type": "waiting",
+        "time": 958.6999999992549,
+        "position": 3
+      },
+      {
+        "type": "seeking",
+        "time": 1015.5,
+        "position": 3
+      },
+      {
+        "type": "seeked",
+        "time": 1018.5999999996275,
+        "position": 3.031506
+      },
+      {
+        "type": "playing",
+        "time": 1022.3000000007451,
+        "position": 3.032
+      },
+      {
+        "type": "pause",
+        "time": 3274.800000000745,
+        "position": 5.272
+      },
+      {
+        "type": "play",
+        "time": 3365.800000000745,
+        "position": 5.28
+      },
+      {
+        "type": "playing",
+        "time": 3366.800000000745,
+        "position": 5.288549
+      },
+      {
+        "type": "pause",
+        "time": 4118.0999999996275,
+        "position": 6.010667
+      },
+      {
+        "type": "play",
+        "time": 4321.199999999255,
+        "position": 6.021333
+      },
+      {
+        "type": "playing",
+        "time": 4322.0999999996275,
+        "position": 6.021333
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "width": 390,
+    "mobile": true,
+    "reducedMotion": false,
+    "cpuThrottle": 4,
+    "cssPathMorphing": false,
+    "mediaElementVolumeIgnored": true,
+    "revealRadii": [
+      44,
+      46.25705996388325,
+      47.722631581023236,
+      47.990562893555186
+    ],
+    "volumeAfterDrag": 0.1,
+    "outputRMS": {
+      "playing": 0.06174180157247997,
+      "muted": 0,
+      "restored": 0.1640430108567024
+    },
+    "pausedAt": 6.832,
+    "resumedAt": 7.7128,
+    "events": [
+      {
+        "type": "play",
+        "time": 1734.4000000003725,
+        "position": 3
+      },
+      {
+        "type": "waiting",
+        "time": 1735.4000000003725,
+        "position": 3
+      },
+      {
+        "type": "seeking",
+        "time": 1867.4000000003725,
+        "position": 3
+      },
+      {
+        "type": "seeked",
+        "time": 1929.7999999988824,
+        "position": 3.090667
+      },
+      {
+        "type": "playing",
+        "time": 1933.2999999988824,
+        "position": 3.090667
+      },
+      {
+        "type": "pause",
+        "time": 5688.5999999996275,
+        "position": 6.832
+      },
+      {
+        "type": "play",
+        "time": 6399.5999999996275,
+        "position": 6.874667
+      },
+      {
+        "type": "playing",
+        "time": 6401.299999998882,
+        "position": 6.874667
+      },
+      {
+        "type": "pause",
+        "time": 7583.4000000003725,
+        "position": 8.005333
+      },
+      {
+        "type": "play",
+        "time": 8040.199999999255,
+        "position": 8.018667
+      },
+      {
+        "type": "playing",
+        "time": 8041.5,
+        "position": 8.018667
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "width": 390,
+    "mobile": true,
+    "reducedMotion": true,
+    "cpuThrottle": 4,
+    "cssPathMorphing": false,
+    "mediaElementVolumeIgnored": true,
+    "revealRadii": [
+      48,
+      48,
+      48,
+      48
+    ],
+    "volumeAfterDrag": 0.1,
+    "outputRMS": {
+      "playing": 0.03179141311748028,
+      "muted": 0,
+      "restored": 0.08058531457294003
+    },
+    "pausedAt": 5.28,
+    "resumedAt": 5.938667,
+    "events": [
+      {
+        "type": "play",
+        "time": 1117.199999999255,
+        "position": 3
+      },
+      {
+        "type": "waiting",
+        "time": 1117.2999999988824,
+        "position": 3
+      },
+      {
+        "type": "seeking",
+        "time": 1170.5999999996275,
+        "position": 3
+      },
+      {
+        "type": "seeked",
+        "time": 1188.699999999255,
+        "position": 3.037784
+      },
+      {
+        "type": "playing",
+        "time": 1189.5,
+        "position": 3.038543
+      },
+      {
+        "type": "pause",
+        "time": 3444.199999999255,
+        "position": 5.28
+      },
+      {
+        "type": "play",
+        "time": 3543.5,
+        "position": 5.290667
+      },
+      {
+        "type": "playing",
+        "time": 3544.39999999851,
+        "position": 5.290667
+      },
+      {
+        "type": "pause",
+        "time": 4261.5999999996275,
+        "position": 5.997492
+      },
+      {
+        "type": "play",
+        "time": 4428.0999999996275,
+        "position": 6.008
+      },
+      {
+        "type": "playing",
+        "time": 4428.299999998882,
+        "position": 6.013339
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "width": 760,
+    "mobile": true,
+    "reducedMotion": false,
+    "cpuThrottle": 4,
+    "cssPathMorphing": false,
+    "mediaElementVolumeIgnored": true,
+    "revealRadii": [
+      44,
+      47.04572667704716,
+      47.8392904375,
+      47.996074532226565
+    ],
+    "volumeAfterDrag": 0.1,
+    "outputRMS": {
+      "playing": 0.06889774986042933,
+      "muted": 0,
+      "restored": 0.12538675090538134
+    },
+    "pausedAt": 6.847087,
+    "resumedAt": 7.658667,
+    "events": [
+      {
+        "type": "play",
+        "time": 1778.2999999988824,
+        "position": 3
+      },
+      {
+        "type": "waiting",
+        "time": 1778.5,
+        "position": 3
+      },
+      {
+        "type": "seeking",
+        "time": 1914.199999999255,
+        "position": 3
+      },
+      {
+        "type": "seeked",
+        "time": 1992.5999999996275,
+        "position": 3.098667
+      },
+      {
+        "type": "playing",
+        "time": 1992.7999999988824,
+        "position": 3.098667
+      },
+      {
+        "type": "pause",
+        "time": 5844.89999999851,
+        "position": 6.847087
+      },
+      {
+        "type": "play",
+        "time": 6581.89999999851,
+        "position": 6.848
+      },
+      {
+        "type": "playing",
+        "time": 6582,
+        "position": 6.848
+      },
+      {
+        "type": "pause",
+        "time": 7704.5999999996275,
+        "position": 7.92
+      },
+      {
+        "type": "play",
+        "time": 8088.39999999851,
+        "position": 7.979991
+      },
+      {
+        "type": "playing",
+        "time": 8089.299999998882,
+        "position": 7.980906
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "width": 760,
+    "mobile": true,
+    "reducedMotion": true,
+    "cpuThrottle": 4,
+    "cssPathMorphing": false,
+    "mediaElementVolumeIgnored": true,
+    "revealRadii": [
+      48,
+      48,
+      48,
+      48
+    ],
+    "volumeAfterDrag": 0.1,
+    "outputRMS": {
+      "playing": 0.034815819330865326,
+      "muted": 0,
+      "restored": 0.11480694618677831
+    },
+    "pausedAt": 5.301333,
+    "resumedAt": 5.970667,
+    "events": [
+      {
+        "type": "play",
+        "time": 1112.0999999996275,
+        "position": 3
+      },
+      {
+        "type": "waiting",
+        "time": 1112.800000000745,
+        "position": 3
+      },
+      {
+        "type": "seeking",
+        "time": 1193.0999999996275,
+        "position": 3
+      },
+      {
+        "type": "seeked",
+        "time": 1209.7000000011176,
+        "position": 3.050561
+      },
+      {
+        "type": "playing",
+        "time": 1209.9000000003725,
+        "position": 3.050667
+      },
+      {
+        "type": "pause",
+        "time": 3479.9000000003725,
+        "position": 5.301333
+      },
+      {
+        "type": "play",
+        "time": 3576.4000000003725,
+        "position": 5.309333
+      },
+      {
+        "type": "playing",
+        "time": 3577.7000000011176,
+        "position": 5.317549
+      },
+      {
+        "type": "pause",
+        "time": 4294.200000001118,
+        "position": 6.021333
+      },
+      {
+        "type": "play",
+        "time": 4460.0999999996275,
+        "position": 6.032
+      },
+      {
+        "type": "playing",
+        "time": 4461.300000000745,
+        "position": 6.032
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "width": 1280,
+    "mobile": false,
+    "reducedMotion": false,
+    "cpuThrottle": 4,
+    "cssPathMorphing": false,
+    "mediaElementVolumeIgnored": true,
+    "revealRadii": [
+      44,
+      46.43324964813817,
+      47.53359325719318,
+      47.874976499998155
+    ],
+    "volumeAfterDrag": 0.1,
+    "outputRMS": {
+      "playing": 0.027558205458266205,
+      "muted": 0,
+      "restored": 0.14997452981742296
+    },
+    "pausedAt": 5.656038,
+    "resumedAt": 6.35467,
+    "events": [
+      {
+        "type": "play",
+        "time": 1343.0999999996275,
+        "position": 3
+      },
+      {
+        "type": "waiting",
+        "time": 1343.800000000745,
+        "position": 3
+      },
+      {
+        "type": "seeking",
+        "time": 1413.0999999996275,
+        "position": 3
+      },
+      {
+        "type": "seeked",
+        "time": 1458.300000000745,
+        "position": 3.04
+      },
+      {
+        "type": "playing",
+        "time": 1459.5,
+        "position": 3.048027
+      },
+      {
+        "type": "pause",
+        "time": 4146.9000000003725,
+        "position": 5.656038
+      },
+      {
+        "type": "play",
+        "time": 4776.5,
+        "position": 5.666667
+      },
+      {
+        "type": "playing",
+        "time": 4777.5,
+        "position": 5.666667
+      },
+      {
+        "type": "pause",
+        "time": 5617.0999999996275,
+        "position": 6.487363
+      },
+      {
+        "type": "play",
+        "time": 5908,
+        "position": 6.517333
+      },
+      {
+        "type": "playing",
+        "time": 5908.199999999255,
+        "position": 6.517333
+      }
+    ],
+    "pageErrors": []
+  },
+  {
+    "width": 1280,
+    "mobile": false,
+    "reducedMotion": true,
+    "cpuThrottle": 4,
+    "cssPathMorphing": false,
+    "mediaElementVolumeIgnored": true,
+    "revealRadii": [
+      48,
+      48,
+      48,
+      48
+    ],
+    "volumeAfterDrag": 0.1,
+    "outputRMS": {
+      "playing": 0.053096251492098435,
+      "muted": 0,
+      "restored": 0.02727537876226476
+    },
+    "pausedAt": 5.138667,
+    "resumedAt": 5.797333,
+    "events": [
+      {
+        "type": "play",
+        "time": 1146.9000000003725,
+        "position": 3
+      },
+      {
+        "type": "waiting",
+        "time": 1148.4000000003725,
+        "position": 3
+      },
+      {
+        "type": "seeking",
+        "time": 1190.5,
+        "position": 3
+      },
+      {
+        "type": "seeked",
+        "time": 1201.0999999996275,
+        "position": 3
+      },
+      {
+        "type": "playing",
+        "time": 1202,
+        "position": 3
+      },
+      {
+        "type": "pause",
+        "time": 3350.5999999996275,
+        "position": 5.138667
+      },
+      {
+        "type": "play",
+        "time": 3438.800000000745,
+        "position": 5.146169
+      },
+      {
+        "type": "playing",
+        "time": 3439.9000000003725,
+        "position": 5.146667
+      },
+      {
+        "type": "pause",
+        "time": 4167.700000001118,
+        "position": 5.858667
+      },
+      {
+        "type": "play",
+        "time": 4328.5,
+        "position": 5.868587
+      },
+      {
+        "type": "playing",
+        "time": 4330.5,
+        "position": 5.869333
+      }
+    ],
+    "pageErrors": []
+  }
+]

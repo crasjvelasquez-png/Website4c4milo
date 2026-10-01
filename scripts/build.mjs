@@ -50,8 +50,8 @@ function tapePlayer(r) {
           <path class="tape-travel" pathLength="1200" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
         </g>
         <g class="tape-guides">
-          <path class="tape-inner-rim tape-inner-rim-left" pathLength="1" d="M80 22 A48 48 0 0 1 80 118"/>
-          <path class="tape-inner-rim tape-inner-rim-right" pathLength="1" d="M520 118 A48 48 0 0 1 520 22"/>
+          <path class="tape-inner-rim tape-inner-rim-left" pathLength="1" d="M80 26 A44 44 0 0 1 80 114"/>
+          <path class="tape-inner-rim tape-inner-rim-right" pathLength="1" d="M520 114 A44 44 0 0 1 520 26"/>
           <g class="tape-reel-reveal" style="--reel-x:80px;--reel-y:70px"><g class="tape-reel"><path d="M80 32 V50 M47.09 89 L62.68 80 M112.91 89 L97.32 80"/><circle class="tape-hub" cx="80" cy="70" r="5"/></g></g>
           <g class="tape-reel-reveal" style="--reel-x:520px;--reel-y:70px"><g class="tape-reel"><path d="M520 32 V50 M487.09 89 L502.68 80 M552.91 89 L537.32 80"/><circle class="tape-hub" cx="520" cy="70" r="5"/></g></g>
         </g>
