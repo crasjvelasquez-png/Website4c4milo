@@ -384,3 +384,5 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 @media(prefers-reduced-motion:reduce){
   .release-services,.release-services-grid .platform-logo,.release-tile.is-open .release-services-grid .platform-logo{transition:none;transform:none}
 }
+
+@media(min-width:761px){body{zoom:1.3}}
