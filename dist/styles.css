@@ -58,14 +58,14 @@ body::before,body::after{
 }
 body::before{
   opacity:.025;
-  animation:green-pulse-a 36s ease-in-out infinite,ocean-drift-a 148s ease-in-out infinite;
+  animation:green-pulse-a 72s ease-in-out infinite,ocean-drift-a 296s ease-in-out infinite;
 }
 body::after{
   background-image:url("/assets/ocean-glow-b.png");
   background-position:center;
   opacity:.015;
   transform:rotate(180deg);
-  animation:green-pulse-b 52s ease-in-out infinite,ocean-drift-b 212s ease-in-out infinite;
+  animation:green-pulse-b 104s ease-in-out infinite,ocean-drift-b 424s ease-in-out infinite;
 }
 @keyframes green-pulse-a{
   0%,100%{opacity:.025}
@@ -240,34 +240,34 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 @media(prefers-reduced-motion:no-preference){
   html.page-reveal-preparing main>section,html.page-reveal-preparing body>footer,
   html.page-reveal-running main>section:not(.is-page-revealed),html.page-reveal-running body>footer:not(.is-page-revealed){opacity:0}
-  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation:page-fade-in 700ms ease-out var(--reveal-delay,0ms) backwards}
+  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation:page-fade-in 2s ease-out var(--reveal-delay,0ms) backwards}
   html.page-reveal-preparing main>section:focus-within,html.page-reveal-preparing body>footer:focus-within,
   html.page-reveal-running main>section:focus-within,html.page-reveal-running body>footer:focus-within{opacity:1;animation:none}
 }
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){
-  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation-duration:850ms}
+  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation-duration:2.4s}
 }
 /* Featured artwork is above the fold and can finish loading after its section
    has already faded in. Keep the same fade on the image itself so the large
    cover never pops in abruptly on mobile or desktop. */
 @media(prefers-reduced-motion:no-preference){
-  html:not(.no-js) .featured-cover img{opacity:0;transition:opacity 700ms ease-out}
+  html:not(.no-js) .featured-cover img{opacity:0;transition:opacity 2s ease-out}
   html:not(.no-js) .featured-cover img.is-loaded{opacity:1}
 }
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){
-  html:not(.no-js) .featured-cover img{transition-duration:850ms}
+  html:not(.no-js) .featured-cover img{transition-duration:2.4s}
 }
 .early-listen-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;width:100%;padding:16px 24px;border:1px solid color-mix(in srgb,var(--ink),transparent 54%);background:transparent}
 .early-listen-invitation{grid-column:1;grid-row:1}
 .upcoming-preview{display:grid;grid-template-columns:64px minmax(0,1fr);grid-column:1;grid-row:2;align-items:center;gap:16px;min-width:0;min-height:88px;z-index:0;pointer-events:none}
 .upcoming-cover{width:64px;aspect-ratio:1;background:color-mix(in srgb,var(--bg),var(--ink) 8%);border-radius:var(--cover-radius-sm,10px);overflow:hidden}
 .early-listen-copy{position:relative;grid-column:1;grid-row:2;z-index:1;width:100%;min-width:0}
-.upcoming-identity{opacity:0;filter:blur(9px);user-select:none;pointer-events:none;transition:opacity 700ms ease,filter 700ms ease-out}
+.upcoming-identity{opacity:0;filter:blur(9px);user-select:none;pointer-events:none;transition:opacity 2s ease,filter 2s ease-out}
 .upcoming-title{font:400 1.25rem/1.2 Georgia,"Times New Roman",serif;letter-spacing:0;margin:0;overflow-wrap:anywhere;text-wrap:pretty}
 .upcoming-credit{font-size:.6875rem;line-height:1.4;color:var(--muted);margin:4px 0 0}
 .is-revealed .upcoming-identity{opacity:1;filter:none;user-select:auto;pointer-events:auto}
-.early-listen-invitation{font-size:.8125rem;line-height:1.5;margin:0;white-space:nowrap;transition:opacity 700ms ease,visibility 700ms}
-.is-revealed .early-listen-invitation{opacity:0;visibility:hidden;transition:opacity 700ms ease,visibility 0s linear 700ms}
+.early-listen-invitation{font-size:.8125rem;line-height:1.5;margin:0;white-space:nowrap;transition:opacity 2s ease,visibility 2s}
+.is-revealed .early-listen-invitation{opacity:0;visibility:hidden;transition:opacity 2s ease,visibility 0s linear 2s}
 .signup-entry{display:flex;align-items:center;gap:18px;width:100%;border-bottom:1px solid var(--ink)}
 .signup-method{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .signup-method button{display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid color-mix(in srgb,var(--ink),transparent 38%);border-radius:0;background:transparent;color:var(--ink)}
@@ -373,9 +373,9 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .portrait{border-radius:var(--cover-radius,14px)}
 .featured-cover .artwork,.release-cover .artwork{border-radius:inherit}
 .cassette-label .featured-cover{border-radius:var(--cover-radius-sm,10px)}
-.release-tile.is-open .release-services{opacity:1;transition-duration:240ms}
-.release-services-grid .platform-logo{opacity:0;transform:translateY(5px);transition:opacity 140ms ease-out,transform 180ms cubic-bezier(.22,1,.36,1)}
-.release-tile.is-open .release-services-grid .platform-logo{opacity:1;transform:none;transition-duration:200ms,240ms;transition-delay:var(--service-delay,0ms)}
+.release-tile.is-open .release-services{opacity:1;transition-duration:800ms}
+.release-services-grid .platform-logo{opacity:0;transform:translateY(5px);transition:opacity 600ms ease-out,transform 700ms cubic-bezier(.22,1,.36,1)}
+.release-tile.is-open .release-services-grid .platform-logo{opacity:1;transform:none;transition-duration:800ms,900ms;transition-delay:var(--service-delay,0ms)}
 .release-services-grid .platform-logo:nth-child(2){--service-delay:55ms}
 /* 4 sits bottom-left, visually before top-right 3 on the diagonal. */
 .release-services-grid .platform-logo:nth-child(4){--service-delay:110ms}
