@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { createApp } from '../server.mjs';
 
 const source = (await readFile(new URL('../public/noise-video.js',import.meta.url),'utf8')).replace('export function','function');
-function fixture({ reduced = false, reject = false, videoFrames = true, hasBar = true } = {}) {
+function fixture({ reduced = false, mobile = false, reject = false, videoFrames = true, hasBar = true } = {}) {
   const video = new EventTarget();
   const classes = new Set();
   const callbacks = new Map();
@@ -36,15 +36,44 @@ function fixture({ reduced = false, reject = false, videoFrames = true, hasBar =
     delete video.cancelVideoFrameCallback;
   }
   const motion = new EventTarget();motion.matches = reduced;
+  const mobileMedia = new EventTarget();mobileMedia.matches = mobile;
   const document = new EventTarget();
   Object.assign(document, {hidden:false,querySelector:selector => selector === '[data-noise-video]' ? video : selector === '[data-noise-bar]' ? (hasBar ? bar : null) : canvas,body:{classList:{add:c=>classes.add(c),remove:c=>classes.delete(c)}}});
-  const window = new EventTarget();Object.assign(window,{matchMedia:() => motion,innerWidth:1280,innerHeight:900,devicePixelRatio:2,
+  const window = new EventTarget();Object.assign(window,{matchMedia:query => query.includes('prefers-reduced-motion') ? motion : mobileMedia,innerWidth:1280,innerHeight:900,devicePixelRatio:2,
     requestAnimationFrame:callback=>{callbacks.set(++callbackId,callback);return callbackId;},
     cancelAnimationFrame:id=>callbacks.delete(id)
   });
   runInNewContext(`${source}\nmountNoiseVideo();`, {document,window});
-  return {video,document,window,motion,classes,canvas,context,callbacks,draws,bar,barContext,barDraws};
+  return {video,document,window,motion,mobileMedia,classes,canvas,context,callbacks,draws,bar,barContext,barDraws};
 }
+
+test('mobile avoids downloading or drawing decorative video, including after page restore',()=>{
+  const f = fixture({mobile:true});
+  f.window.dispatchEvent(new Event('pagehide'));
+  f.window.dispatchEvent(new Event('pageshow'));
+  f.document.dispatchEvent(new Event('visibilitychange'));
+  assert.equal(f.video.src,'');
+  assert.equal(f.video.plays,0);
+  assert.equal(f.callbacks.size,0);
+  assert.equal(f.draws.length,0);
+  assert.equal(f.barDraws.length,0);
+  assert.equal(f.classes.size,0);
+});
+
+test('switching between desktop and mobile cancels drawing and resumes only when allowed',()=>{
+  const f = fixture();
+  f.mobileMedia.matches = true;f.mobileMedia.dispatchEvent(new Event('change'));
+  assert.equal(f.video.paused,true);
+  assert.equal(f.callbacks.size,0);
+  assert.equal(f.classes.size,0);
+  f.motion.matches = true;f.motion.dispatchEvent(new Event('change'));
+  f.mobileMedia.matches = false;f.mobileMedia.dispatchEvent(new Event('change'));
+  assert.equal(f.video.paused,true);
+  f.motion.matches = false;f.motion.dispatchEvent(new Event('change'));
+  assert.equal(f.video.paused,false);
+  assert.equal(f.callbacks.size,1);
+  assert.ok(f.classes.has('video-noise-playing'));
+});
 
 test('noise pauses while hidden and exited, and resumes when visible or restored',()=>{
   const f = fixture();

@@ -111,3 +111,51 @@ Results: `qa/cassette-browser-results.json`. Screenshots:
 These are local browser checks with mobile touch/viewport emulation and output
 measurements; physical iPhones, Safari/Instagram's browser, subjective listening,
 and production deployment were not tested.
+
+
+## Mobile rendering and Querida alignment, October 2, 2026
+
+Small screens (up to 760px) and coarse-pointer devices now use still grain and
+static green light fields. Decorative video is not loaded or painted, large
+background layers no longer animate or request permanent compositor promotion,
+and mobile section entrances no longer fade while scrolling. Featured artwork
+uses a short fade, and gallery menus and the secret-release identity avoid blur
+on mobile. The cassette's play/pause animation remains available.
+
+The mobile Querida artwork and title are larger, and their row aligns with the
+visible idle cassette outline (88% of the SVG view box), rather than its invisible
+SVG margins. The title scales with its available column. The layout explicitly
+stacks through 760px, fixing an earlier cascading rule that retained two columns
+above 480px.
+
+Build and all 39 Node tests pass. Chromium checks under 4× CPU throttling cover
+320, 390, 480, 760, 844 and 1280px, plus reduced motion at 390px. Checks confirm
+no overflow or browser errors, a single-line Querida title, matching hero/tape
+outline edges through 760px, no mobile video requests, still backgrounds, and
+working audio play/pause and gallery open/close. Desktop decorative motion remains
+enabled. Results: `qa/mobile-performance-results.json`. These checks use touch
+and viewport emulation; physical phones, Safari and production deployment were
+not tested, and no physical-device frame-rate improvement is claimed.
+
+
+## Lightweight mobile atmosphere, October 2, 2026
+
+Mobile now retains ambient motion through one existing 512×512 baked glow
+texture drifting over 90 seconds, plus a 128×128 transparent raster grain tile
+(15,177 bytes) shifted between eight positions per second. Both effects animate
+only transforms, with small edge overscan and constant opacity; there are no
+animated filters, background-position changes, video decoding or canvas draws.
+The second desktop glow is replaced by the grain layer, and the SVG grain
+background is disabled on mobile. The generator is
+`scripts/generate-mobile-grain.mjs`. Reduced motion keeps both layers still, and
+the existing hidden-page handler pauses both animations. Querida alignment and
+the earlier interaction optimizations are preserved.
+
+Build and all 39 Node tests pass. Chromium checks at 320, 390, 480, 760, 844
+and 1280px under 4× CPU throttling verify the mobile raster tile loads while
+video and the second glow do not, stepped transforms change, hidden-page pause
+styles work, dynamic reduced-motion changes stop the effects, and play/pause and
+gallery dismissal still work. There is no overflow or browser error, and the
+hero remains aligned with the idle tape. Results:
+`qa/mobile-light-motion-results.json`. Physical phones, Safari and production
+deployment are unverified.

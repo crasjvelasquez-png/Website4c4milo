@@ -1,0 +1,268 @@
+[
+  {
+    "overflow": false,
+    "hero": {
+      "left": 36.8,
+      "right": 283.19,
+      "width": 246.39,
+      "height": 80
+    },
+    "player": {
+      "left": 36.81,
+      "right": 283.19,
+      "width": 246.38,
+      "height": 41.06
+    },
+    "cover": {
+      "left": 36.8,
+      "right": 116.8,
+      "width": 80,
+      "height": 80
+    },
+    "titleSize": "45.1172px",
+    "titleLines": 1,
+    "noiseSource": null,
+    "glowAnimation": "mobile-glow-drift",
+    "glowWillChange": "auto",
+    "grainAnimation": "mobile-grain-shift",
+    "grainTiming": "steps(1)",
+    "grainImage": "url(\"http://127.0.0.1:3000/assets/mobile-grain.png\")",
+    "revealPreparing": false,
+    "revealRunning": false,
+    "width": 320,
+    "touch": true,
+    "reducedMotion": false,
+    "errors": [],
+    "videoRequested": false,
+    "audioPlayPause": true,
+    "galleryOpenClose": true
+  },
+  {
+    "overflow": false,
+    "hero": {
+      "left": 41,
+      "right": 349,
+      "width": 308,
+      "height": 97.5
+    },
+    "player": {
+      "left": 41.02,
+      "right": 348.98,
+      "width": 307.96,
+      "height": 51.33
+    },
+    "cover": {
+      "left": 41,
+      "right": 138.5,
+      "width": 97.5,
+      "height": 97.5
+    },
+    "titleSize": "58.35px",
+    "titleLines": 1,
+    "noiseSource": null,
+    "glowAnimation": "mobile-glow-drift",
+    "glowWillChange": "auto",
+    "grainAnimation": "mobile-grain-shift",
+    "grainTiming": "steps(1)",
+    "grainImage": "url(\"http://127.0.0.1:3000/assets/mobile-grain.png\")",
+    "revealPreparing": false,
+    "revealRunning": false,
+    "width": 390,
+    "touch": true,
+    "reducedMotion": false,
+    "errors": [],
+    "videoRequested": false,
+    "audioPlayPause": true,
+    "galleryOpenClose": true
+  },
+  {
+    "overflow": false,
+    "hero": {
+      "left": 46.41,
+      "right": 433.59,
+      "width": 387.19,
+      "height": 120
+    },
+    "player": {
+      "left": 46.42,
+      "right": 433.58,
+      "width": 387.16,
+      "height": 64.53
+    },
+    "cover": {
+      "left": 46.41,
+      "right": 166.41,
+      "width": 120,
+      "height": 120
+    },
+    "titleSize": "74.4px",
+    "titleLines": 1,
+    "noiseSource": null,
+    "glowAnimation": "mobile-glow-drift",
+    "glowWillChange": "auto",
+    "grainAnimation": "mobile-grain-shift",
+    "grainTiming": "steps(1)",
+    "grainImage": "url(\"http://127.0.0.1:3000/assets/mobile-grain.png\")",
+    "revealPreparing": false,
+    "revealRunning": false,
+    "width": 480,
+    "touch": true,
+    "reducedMotion": false,
+    "errors": [],
+    "videoRequested": false,
+    "audioPlayPause": true,
+    "galleryOpenClose": true
+  },
+  {
+    "overflow": false,
+    "hero": {
+      "left": 63.2,
+      "right": 696.8,
+      "width": 633.59,
+      "height": 168
+    },
+    "player": {
+      "left": 63.2,
+      "right": 696.8,
+      "width": 633.6,
+      "height": 105.6
+    },
+    "cover": {
+      "left": 63.2,
+      "right": 223.2,
+      "width": 160,
+      "height": 160
+    },
+    "titleSize": "132.961px",
+    "titleLines": 1,
+    "noiseSource": null,
+    "glowAnimation": "mobile-glow-drift",
+    "glowWillChange": "auto",
+    "grainAnimation": "mobile-grain-shift",
+    "grainTiming": "steps(1)",
+    "grainImage": "url(\"http://127.0.0.1:3000/assets/mobile-grain.png\")",
+    "revealPreparing": false,
+    "revealRunning": false,
+    "width": 760,
+    "touch": true,
+    "reducedMotion": false,
+    "errors": [],
+    "videoRequested": false,
+    "audioPlayPause": true,
+    "galleryOpenClose": true
+  },
+  {
+    "overflow": false,
+    "hero": {
+      "left": 82,
+      "right": 372.91,
+      "width": 290.91,
+      "height": 64
+    },
+    "player": {
+      "left": 433.86,
+      "right": 741.05,
+      "width": 307.19,
+      "height": 51.2
+    },
+    "cover": {
+      "left": 82,
+      "right": 146,
+      "width": 64,
+      "height": 64
+    },
+    "titleSize": "32px",
+    "titleLines": 1,
+    "noiseSource": null,
+    "glowAnimation": "mobile-glow-drift",
+    "glowWillChange": "auto",
+    "grainAnimation": "mobile-grain-shift",
+    "grainTiming": "steps(1)",
+    "grainImage": "url(\"http://127.0.0.1:3000/assets/mobile-grain.png\")",
+    "revealPreparing": false,
+    "revealRunning": false,
+    "width": 844,
+    "touch": true,
+    "reducedMotion": false,
+    "errors": [],
+    "videoRequested": false,
+    "audioPlayPause": true,
+    "galleryOpenClose": true
+  },
+  {
+    "overflow": false,
+    "hero": {
+      "left": 300,
+      "right": 590.91,
+      "width": 290.91,
+      "height": 64
+    },
+    "player": {
+      "left": 651.86,
+      "right": 959.05,
+      "width": 307.19,
+      "height": 51.2
+    },
+    "cover": {
+      "left": 300,
+      "right": 364,
+      "width": 64,
+      "height": 64
+    },
+    "titleSize": "32px",
+    "titleLines": 1,
+    "noiseSource": "/assets/vhs-noise.mp4",
+    "glowAnimation": "green-pulse-a, ocean-drift-a",
+    "glowWillChange": "opacity, transform",
+    "grainAnimation": "green-pulse-b, ocean-drift-b",
+    "grainTiming": "ease-in-out, ease-in-out",
+    "grainImage": "url(\"http://127.0.0.1:3000/assets/ocean-glow-b.png\")",
+    "revealPreparing": false,
+    "revealRunning": true,
+    "width": 1280,
+    "touch": false,
+    "reducedMotion": false,
+    "errors": [],
+    "videoRequested": true,
+    "audioPlayPause": true,
+    "galleryOpenClose": true
+  },
+  {
+    "overflow": false,
+    "hero": {
+      "left": 41,
+      "right": 349,
+      "width": 308,
+      "height": 97.5
+    },
+    "player": {
+      "left": 41.02,
+      "right": 348.98,
+      "width": 307.96,
+      "height": 51.33
+    },
+    "cover": {
+      "left": 41,
+      "right": 138.5,
+      "width": 97.5,
+      "height": 97.5
+    },
+    "titleSize": "58.35px",
+    "titleLines": 1,
+    "noiseSource": null,
+    "glowAnimation": "none",
+    "glowWillChange": "auto",
+    "grainAnimation": "none",
+    "grainTiming": "ease",
+    "grainImage": "url(\"http://127.0.0.1:3000/assets/mobile-grain.png\")",
+    "revealPreparing": false,
+    "revealRunning": false,
+    "width": 390,
+    "touch": true,
+    "reducedMotion": true,
+    "errors": [],
+    "videoRequested": false,
+    "audioPlayPause": true,
+    "galleryOpenClose": true
+  }
+]

@@ -348,25 +348,21 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 
 @media(max-width:360px){.is-revealed .upcoming-preview{grid-template-columns:minmax(0,1fr);right:136px}.is-revealed .upcoming-cover{display:none}.is-revealed .upcoming-title{font-size:.875rem}.upcoming-player{width:108px}}
 
-/* Mobile-only: Querida row fills its row, with even vertical rhythm. */
+/* Mobile: the enlarged sleeve and title share the transport's outer edges. */
 @media(max-width:760px){
-  #music.featured{width:100%;gap:32px;justify-items:center}
-  #music .cassette-label{width:fit-content;max-width:100%;justify-self:center;justify-content:center;align-items:center;gap:16px;margin-inline:auto}
-  #music .cassette-label .featured-copy{width:auto;max-width:none;justify-self:stretch;min-width:0}
+  #music.featured{width:100%;grid-template-columns:minmax(0,1fr);gap:32px;justify-items:center}
+  /* The idle tape spans x=36…564 in its 600-unit SVG view box. */
+  #music .cassette-label{width:88%;max-width:none;justify-self:center;grid-template-columns:clamp(80px,25vw,160px) minmax(0,1fr);align-items:center;gap:clamp(16px,4vw,32px);margin-inline:0}
+  #music .cassette-label .featured-cover{width:100%}
+  #music .cassette-label .featured-cover .artwork{width:100%;height:auto}
+  #music .cassette-label .featured-copy{width:auto;max-width:none;justify-self:stretch;min-width:0;container-type:inline-size}
+  #music .cassette-label h1{font-size:clamp(2.5rem,11.5vw,5rem);font-size:clamp(2rem,30cqw,9rem);line-height:1.05}
+  #music .cassette-label .section-label{font-size:.875rem;margin-bottom:6px}
   #music.featured .tape-player{width:100%;max-width:none;justify-self:stretch;margin-inline:0}
   #music .tape-loop{width:100%}
   #links.links-section{margin-top:48px}
   .streaming-heading{margin-bottom:16px}
 }
-@media(max-width:480px){
-  #music.featured{gap:32px}
-  #music .cassette-label{grid-template-columns:72px minmax(0,1fr);gap:16px}
-  #music .cassette-label .featured-cover{width:72px}
-  #music .cassette-label .featured-cover .artwork{width:72px;height:72px}
-  #music .cassette-label h1{font-size:clamp(2rem,10.5vw,2.5rem);line-height:1.05}
-  #music .cassette-label .section-label{font-size:.8125rem;margin-bottom:6px}
-}
-
 /* Shared timing for touch and pointer interactions; reverse cleanly on dismissal. */
 :root{--cover-radius:14px;--cover-radius-sm:10px}
 .artwork,.empty-art,.cover-pending{border-radius:var(--cover-radius,14px)}
@@ -383,4 +379,38 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .release-services-grid .platform-logo:nth-child(5){--service-delay:220ms}
 @media(prefers-reduced-motion:reduce){
   .release-services,.release-services-grid .platform-logo,.release-tile.is-open .release-services-grid .platform-logo{transition:none;transform:none}
+}
+
+/* Mobile uses one baked glow and a small cached grain tile. Moving transforms
+   avoid video decoding, canvas drawing, live filters and background repainting. */
+@media(max-width:760px),(pointer:coarse){
+  .vhs-noise,.vhs-noise-bar{display:none}
+  body,body.video-noise-playing{background-image:none;background-blend-mode:normal}
+  body::before,body::after{animation:none;will-change:auto;inset:0}
+  body::before{inset:-4%;opacity:.12}
+  body::after{inset:-18px;background-image:url("/assets/mobile-grain.png");background-repeat:repeat;background-size:128px 128px;opacity:.35;transform:none}
+  html.page-reveal-preparing main>section,html.page-reveal-preparing body>footer,
+  html.page-reveal-running main>section,html.page-reveal-running body>footer{opacity:1;animation:none}
+  html:not(.no-js) .featured-cover img{transition-duration:250ms}
+  .release-services{backdrop-filter:none;-webkit-backdrop-filter:none;background:#000c}
+  .upcoming-identity{filter:none;transition-duration:250ms}
+}
+@media(max-width:760px) and (prefers-reduced-motion:no-preference),(pointer:coarse) and (prefers-reduced-motion:no-preference){
+  body::before{animation:mobile-glow-drift 90s ease-in-out infinite}
+  body::after{animation:mobile-grain-shift 1s steps(1,end) infinite}
+}
+@keyframes mobile-glow-drift{
+  0%,100%{transform:translate3d(-2%,1%,0)}
+  50%{transform:translate3d(2%,-1%,0)}
+}
+/* Eight texture positions per second, with enough overscan to cover every edge. */
+@keyframes mobile-grain-shift{
+  0%,100%{transform:translate3d(0,0,0)}
+  12.5%{transform:translate3d(-7px,5px,0)}
+  25%{transform:translate3d(11px,-9px,0)}
+  37.5%{transform:translate3d(-13px,-4px,0)}
+  50%{transform:translate3d(5px,13px,0)}
+  62.5%{transform:translate3d(-9px,-12px,0)}
+  75%{transform:translate3d(14px,3px,0)}
+  87.5%{transform:translate3d(-3px,9px,0)}
 }

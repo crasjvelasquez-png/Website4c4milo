@@ -4,7 +4,8 @@ document.documentElement.classList.add('player-reveal-ready');
 window.addEventListener('load', () => {
   if (!document.querySelector('.progressive-player')) document.documentElement.classList.remove('player-reveal-ready');
 });
-if (window.IntersectionObserver && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (window.IntersectionObserver && !matchMedia('(prefers-reduced-motion: reduce)').matches
+  && !matchMedia('(max-width: 760px), (pointer: coarse)').matches) {
   document.documentElement.classList.add('page-reveal-preparing');
   const restoreContent = () => document.documentElement.classList.remove('page-reveal-preparing');
   window.addEventListener('load', restoreContent, { once: true });

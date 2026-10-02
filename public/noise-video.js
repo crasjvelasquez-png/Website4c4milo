@@ -1,4 +1,5 @@
-// Decorative media never starts sound or loads for reduced-motion visitors.
+// Use CSS raster grain on mobile: full-viewport video/canvas blending competes with
+// scrolling and the cassette animation, especially on high-density screens.
 export function mountNoiseVideo() {
   const video = document.querySelector('[data-noise-video]');
   const canvas = document.querySelector('[data-noise-canvas]');
@@ -10,9 +11,10 @@ export function mountNoiseVideo() {
   // CSS pixels per tile: the supplied 640 × 360 clip stays at native scale.
   const tileWidth = 640;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = window.matchMedia('(max-width: 760px), (pointer: coarse)');
   let leaving = false;
   let failed = false;
-  const canPlay = () => !document.hidden && !reducedMotion.matches && !leaving && !failed;
+  const canPlay = () => !document.hidden && !reducedMotion.matches && !mobile.matches && !leaving && !failed;
   let frame = null;
   const videoFrames = typeof video.requestVideoFrameCallback === 'function';
   function showFallback() {
@@ -84,6 +86,7 @@ export function mountNoiseVideo() {
   }
   document.addEventListener('visibilitychange', sync);
   reducedMotion.addEventListener('change', sync);
+  mobile.addEventListener('change', sync);
   window.addEventListener('pagehide', () => { leaving = true; sync(); });
   window.addEventListener('pageshow', () => { leaving = false; sync(); });
   sync();
