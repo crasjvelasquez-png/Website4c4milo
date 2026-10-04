@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {scheduleEnvelope, createTransport, tapeGeometry} from '../public/audio-player.js';
+import {scheduleEnvelope, createTransport, tapeGeometry, tapePoint, tapeLength} from '../public/audio-player.js';
 import {createApp} from '../server.mjs';
 import {mkdtemp,writeFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -135,6 +135,32 @@ test('all tape and reel endpoints share a radius throughout the reveal',()=>{
     assert.equal(p.loop,`M80 ${top} H520 A${r} ${r} 0 0 1 520 ${bottom} H80 A${r} ${r} 0 0 1 80 ${top} Z`);
     assert.equal(p.left,`M80 ${top} A${r} ${r} 0 0 1 80 ${bottom}`);
     assert.equal(p.right,`M520 ${bottom} A${r} ${r} 0 0 1 520 ${top}`);
+  }
+});
+
+test('analytic tape points trace the drawn loop continuously at every radius',()=>{
+  const near=(p,x,y)=>{assert.ok(Math.abs(p.x-x)<1e-9&&Math.abs(p.y-y)<1e-9,`${p.x},${p.y} != ${x},${y}`);};
+  for(const r of [44,46,48]) {
+    const arc=Math.PI*r, length=tapeLength(r);
+    assert.equal(length,880+2*arc);
+    near(tapePoint(r,0),80,70-r);
+    near(tapePoint(r,220),300,70-r);
+    near(tapePoint(r,440),520,70-r);
+    near(tapePoint(r,440+arc/2),520+r,70);
+    near(tapePoint(r,440+arc),520,70+r);
+    near(tapePoint(r,880+arc),80,70+r);
+    near(tapePoint(r,880+arc*1.5),80-r,70);
+    near(tapePoint(r,length),80,70-r);
+    near(tapePoint(r,-10),tapePoint(r,length-10).x,tapePoint(r,length-10).y);
+    // Every point lies on the stadium, and no step jumps farther than travelled.
+    let previous=tapePoint(r,0);
+    for(let d=0.5;d<=length*2;d+=0.5) {
+      const p=tapePoint(r,d);
+      const cx=p.x<80?80:p.x>520?520:p.x;
+      assert.ok(Math.abs(Math.hypot(p.x-cx,p.y-70)-r)<1e-9);
+      assert.ok(Math.hypot(p.x-previous.x,p.y-previous.y)<=0.5+1e-9);
+      previous=p;
+    }
   }
 });
 

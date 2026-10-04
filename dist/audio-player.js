@@ -220,6 +220,28 @@ export function tapeGeometry(radius) {
   };
 }
 
+// Exact length of the loop drawn by tapeGeometry(): two 440-unit straights
+// plus two half circles.
+export function tapeLength(radius) {
+  return 880 + 2 * Math.PI * radius;
+}
+
+// Exact point at a distance along tapeGeometry(radius).loop, measured from
+// its start (80, 70 - radius) in the path's clockwise drawing direction.
+// Pure math avoids per-frame SVG geometry queries.
+export function tapePoint(radius, distance) {
+  const arc = Math.PI * radius, length = 880 + 2 * arc;
+  let d = (distance % length + length) % length;
+  if (d < 440) return {x:80 + d, y:70 - radius};
+  d -= 440;
+  if (d < arc) { const a = d / radius; return {x:520 + radius * Math.sin(a), y:70 - radius * Math.cos(a)}; }
+  d -= arc;
+  if (d < 440) return {x:520 - d, y:70 + radius};
+  d -= 440;
+  const a = d / radius;
+  return {x:80 - radius * Math.sin(a), y:70 + radius * Math.cos(a)};
+}
+
 function mountTapeReveal(root) {
   const loops = root.querySelectorAll('.tape-ribbon, .tape-travel');
   const left = root.querySelector('.tape-inner-rim-left');
@@ -246,9 +268,10 @@ function mountTapeReveal(root) {
     root.style.setProperty('--head-shift', `${44 - radius}px`);
     root.style.setProperty('--head-top', `${(70 - radius) / 140 * 100}%`);
     alignLabel();
+    // Redraw dependents in this same frame so nothing trails the tape.
+    update.onDraw?.(radius);
   };
-  draw(radius);
-  return playing => {
+  const update = playing => {
     const next = playing ? 48 : 44;
     if (next === target) return;
     target = next;
@@ -262,6 +285,9 @@ function mountTapeReveal(root) {
     };
     frame = requestAnimationFrame(tick);
   };
+  update.radius = () => radius;
+  draw(radius);
+  return update;
 }
 
 export function mountPlayer(root) {
@@ -281,22 +307,25 @@ export function mountPlayer(root) {
   volume.addEventListener('input', () => transport.setVolume(volume.value));
   const reveal = mountTapeReveal(root);
   let loading = false;
+  const minutesText = time.querySelector('[data-time-minutes]');
+  const secondsText = time.querySelector('[data-time-seconds]');
+  const heading = document.getElementById('featured-heading');
   function render() {
     const playing = !audio.paused || transport.scratching;
     root.classList.toggle('is-playing', playing);
     reveal(playing);
-    volumeLabel.inert = !playing;
+    if (volumeLabel.inert !== !playing) volumeLabel.inert = !playing;
     if (playing) time.removeAttribute('aria-hidden');
-    else time.setAttribute('aria-hidden', 'true');
-    symbol.textContent = playing ? 'Ⅱ' : '▶';
-    toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${document.getElementById('featured-heading').textContent}`);
-    toggle.setAttribute('aria-pressed', String(playing));
+    else setAttr(time, 'aria-hidden', 'true');
+    setText(symbol, playing ? 'Ⅱ' : '▶');
+    setAttr(toggle, 'aria-label', `${playing ? 'Pause' : 'Play'} ${heading.textContent}`);
+    setAttr(toggle, 'aria-pressed', String(playing));
     const seconds = Number.isFinite(transport.position) ? Math.floor(transport.position) : 0;
     const minutes = String(Math.floor(seconds / 60));
     const remainder = String(seconds % 60).padStart(2, '0');
-    time.querySelector('[data-time-minutes]').textContent = minutes;
-    time.querySelector('[data-time-seconds]').textContent = remainder;
-    time.setAttribute('aria-label', `Elapsed time: ${minutes}:${remainder}`);
+    setText(minutesText, minutes);
+    setText(secondsText, remainder);
+    setAttr(time, 'aria-label', `Elapsed time: ${minutes}:${remainder}`);
   }
   toggle.addEventListener('click', async () => {
     if (loading || transport.scratching) return;
@@ -306,7 +335,7 @@ export function mountPlayer(root) {
     catch { transport.stop(); status.textContent = 'Audio could not play. Try again or check the file.'; }
     finally { loading = false; toggle.disabled = false; render(); }
   });
-  const cancelGesture = mountScratchHandle(root, transport, render, status);
+  const cancelGesture = mountScratchHandle(root, transport, render, status, reveal);
   const exit = () => { cancelGesture(); transport.stop(); status.textContent = 'Stopped'; render(); };
   for (const event of ['timeupdate','loadedmetadata','seeked','playing','pause']) audio.addEventListener(event, render);
   audio.addEventListener('waiting', () => { status.textContent = 'Buffering…'; });
@@ -321,33 +350,51 @@ export function mountPlayer(root) {
   render();
 }
 
+// Skip identical DOM writes: each write can invalidate style, layout, or the
+// accessibility tree even when the value does not change.
+function setText(element, value) {
+  if (element.textContent !== value) element.textContent = value;
+}
+function setAttr(element, name, value) {
+  if (element.getAttribute(name) !== value) element.setAttribute(name, value);
+}
+
 // Pointer Events cover mouse, pen, and touch without blocking page scrolling
 // anywhere except the invisible handle. One animation clock drives all visuals.
-function mountScratchHandle(root, transport, render, status) {
+function mountScratchHandle(root, transport, render, status, reveal) {
   const handle = root.querySelector('.tape-head-handle');
   const tape = root.querySelector('.tape-loop');
-  const head = root.querySelector('.tape-head-mark');
+  const headPath = root.querySelector('.tape-head-mark path');
   const reels = root.querySelectorAll('.tape-reel');
+  const audio = root.querySelector('audio');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   let gesture, finishing = false, frame, keyTimer, lastTick;
-  let headX = 94, lastHeadGeometry;
+  let headX = 94, lastHeadGeometry, reelPosition, lastReelTransform;
+  // Measure outside the frame loop: reading layout right after the previous
+  // frame's style writes would force a synchronous layout every frame.
+  let tapeWidth = tape.getBoundingClientRect().width;
+  const measure = () => { tapeWidth = tape.getBoundingClientRect().width; };
+  new ResizeObserver(measure).observe(tape);
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const drawHead = x => {
     headX = x;
     // Follow the existing continuous path around the left reel when pulled
     // past its top tangent, so the bump never separates from the white tape.
-    const ribbon = root.querySelector('.tape-ribbon');
-    const geometry = `${x}:${ribbon.getAttribute('d')}`;
+    const radius = reveal.radius();
+    const geometry = `${x}:${radius}`;
     if (geometry === lastHeadGeometry) return;
     lastHeadGeometry = geometry;
-    const length = ribbon.getTotalLength();
-    const point = distance => ribbon.getPointAtLength((distance % length + length) % length);
-    const middle = point(x - 80);
+    const middle = tapePoint(radius, x - 80);
     handle.style.left = `${middle.x / 6}%`;
     handle.style.top = `${middle.y / 140 * 100}%`;
-    const points = Array.from({length:11}, (_, i) => point(x - 94 + i * 2.8));
-    head.querySelector('path').setAttribute('d', points.map((p, i) => `${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' '));
+    let d = '';
+    for (let i = 0; i < 11; i++) {
+      const p = tapePoint(radius, x - 94 + i * 2.8);
+      d += `${i ? 'L' : 'M'}${p.x.toFixed(3)} ${p.y.toFixed(3)}`;
+    }
+    headPath.setAttribute('d', d);
   };
+  reveal.onDraw = () => drawHead(headX);
   async function begin(pointerId, x) {
     if (gesture || finishing) return;
     const current = {pointerId, startX:x, x, headOrigin:headX, origin:transport.position, position:transport.position,
@@ -393,6 +440,7 @@ function mountScratchHandle(root, transport, render, status) {
     if (event.button !== 0 || gesture || finishing) return;
     event.preventDefault(); handle.focus({preventScroll:true});
     handle.setPointerCapture(event.pointerId);
+    measure();
     void begin(event.pointerId, event.clientX);
   });
   handle.addEventListener('pointermove', event => {
@@ -417,16 +465,36 @@ function mountScratchHandle(root, transport, render, status) {
     if (gesture.ready) keyTimer = setTimeout(() => { void finish(); }, 180);
   });
   handle.addEventListener('blur', () => { void finish(); });
+  // audio.currentTime advances in coarse steps (one audio callback, or up to
+  // 250 ms in some browsers), so reels driven by it directly stutter. Advance
+  // a frame clock instead and discipline it toward the media clock, estimated
+  // between its updates; the correction is capped at half speed, so reels
+  // never stall or run backwards while playing.
+  let mediaSample, sinceSample = 0;
+  const advanceReels = (actual, elapsed) => {
+    if (!Number.isFinite(actual)) return;
+    const advancing = !transport.scratching && !audio.paused && !audio.seeking && audio.readyState >= 3;
+    const rate = audio.playbackRate || 1;
+    if (actual !== mediaSample || !advancing) { mediaSample = actual; sinceSample = 0; }
+    else sinceSample += elapsed * rate;
+    const estimate = actual + Math.min(sinceSample, 0.3);
+    if (reelPosition === undefined || transport.scratching || Math.abs(estimate - reelPosition) > 0.5) {
+      reelPosition = estimate;
+      return;
+    }
+    if (!advancing) return;
+    reelPosition += elapsed * rate;
+    reelPosition += clamp((estimate - reelPosition) * Math.min(1, elapsed * 2), -elapsed / 2, elapsed / 2);
+  };
   const tick = now => {
     const elapsedTick = lastTick === undefined ? 0 : Math.min(0.1, (now - lastTick) / 1000);
     lastTick = now;
+    const length = tapeLength(reveal.radius());
     if (gesture?.ready) {
-      const width = tape.getBoundingClientRect().width;
-      const displacement = (gesture.x - gesture.startX) * 600 / width;
-      const tapeLength = root.querySelector('.tape-ribbon').getTotalLength();
+      const displacement = (gesture.x - gesture.startX) * 600 / Math.max(1, tapeWidth);
       // Map one complete trip around the actual tape to two audio seconds,
       // independent of player size or drag speed.
-      const target = clamp(gesture.keyboardPosition ?? gesture.origin + displacement / tapeLength * 2, 0, transport.duration);
+      const target = clamp(gesture.keyboardPosition ?? gesture.origin + displacement / length * 2, 0, transport.duration);
       const position = gesture.pointerId === null ? gesture.lastPosition + clamp(target - gesture.lastPosition, -0.12, 0.12) : target;
       const elapsed = Math.max(0.008, (now - gesture.lastTime) / 1000);
       const velocity = (position - gesture.lastPosition) / elapsed;
@@ -435,25 +503,35 @@ function mountScratchHandle(root, transport, render, status) {
       drawHead(gesture.headOrigin + displacement);
       render();
     }
-    if (!gesture && !finishing && !reduced.matches && !root.querySelector('audio').paused && !handle.matches(':focus-visible')) {
+    if (!gesture && !finishing && !reduced.matches && !audio.paused && !handle.matches(':focus-visible')) {
       // Keep the bump and its invisible target together: one complete tape
       // circuit every eight seconds. Release continues from the grabbed point.
-      const length = root.querySelector('.tape-ribbon').getTotalLength();
       headX += length * elapsedTick / 8;
       headX = (headX - 80) % length + 80;
     }
     drawHead(headX);
     const position = transport.position;
-    handle.setAttribute('aria-valuemax', String(Number.isFinite(transport.duration) ? transport.duration : 0));
-    handle.setAttribute('aria-valuenow', String(Math.round(position * 10) / 10));
-    handle.setAttribute('aria-valuetext', `${Math.floor(position / 60)}:${String(Math.floor(position % 60)).padStart(2, '0')}`);
-    if (!reduced.matches) {
-      for (const reel of reels) reel.style.transform = `rotate(${position * 360 / 1.276}deg)`;
+    setAttr(handle, 'aria-valuemax', String(Number.isFinite(transport.duration) ? transport.duration : 0));
+    setAttr(handle, 'aria-valuenow', String(Math.round(position * 10) / 10));
+    setAttr(handle, 'aria-valuetext', `${Math.floor(position / 60)}:${String(Math.floor(position % 60)).padStart(2, '0')}`);
+    advanceReels(position, elapsedTick);
+    if (!reduced.matches && reelPosition !== undefined) {
+      // Wrap to one turn so the angle keeps full float precision.
+      const angle = (reelPosition * 360 / 1.276) % 360;
+      const transform = `rotate(${angle.toFixed(3)}deg)`;
+      if (transform !== lastReelTransform) {
+        lastReelTransform = transform;
+        for (const reel of reels) reel.style.transform = transform;
+      }
     }
     if (!document.hidden) frame = requestAnimationFrame(tick);
   };
   document.addEventListener('visibilitychange', () => {
     cancelAnimationFrame(frame);
+    // Resume from the media clock instead of a stale frame timestamp.
+    lastTick = undefined;
+    reelPosition = undefined;
+    mediaSample = undefined;
     if (!document.hidden) frame = requestAnimationFrame(tick);
   });
   frame = requestAnimationFrame(tick);

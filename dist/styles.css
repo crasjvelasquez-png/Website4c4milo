@@ -517,6 +517,7 @@ main>section#early-listen,main>section#page-links{display:none}
 @media(prefers-reduced-motion:reduce){.release-title{transition:none}}
 
 /* Hover uses half the opened panel's 60% artwork dimming. */
-.has-release-title::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;background:#000;opacity:0;pointer-events:none;transition:opacity 180ms ease-out}
-@media(min-width:761px) and (hover:hover) and (pointer:fine){.has-release-title:not(.is-open):has(.release-cover:hover)::after,.has-release-title:not(.is-open):has(.release-cover:focus-visible)::after{opacity:.3}}
-@media(prefers-reduced-motion:reduce){.has-release-title::after{transition:none}}
+.has-release-title .release-cover{position:relative}
+.has-release-title .release-cover::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;background:#000;opacity:0;pointer-events:none;transition:opacity 180ms ease-out}
+@media(min-width:761px) and (hover:hover) and (pointer:fine){.has-release-title:not(.is-open) .release-cover:hover::after,.has-release-title:not(.is-open) .release-cover:focus-visible::after{opacity:.3}}
+@media(prefers-reduced-motion:reduce){.has-release-title .release-cover::after{transition:none}}
