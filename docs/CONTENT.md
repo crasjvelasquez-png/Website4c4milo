@@ -128,7 +128,8 @@ with `npm run build`. Missing exact pairs produce build warnings and leave the
 existing streaming-service chooser available without a preview. The featured
 cassette keeps its existing audio configuration.
 
-Hover previews on desktop; click if the browser requests activation. On touch,
+Hover previews automatically on desktop, with no click-to-preview prompt. Browser
+autoplay restrictions may require an initial interaction. On touch,
 tap the cover. Enter previews and opens streaming services; Space toggles the
 preview; Escape, leaving the cover/focus area, or tapping outside pauses it.
 Positions are retained until the page session ends. Other site audio, streaming

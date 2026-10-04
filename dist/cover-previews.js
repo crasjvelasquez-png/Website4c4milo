@@ -48,10 +48,9 @@ export function mountCoverPreviews() {
         const playing = audio.play();
         playing.catch(() => {});
         // A suspended Web Audio graph can also leave play() pending forever.
-        // Without activation, offer an explicit retry instead of waiting for it.
+        // If autoplay is blocked, stay quiet and allow a later interaction to retry.
         if (context.state !== 'running' && !navigator.userActivation?.isActive) {
           pause();
-          hint('Click to preview');
           return;
         }
         await Promise.all([resumed, playing]);
@@ -59,7 +58,7 @@ export function mountCoverPreviews() {
       } catch (error) {
         if (token !== generation) return;
         pause();
-        hint(error.name === 'NotAllowedError' ? 'Click to preview' : 'Preview unavailable');
+        if (error.name !== 'NotAllowedError') hint('Preview unavailable');
       }
     }
     audio.addEventListener('playing', () => {

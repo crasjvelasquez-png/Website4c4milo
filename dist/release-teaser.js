@@ -1,4 +1,4 @@
-import { claimSiteAudio } from './site-audio.js';
+import { claimSiteAudio, allowsBackgroundAudio } from './site-audio.js';
 // Brevo signup and the public early-listen reveal. Never autoplay.
 export function validatePreviewContact(mode, value) {
   const contact = value.trim();
@@ -124,7 +124,7 @@ export function mountReleaseTeaser(section) {
     audio.pause();
     if (audio.readyState > 0) audio.currentTime = 0;
   }
-  document.addEventListener('visibilitychange', () => { if (document.hidden) stopAudio(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && !allowsBackgroundAudio()) stopAudio(); });
   window.addEventListener('pagehide', stopAudio);
   function revealRelease() {
     form.hidden = true;

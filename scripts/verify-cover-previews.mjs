@@ -136,14 +136,14 @@ try {
     await blocked.waitForTimeout(600);
     const state = await cdp.send('Runtime.evaluate', {expression:`({hint:document.querySelector('[data-preview-status]').textContent, paused:document.querySelector('[data-cover-audio]').paused, activated:navigator.userActivation.hasBeenActive})`,returnByValue:true,userGesture:false});
     assert.equal(state.result.value.activated,false);
-    assert.equal(state.result.value.hint,'Click to preview');
+    assert.equal(state.result.value.hint,'');
     assert.equal(state.result.value.paused,true);
     const first = blocked.locator('[data-preview-src]').first();
     await first.locator('.release-cover').click();
     await blocked.waitForFunction(() => !document.querySelector('[data-cover-audio]').paused);
     await blocked.mouse.move(2,2);
     await blocked.waitForFunction(() => document.querySelector('[data-cover-audio]').paused);
-    console.log('PASS real browser autoplay blocking and click fallback');
+    console.log('PASS blocked autoplay stays silent without a prompt; direct interaction still works');
   } finally { await blockedBrowser.close(); }
   assert.deepEqual(errors, []);
   if (process.env.PREVIEW_SCREENSHOT_DIR) {

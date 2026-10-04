@@ -505,3 +505,18 @@ main>section#early-listen,main>section#page-links{display:none}
 
 /* Only playback failures add a hint; cover geometry stays unchanged. */
 .preview-status:not(.sr-only){position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:2;padding:5px 9px;border-radius:4px;background:#000b;color:#fff;font-size:12px;line-height:1.3;white-space:nowrap;pointer-events:none}
+
+/* A traveling grab target must leave the central transport controls tappable. */
+.featured .audio-toggle,.featured .audio-volume-label{z-index:3}
+
+/* Single titles move from the artwork centre to above the service marks. */
+.release-title{position:absolute;z-index:2;top:50%;left:12px;right:12px;transform:translateY(-50%);opacity:0;pointer-events:none;text-align:center;color:#fff;font-size:1rem;font-weight:400;line-height:1.25;text-shadow:0 1px 12px #000,0 1px 4px #000;transition:top 320ms cubic-bezier(.22,1,.36,1),opacity 180ms ease-out}
+.has-release-title.is-open .release-title{top:22%;opacity:1}
+.has-release-title .release-services-grid{transform:translateY(18px)}
+@media(min-width:761px) and (hover:hover) and (pointer:fine){.has-release-title:has(.release-cover:hover) .release-title,.has-release-title:has(.release-cover:focus-visible) .release-title{opacity:1}}
+@media(prefers-reduced-motion:reduce){.release-title{transition:none}}
+
+/* Hover uses half the opened panel's 60% artwork dimming. */
+.has-release-title::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;background:#000;opacity:0;pointer-events:none;transition:opacity 180ms ease-out}
+@media(min-width:761px) and (hover:hover) and (pointer:fine){.has-release-title:not(.is-open):has(.release-cover:hover)::after,.has-release-title:not(.is-open):has(.release-cover:focus-visible)::after{opacity:.3}}
+@media(prefers-reduced-motion:reduce){.has-release-title::after{transition:none}}

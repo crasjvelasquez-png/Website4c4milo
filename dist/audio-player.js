@@ -1,4 +1,4 @@
-import { claimSiteAudio } from './site-audio.js';
+import { claimSiteAudio, allowsBackgroundAudio } from './site-audio.js';
 // Keep the fade and user volume independent (iOS ignores media-element volume).
 export function scheduleEnvelope(param, now, position, duration, fadeIn, fadeOut) {
   const remaining = Math.max(0, duration - position);
@@ -313,7 +313,7 @@ export function mountPlayer(root) {
   audio.addEventListener('playing', () => { status.textContent = 'Playing'; });
   audio.addEventListener('ended', () => { status.textContent = 'Finished'; render(); });
   audio.addEventListener('error', () => { exit(); status.textContent = 'Audio file unavailable. Check the local file and rebuild.'; });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) exit(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && !allowsBackgroundAudio()) exit(); });
   window.addEventListener('pagehide', exit);
   document.addEventListener('site-audio-claim', event => {
     if (event.detail !== audio) { cancelGesture(); transport.pause(); status.textContent = 'Paused'; render(); }
@@ -329,7 +329,7 @@ function mountScratchHandle(root, transport, render, status) {
   const head = root.querySelector('.tape-head-mark');
   const reels = root.querySelectorAll('.tape-reel');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let gesture, finishing = false, frame, settleFrame, keyTimer;
+  let gesture, finishing = false, frame, keyTimer, lastTick;
   let headX = 94, lastHeadGeometry;
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const drawHead = x => {
@@ -348,21 +348,9 @@ function mountScratchHandle(root, transport, render, status) {
     const points = Array.from({length:11}, (_, i) => point(x - 94 + i * 2.8));
     head.querySelector('path').setAttribute('d', points.map((p, i) => `${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' '));
   };
-  const settle = () => {
-    cancelAnimationFrame(settleFrame);
-    if (reduced.matches) { drawHead(94); return; }
-    const from = headX, start = performance.now();
-    const tick = now => {
-      const p = clamp((now - start) / 220, 0, 1);
-      drawHead(from + (94 - from) * (1 - (1 - p) ** 3));
-      if (p < 1) settleFrame = requestAnimationFrame(tick);
-    };
-    settleFrame = requestAnimationFrame(tick);
-  };
   async function begin(pointerId, x) {
     if (gesture || finishing) return;
-    cancelAnimationFrame(settleFrame);
-    const current = {pointerId, startX:x, x, origin:transport.position, position:transport.position,
+    const current = {pointerId, startX:x, x, headOrigin:headX, origin:transport.position, position:transport.position,
       lastPosition:transport.position, lastTime:performance.now(), ready:false};
     gesture = current;
     root.classList.add('is-scratching');
@@ -391,7 +379,6 @@ function mountScratchHandle(root, transport, render, status) {
     clearTimeout(keyTimer);
     if (id !== null && handle.hasPointerCapture(id)) handle.releasePointerCapture(id);
     root.classList.remove('is-scratching');
-    settle();
     try {
       await transport.endScratch(resume);
       if (resume) status.textContent = !root.querySelector('audio').paused ? 'Playing' : 'Paused';
@@ -431,17 +418,29 @@ function mountScratchHandle(root, transport, render, status) {
   });
   handle.addEventListener('blur', () => { void finish(); });
   const tick = now => {
+    const elapsedTick = lastTick === undefined ? 0 : Math.min(0.1, (now - lastTick) / 1000);
+    lastTick = now;
     if (gesture?.ready) {
       const width = tape.getBoundingClientRect().width;
-      const displacement = clamp((gesture.x - gesture.startX) * 600 / width, -58, 116);
-      const target = clamp(gesture.keyboardPosition ?? gesture.origin + displacement * width / 600 * 0.1, 0, transport.duration);
+      const displacement = (gesture.x - gesture.startX) * 600 / width;
+      const tapeLength = root.querySelector('.tape-ribbon').getTotalLength();
+      // Map one complete trip around the actual tape to two audio seconds,
+      // independent of player size or drag speed.
+      const target = clamp(gesture.keyboardPosition ?? gesture.origin + displacement / tapeLength * 2, 0, transport.duration);
       const position = gesture.pointerId === null ? gesture.lastPosition + clamp(target - gesture.lastPosition, -0.12, 0.12) : target;
       const elapsed = Math.max(0.008, (now - gesture.lastTime) / 1000);
       const velocity = (position - gesture.lastPosition) / elapsed;
       transport.moveScratch(position, velocity);
       gesture.lastPosition = position; gesture.lastTime = now;
-      drawHead(94 + displacement);
+      drawHead(gesture.headOrigin + displacement);
       render();
+    }
+    if (!gesture && !finishing && !reduced.matches && !root.querySelector('audio').paused && !handle.matches(':focus-visible')) {
+      // Keep the bump and its invisible target together: one complete tape
+      // circuit every eight seconds. Release continues from the grabbed point.
+      const length = root.querySelector('.tape-ribbon').getTotalLength();
+      headX += length * elapsedTick / 8;
+      headX = (headX - 80) % length + 80;
     }
     drawHead(headX);
     const position = transport.position;
@@ -460,7 +459,7 @@ function mountScratchHandle(root, transport, render, status) {
   frame = requestAnimationFrame(tick);
   return () => {
     void finish(false);
-    cancelAnimationFrame(settleFrame);
-    drawHead(94);
+    lastTick = undefined;
+    drawHead(headX);
   };
 }

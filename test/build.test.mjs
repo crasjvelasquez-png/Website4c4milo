@@ -116,7 +116,7 @@ test('gallery covers have five inline services while featured Querida has no pop
   const gallery = html.match(/<div class="release-covers">([\s\S]*?)<\/section>/)?.[1];
   assert.ok(gallery);
   assert.doesNotMatch(gallery,/featured-cover|Image placeholder|Release artwork/);
-  const tiles = gallery.split('<div class="release-tile" data-release-tile>').slice(1);
+  const tiles = gallery.split(/<div class="release-tile(?: has-release-title)?" data-release-tile\b[^>]*>/).slice(1);
   assert.equal(tiles.length,content.releases.length-1);
   for (const [index,tile] of tiles.entries()) {
     assert.match(tile,new RegExp(`data-inline-services="services-inline-${index+1}"`));
