@@ -1,6 +1,7 @@
 import { readFile, mkdir, writeFile, cp, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, sep } from 'node:path';
+import { matchCoverPreviews } from '../lib/cover-previews.mjs';
 import { escape as e, externalUrl, assetUrl, embedUrl, validateContent } from '../lib/content.mjs';
 
 export async function buildSite({ directory=fileURLToPath(new URL('../', import.meta.url)) } = {}) {
@@ -9,6 +10,8 @@ let noiseVideo = '';
 try { await access(`${root}public/assets/vhs-noise.mp4`); noiseVideo = '/assets/vhs-noise.mp4'; }
 catch { /* Use the still texture until a noise loop is supplied. */ }
 const c = validateContent(JSON.parse(await readFile(`${root}content.json`, 'utf8')));
+const { previews: coverPreviews, warnings: previewWarnings } = await matchCoverPreviews(c.releases, `${root}public`, c.featuredReleaseId);
+for (const warning of previewWarnings) console.warn(warning);
 const missingArtwork = new Set();
 for (const r of c.releases) if (r.artwork) {
   try { await access(`${root}public${r.artwork}`); }
@@ -42,6 +45,7 @@ function tapePlayer(r) {
   const ready = availableAudio.has(r.id);
   return `<div class="tape-player" data-audio-player data-fade-in="${r.audio.fadeIn ?? 1}" data-fade-out="${r.audio.fadeOut ?? 1.5}">
     <div class="tape-main"><span class="audio-time" role="timer" aria-label="Elapsed time: 0:00"><span data-time-minutes aria-hidden="true">0</span><span class="audio-time-colon" aria-hidden="true">:</span><span data-time-seconds aria-hidden="true">00</span></span><button class="audio-toggle" aria-label="Play ${e(r.title)}" ${ready ? '' : 'disabled'}><span data-play-symbol aria-hidden="true">▶</span></button><label class="audio-volume-label"><span class="sr-only">Volume</span><input class="audio-volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume" ${ready ? '' : 'disabled'}></label>
+      <button type="button" class="tape-head-handle" role="slider" aria-label="Scratch track: drag left to rewind" aria-description="Drag left to rewind, right to scratch forward. Arrow keys seek one second; Shift seeks five. Home and End select track boundaries." aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00" ${ready ? '' : 'disabled'}></button>
       <svg class="tape-loop" viewBox="0 0 600 140" aria-hidden="true">
         <!-- The continuous tape outline expands into the outer reel edges.
              Only the inner halves are added, so no stroke is hidden or doubled. -->
@@ -49,6 +53,7 @@ function tapePlayer(r) {
           <path class="tape-ribbon" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
           <path class="tape-travel" pathLength="1200" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
         </g>
+        <g class="tape-head-mark"><path d="M80 26 H108"/></g>
         <g class="tape-guides">
           <path class="tape-inner-rim tape-inner-rim-left" pathLength="1" d="M80 26 A44 44 0 0 1 80 114"/>
           <path class="tape-inner-rim tape-inner-rim-right" pathLength="1" d="M520 114 A44 44 0 0 1 520 26"/>
@@ -111,13 +116,79 @@ function releaseCover(r, featuredCover = false) {
   if (featuredCover) return `<span class="featured-cover">${cover}</span>`;
   const destination = (r.links ?? []).map(item => externalUrl(item.url)).find(Boolean);
   const id = inlineServicesId(r);
-  return `<div class="release-tile" data-release-tile><a class="release-cover floating-link" href="${e(destination || `#${id}`)}" data-inline-services="${id}" aria-expanded="false" aria-controls="${id}" aria-label="Show streaming services for ${e(r.title)}">${cover}</a><div class="release-services" id="${id}" role="group" aria-label="Streaming services for ${e(r.title)}" hidden><button type="button" class="release-services-close" aria-label="Close streaming services for ${e(r.title)}">×</button><div class="release-services-grid">${serviceLogoLinks(r)}</div></div></div>`;
+  const preview = coverPreviews.get(r.id);
+  const previewAttributes = preview ? ` data-preview-src="${e(preview)}"` : '';
+  const previewMarkup = preview ? `<audio data-cover-audio preload="none"></audio><span class="preview-status sr-only" data-preview-status role="status" aria-live="polite"></span>` : '';
+  const title = r.type === 'Single' && r.id !== 'querida' ? `<span class="release-title" aria-hidden="true">“${e(r.title)}”</span>` : '';
+  return `<div class="release-tile${title ? ' has-release-title' : ''}" data-release-tile${previewAttributes}><a class="release-cover floating-link" href="${e(destination || `#${id}`)}" data-inline-services="${id}" aria-expanded="false" aria-controls="${id}" aria-label="${preview ? `Preview ${e(r.title)} and show streaming services` : `Show streaming services for ${e(r.title)}`}"${preview ? ' aria-keyshortcuts="Space Enter"' : ''}>${cover}</a>${title}${previewMarkup}<div class="release-services" id="${id}" role="group" aria-label="Streaming services for ${e(r.title)}" hidden><button type="button" class="release-services-close" aria-label="Close streaming services for ${e(r.title)}">×</button><div class="release-services-grid">${serviceLogoLinks(r)}</div></div></div>`;
 }
 const featured = c.releases.find(r => r.id === c.featuredReleaseId);
 const placeholder = c.artist.placeholder || c.releases.some(r => r.placeholder) || (c.listening?.enabled && c.listening?.demo);
 const streamingLogos = c.links.filter(x => x.label !== 'TikTok' && x.label !== 'Instagram');
 const socialLogos = c.links.filter(x => x.label === 'TikTok' || x.label === 'Instagram');
 const showSignup = c.signup?.enabled === true;
+const backgroundMarkup = `${noiseVideo ? `<video class="vhs-noise-source" data-noise-video data-src="${noiseVideo}" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"></video><canvas class="vhs-noise" data-noise-canvas aria-hidden="true"></canvas>` : ''}`;
+const previewMarkup = placeholder ? `<div class="preview-note" aria-hidden="true">${noiseVideo ? '<canvas class="vhs-noise-bar" data-noise-bar></canvas>' : ''}</div>` : '';
+const footerMarkup = `<footer><span>${e(c.artist.name)}</span><a href="#main" aria-label="Back to top" title="Back to top"><span aria-hidden="true">↑</span></a></footer>`;
+const portfolioProjects = c.portfolio?.projects ?? [];
+const portfolioAssets = new Set();
+for (const project of portfolioProjects) for (const path of [project.artwork, project.audio?.before, project.audio?.after]) if (path) {
+  try { await access(`${root}public${path}`); portfolioAssets.add(path); }
+  catch { /* Missing portfolio assets keep their explicit placeholder state. */ }
+}
+function portfolioPage() {
+  const projects = portfolioProjects.map(project => ({
+    ...project,
+    artwork: portfolioAssets.has(project.artwork) ? project.artwork : '',
+    audio: {
+      before: portfolioAssets.has(project.audio?.before) ? project.audio.before : '',
+      after: portfolioAssets.has(project.audio?.after) ? project.audio.after : ''
+    }
+  }));
+  const first = projects[0];
+  const cover = (project, side) => project.artwork
+    ? `<img class="portfolio-art" data-cover-${side} src="${e(project.artwork)}" alt="${e(project.artworkAlt || `${project.title} cover`)}" width="800" height="800" decoding="async">`
+    : `<div class="portfolio-art portfolio-art-empty" data-cover-${side} role="img" aria-label="${e(project.title)} cover artwork placeholder"><span>Artwork pending</span></div>`;
+  const cards = projects.map((project, index) => `<li class="portfolio-project${index === 0 ? ' is-selected' : ''}">
+    <button class="portfolio-project-button" type="button" data-project-id="${e(project.id)}" aria-label="Load ${e(project.title)} by ${e(project.artist)}; ${e(project.contribution)}" aria-pressed="${index === 0}">
+      <span class="portfolio-thumb">${project.artwork ? `<img src="${e(project.artwork)}" alt="" width="800" height="800" loading="lazy" decoding="async">` : `<span class="portfolio-thumb-empty" aria-hidden="true"></span>`}</span>
+      <span class="portfolio-credit"><span class="portfolio-credit-title">${e(project.title)}</span><span>${e(project.artist)}</span><span>${e(project.contribution)}</span></span>
+      <span class="portfolio-tap-hint">Tap again to load</span>
+    </button>
+  </li>`).join('');
+  const data = JSON.stringify(projects).replace(/</g, '\\u003c');
+  return `<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio · ${e(c.artist.name)}</title><meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#193d00">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><script src="/motion-setup.js"></script><link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/portfolio-player.js"></script>
+</head>
+<body class="portfolio-page">
+  ${backgroundMarkup}<a class="skip-link" href="#main">Skip to content</a>
+  <main id="main" class="portfolio-main">
+    <a class="portfolio-home" href="/" aria-label="Back to c4milo home">c4milo</a>
+    <section class="portfolio-hero" id="portfolio-player" aria-labelledby="portfolio-title" data-portfolio-player>
+      <div class="portfolio-identity"><h1 id="portfolio-title">${e(first.title)}</h1><p><span data-project-artist>${e(first.artist)}</span><span aria-hidden="true"> · </span><span data-project-contribution>${e(first.contribution)}</span></p></div>
+      <div class="portfolio-comparison" data-active-side="before" aria-label="Before and after artwork">
+        <div class="portfolio-side portfolio-side-before"><span class="portfolio-side-label">Before</span>${cover(first, 'before')}</div>
+        <div class="portfolio-side portfolio-side-after"><span class="portfolio-side-label">After</span>${cover(first, 'after')}</div>
+      </div>
+      <div class="portfolio-transport">
+        <button class="portfolio-play" type="button" data-play aria-label="Play" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path data-icon-play d="m8 5 12 7-12 7Z"/><path data-icon-pause d="M8 5v14M16 5v14"/></svg></button>
+        <div class="portfolio-progress-wrap"><input data-seek type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek through the selected project" disabled><div class="portfolio-time"><span data-current-time>0:00</span><span data-duration>0:00</span></div></div>
+        <div class="portfolio-switch" role="group" aria-label="Choose mix version"><button type="button" data-side="before" aria-pressed="true">Before</button><button type="button" data-side="after" aria-pressed="false">After</button></div>
+      </div>
+      <p class="portfolio-audio-status" data-audio-status role="status" aria-live="polite"></p>
+    </section>
+    <section class="portfolio-work" aria-labelledby="portfolio-work-title"><div class="portfolio-work-heading"><h2 id="portfolio-work-title">Selected work</h2><p>15 projects</p></div><ul class="portfolio-grid">${cards}</ul></section>
+    <p class="sr-only" data-selection-status role="status" aria-live="polite"></p>
+    <script type="application/json" data-project-data>${data}</script>
+  </main>
+  ${footerMarkup}
+</body></html>`;
+}
 const html = `<!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -132,9 +203,9 @@ const html = `<!doctype html>
   <script type="module" src="/app.js"></script>
 </head>
 <body>
-  ${noiseVideo ? `<video class="vhs-noise-source" data-noise-video data-src="${noiseVideo}" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"></video><canvas class="vhs-noise" data-noise-canvas aria-hidden="true"></canvas>` : ''}
+  ${backgroundMarkup}
   <a class="skip-link" href="#main">Skip to content</a>
-  ${placeholder ? `<div class="preview-note" aria-hidden="true">${noiseVideo ? '<canvas class="vhs-noise-bar" data-noise-bar></canvas>' : ''}</div>` : ''}
+  ${previewMarkup}
   <main id="main">
     <section id="music" class="featured" aria-labelledby="featured-heading">
       ${featured ? `<div class="cassette-label">${releaseCover(featured, true)}<div class="featured-copy"><p class="section-label">${e(featured.statusLabel || `Featured release${featured.placeholder ? ' · Placeholder' : ''}`)}</p><h1 id="featured-heading">${e(featured.title)}</h1>${featured.audio ? `${featured.description ? `<p>${e(featured.description)}</p>` : ''}` : releaseBody(featured)}</div></div>${featured.audio ? tapePlayer(featured) : ''}<div class="cassette-base" aria-hidden="true"><i></i><i></i><i></i><i></i></div>` : '<h1 id="featured-heading">Music</h1><p>No releases yet.</p>'}
@@ -187,15 +258,39 @@ const html = `<!doctype html>
     ${socialLogos.length ? `<section id="socials" class="socials-section" aria-label="Social media"><div class="social-logos">${socialLogos.map(logoLink).join('')}</div></section>` : ''}
     ${c.listening?.enabled ? `<section id="listening" aria-labelledby="listening-heading"><div class="section-heading"><h2 id="listening-heading">On my stereo</h2><span id="listening-source" class="muted">${c.listening.demo ? 'Placeholder data' : 'Last.fm'}</span></div><p id="listening-status" class="muted" role="status">${c.listening.demo ? 'Listening layout preview. No account connected.' : 'Loading listening activity…'}</p><div class="listening-tabs" role="tablist" aria-label="Listening activity"><button type="button" id="tab-recent" role="tab" aria-selected="true" aria-controls="panel-recent" data-tab="recent">Recent tracks</button><button type="button" id="tab-top" role="tab" aria-selected="false" aria-controls="panel-top" tabindex="-1" data-tab="top">Top artists</button></div><div id="panel-recent" role="tabpanel" aria-labelledby="tab-recent" tabindex="0"><ol id="recent-list" class="listening-list">${(c.listening.demo ? c.listening.recent : []).map(r=>`<li><div><strong>${e(r.title)}</strong><small>${e(r.artist)}</small></div><span class="muted">${e(r.note)}</span></li>`).join('')}</ol></div><div id="panel-top" role="tabpanel" aria-labelledby="tab-top" tabindex="0" hidden><p class="period muted">${c.listening.demo ? 'Time period placeholder' : `Period: ${e(c.listening.period)}`}</p><ol id="top-list" class="listening-list">${(c.listening.demo ? c.listening.top : []).map(r=>`<li><strong>${e(r.name)}</strong><span class="muted">${e(r.note)}</span></li>`).join('')}</ol></div><noscript><p>Listening tab switching and live updates need JavaScript. Artist music and links remain available.</p></noscript></section>` : ''}
     ${c.artist.aboutEnabled !== false ? `<section id="about" class="about-section" aria-labelledby="about-heading">${image(c.artist.photo, c.artist.photoAlt, 'Artist portrait', 'portrait')}<div><h2 id="about-heading">About ${e(c.artist.name)}</h2><p>${e(c.artist.bio)}</p>${/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(c.artist.email) ? `<a class="text-link" href="mailto:${e(c.artist.email)}">Contact ${e(c.artist.name)}</a>` : '<span class="muted">Contact email placeholder</span>'}</div></section>` : ''}
+    <section id="page-links" class="page-links" aria-label="Explore"><a class="page-button" href="/portafolio.html">Portafolio</a><a class="page-button" href="/shop.html">Shop</a></section>
   </main>
-  <footer><span>${e(c.artist.name)}</span><a href="#main" aria-label="Back to top" title="Back to top"><span aria-hidden="true">↑</span></a></footer>
+  ${footerMarkup}
 </body></html>`;
 await mkdir(`${root}dist`, { recursive: true });
 await cp(`${root}public`, `${root}dist`, { recursive: true });
 await writeFile(`${root}dist/index.html`, html.replace(/^ +$/gm, ''));
+await writeFile(`${root}dist/portafolio.html`, portfolioPage().replace(/^ +$/gm, ''));
+for (const [slug, title] of [['shop', 'Shop']]) {
+  const page = `<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${e(title)} · ${e(c.artist.name)}</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script src="/motion-setup.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body class="blank-page">
+  ${backgroundMarkup}
+  <a class="skip-link" href="#main">Skip to content</a>
+  ${previewMarkup}
+  <main id="main" aria-label="${e(title)}" tabindex="-1"></main>
+  ${footerMarkup}
+</body></html>`;
+  await writeFile(`${root}dist/${slug}.html`, page.replace(/^ +$/gm, ''));
+}
 await writeFile(`${root}dist/listening-config.json`, JSON.stringify({demo:!!c.listening?.demo,period:c.listening?.period ?? '1month'}));
 await writeFile(`${root}dist/spotify-config.json`, JSON.stringify({clientId:(process.env.SPOTIFY_CLIENT_ID ?? '').trim()}));
-return { placeholder:!!placeholder, outputDirectory:`${root}dist` };
+return { previewWarnings, placeholder:!!placeholder, outputDirectory:`${root}dist` };
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
 await buildSite();
