@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { createApp } from '../server.mjs';
 
 const source = (await readFile(new URL('../public/noise-video.js',import.meta.url),'utf8')).replace('export function','function');
-function fixture({ reduced = false, reject = false, videoFrames = true, hasBar = true } = {}) {
+function fixture({ reduced = false, reject = false, videoFrames = true, hasBar = true, compact = false } = {}) {
   const video = new EventTarget();
   const classes = new Set();
   const callbacks = new Map();
@@ -36,14 +36,21 @@ function fixture({ reduced = false, reject = false, videoFrames = true, hasBar =
     delete video.cancelVideoFrameCallback;
   }
   const motion = new EventTarget();motion.matches = reduced;
+  const device = new EventTarget();device.matches = compact;
+  let intersect;
   const document = new EventTarget();
   Object.assign(document, {hidden:false,querySelector:selector => selector === '[data-noise-video]' ? video : selector === '[data-noise-bar]' ? (hasBar ? bar : null) : canvas,body:{classList:{add:c=>classes.add(c),remove:c=>classes.delete(c)}}});
-  const window = new EventTarget();Object.assign(window,{matchMedia:() => motion,innerWidth:1280,innerHeight:900,devicePixelRatio:2,
+  const window = new EventTarget();Object.assign(window,{matchMedia:query => query.includes('reduced-motion') ? motion : device,innerWidth:1280,innerHeight:900,devicePixelRatio:2,
+    IntersectionObserver:class { constructor(callback) { intersect = callback; } observe() {} },
     requestAnimationFrame:callback=>{callbacks.set(++callbackId,callback);return callbackId;},
     cancelAnimationFrame:id=>callbacks.delete(id)
   });
   runInNewContext(`${source}\nmountNoiseVideo();`, {document,window});
-  return {video,document,window,motion,classes,canvas,context,callbacks,draws,bar,barContext,barDraws};
+  const nextFrame = now => {
+    const [id,callback] = [...callbacks][0];
+    callbacks.delete(id);callback(now);
+  };
+  return {video,document,window,motion,device,classes,canvas,context,callbacks,draws,bar,barContext,barDraws,nextFrame,intersect:visible=>intersect([{isIntersecting:visible}])};
 }
 
 test('noise pauses while hidden and exited, and resumes when visible or restored',()=>{
@@ -74,6 +81,7 @@ test('video frames tile the full viewport at native scale and resize without ext
   assert.deepEqual(f.barDraws[0],[0,0,1280,40]);
   assert.equal(f.bar.height,80);
   f.window.innerWidth = 390;f.window.innerHeight = 844;
+  f.window.dispatchEvent(new Event('resize'));
   const [id,callback] = [...f.callbacks][0];
   f.callbacks.delete(id);callback();
   assert.deepEqual(f.draws.at(-1),[0,0,390,844]);
@@ -95,18 +103,54 @@ test('reduced motion avoids downloading the video and responds to preference cha
 });
 
 test('phone sizes and orientation changes keep the bar covered and cap high-density rendering',()=>{
-  const f = fixture();
+  const f = fixture({compact:true});
   for (const [width,height] of [[320,568],[390,844],[430,932],[844,390]]) {
     Object.assign(f.window,{innerWidth:width,innerHeight:height,devicePixelRatio:3});
+    f.window.dispatchEvent(new Event('resize'));
     const [id,callback] = [...f.callbacks][0];
     f.callbacks.delete(id);callback();
-    assert.equal(f.canvas.width,width * 2);
-    assert.equal(f.canvas.height,height * 2);
-    assert.equal(f.bar.width,width * 2);
-    assert.equal(f.bar.height,80);
+    assert.equal(f.canvas.width,width);
+    assert.equal(f.canvas.height,height);
+    assert.equal(f.bar.width,width);
+    assert.equal(f.bar.height,40);
     assert.deepEqual(f.barDraws.at(-1),[0,0,width,40]);
   }
   assert.equal(f.video.plays,1);
+});
+
+test('mobile grain samples 15fps and does not read bar layout during drawing',()=>{
+  const f = fixture({compact:true});
+  Object.defineProperty(f.bar,'clientHeight',{get:()=>{throw new Error('layout read during paint');}});
+  for (let i=1;i<=30;i++) f.nextFrame(i * 1000 / 30);
+  assert.equal(f.draws.length,16); // Initial still plus fifteen updates.
+  assert.equal(f.callbacks.size,1);
+  f.intersect(false);
+  const count=f.barDraws.length;
+  f.nextFrame(1100);
+  assert.equal(f.barDraws.length,count);
+  f.intersect(true);f.nextFrame(1200);
+  assert.equal(f.barDraws.length,count+1);
+});
+
+test('fallback rAF caps 120Hz drawing, changes density at breakpoints, and resumes immediately',()=>{
+  const f = fixture({videoFrames:false});
+  for (let i=1;i<=120;i++) f.nextFrame(i * 1000 / 120);
+  assert.equal(f.draws.length,31);
+  f.device.matches=true;f.device.dispatchEvent(new Event('change'));
+  f.nextFrame(1001);
+  assert.equal(f.canvas.width,1280);
+  f.document.hidden=true;f.document.dispatchEvent(new Event('visibilitychange'));
+  assert.equal(f.callbacks.size,0);
+  const count=f.draws.length;
+  f.document.hidden=false;f.document.dispatchEvent(new Event('visibilitychange'));
+  assert.equal(f.draws.length,count+1);
+  assert.equal(f.callbacks.size,1);
+});
+
+test('desktop paints every decoded frame even when video callbacks arrive unevenly',()=>{
+  const f=fixture();
+  for (const now of [31,61,99,127,166]) f.nextFrame(now);
+  assert.equal(f.draws.length,6);
 });
 
 test('older browsers use animation frames and pages without a white bar still work',()=>{

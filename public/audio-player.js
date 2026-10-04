@@ -368,7 +368,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
   const reels = root.querySelectorAll('.tape-reel');
   const audio = root.querySelector('audio');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const mobile = window.matchMedia('(max-width: 760px)');
+  const mobile = window.matchMedia('(max-width: 760px), (pointer: coarse)');
   let gesture, finishing = false, frame, keyTimer, lastTick;
   let headX = 94, lastHeadGeometry, reelPosition, lastReelTransform;
   // Measure outside the frame loop: reading layout right after the previous
@@ -441,9 +441,14 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     catch { transport.pause(); status.textContent = 'Audio could not resume. Press play to retry.'; }
     finally { finishing = false; render(); }
   }
-  handle.addEventListener('pointerenter', () => { transport.prepareScratch().catch(() => {}); });
-  handle.addEventListener('focus', () => { transport.prepareScratch().catch(() => {}); });
-  root.querySelector('.audio-toggle').addEventListener('click', () => { transport.prepareScratch().catch(() => {}); });
+  const prepareScratch = () => {
+    // The handle is unavailable on mobile: do not download, decode, and reverse
+    // the entire track just because the visitor pressed Play.
+    if (!mobile.matches) transport.prepareScratch().catch(() => {});
+  };
+  handle.addEventListener('pointerenter', prepareScratch);
+  handle.addEventListener('focus', prepareScratch);
+  root.querySelector('.audio-toggle').addEventListener('click', prepareScratch);
   handle.addEventListener('pointerdown', event => {
     if (mobile.matches || event.button !== 0 || gesture || finishing) return;
     event.preventDefault(); handle.focus({preventScroll:true});

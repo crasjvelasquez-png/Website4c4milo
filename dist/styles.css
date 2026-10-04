@@ -250,7 +250,7 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
   html.page-reveal-running main>section:focus-within,html.page-reveal-running body>footer:focus-within{opacity:1;animation:none}
 }
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){
-  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation-duration:850ms}
+  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation-duration:420ms;animation-delay:0ms}
 }
 /* Featured artwork is above the fold and can finish loading after its section
    has already faded in. Keep the same fade on the image itself so the large
@@ -498,7 +498,7 @@ main>section#early-listen,main>section#page-links{display:none}
 .featured .tape-head-handle:hover,.featured .tape-head-handle:active{background:transparent;color:#fff}
 .featured .tape-head-handle:focus-visible{outline:1px solid #ffffff80;outline-offset:-8px}
 .featured .tape-head-handle:disabled{pointer-events:none}
-@media(max-width:760px){.featured .tape-head-handle{display:none;pointer-events:none;touch-action:auto}}
+@media(max-width:760px),(pointer:coarse){.featured .tape-head-handle{display:none;pointer-events:none;touch-action:auto}}
 .featured .is-scratching .tape-head-handle{cursor:grabbing}
 .tape-head-mark{fill:none;stroke:#fff;stroke-width:2.5;pointer-events:none}
 .tape-head-mark path{transition:stroke-width 100ms ease}

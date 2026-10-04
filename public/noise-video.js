@@ -10,12 +10,31 @@ export function mountNoiseVideo() {
   // CSS pixels per tile: the supplied 640 × 360 clip stays at native scale.
   const tileWidth = 640;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const compact = window.matchMedia('(max-width: 760px), (pointer: coarse)');
+  // Grain has no fine edges to preserve at Retina resolution. Keep its native
+  // CSS-pixel scale on phones and leave rendering time for touch and playback.
+  let width, height, pixelRatio, barHeight, barVisible = true;
+  let lastPaint;
+  function measure() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    pixelRatio = compact.matches ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+    barHeight = bar?.clientHeight || 0;
+    lastPaint = undefined;
+  }
+  measure();
+  window.addEventListener('resize', measure, {passive:true});
+  compact.addEventListener('change', measure);
+  if (bar && window.IntersectionObserver) {
+    new window.IntersectionObserver(([entry]) => { barVisible = entry.isIntersecting; }).observe(bar);
+  }
   let leaving = false;
   let failed = false;
   const canPlay = () => !document.hidden && !reducedMotion.matches && !leaving && !failed;
   let frame = null;
   const videoFrames = typeof video.requestVideoFrameCallback === 'function';
   function showFallback() {
+    lastPaint = undefined;
     document.body.classList.remove('video-noise-playing');
     if (frame !== null) {
       if (videoFrames) video.cancelVideoFrameCallback(frame);
@@ -25,9 +44,6 @@ export function mountNoiseVideo() {
   }
   function paint() {
     if (!canPlay() || video.paused || !video.videoWidth || !video.videoHeight) return false;
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
     const backingWidth = Math.round(width * pixelRatio);
     const backingHeight = Math.round(height * pixelRatio);
     if (canvas.width !== backingWidth || canvas.height !== backingHeight) {
@@ -41,8 +57,7 @@ export function mountNoiseVideo() {
     context.imageSmoothingEnabled = false;
     context.fillStyle = pattern;
     context.fillRect(0, 0, width / scale, height / scale);
-    if (barContext) {
-      const barHeight = bar.clientHeight;
+    if (barContext && barVisible && barHeight > 0) {
       const backingBarHeight = Math.round(barHeight * pixelRatio);
       if (bar.width !== backingWidth || bar.height !== backingBarHeight) {
         bar.width = backingWidth;
@@ -57,10 +72,17 @@ export function mountNoiseVideo() {
     document.body.classList.add('video-noise-playing');
     return true;
   }
-  function draw() {
+  function draw(now = 0) {
     frame = null;
     if (!canPlay() || video.paused) return;
-    try { paint(); }
+    // The clip is 30fps. Sample every other source frame on phones; fallback
+    // rAF browsers must not repaint at their display's 60/120Hz refresh rate.
+    const interval = 1000 / (compact.matches ? 15 : 30);
+    try {
+      if ((videoFrames && !compact.matches) || lastPaint === undefined || now - lastPaint >= interval - 2) {
+        if (paint()) lastPaint = now;
+      }
+    }
     catch { failed = true; video.pause(); showFallback(); return; }
     frame = videoFrames ? video.requestVideoFrameCallback(draw) : window.requestAnimationFrame(draw);
   }
