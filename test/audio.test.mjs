@@ -137,3 +137,89 @@ test('all tape and reel endpoints share a radius throughout the reveal',()=>{
     assert.equal(p.right,`M520 ${bottom} A${r} ${r} 0 0 1 520 ${top}`);
   }
 });
+
+test('scratch reverses every channel of actual PCM without changing the original', async () => {
+  const {reverseTrack} = await import('../public/audio-player.js');
+  const channels = [Float32Array.from([0.1, 0.2, -0.3, 0.4]), Float32Array.from([1, 2, 3, 4])];
+  const buffer = {numberOfChannels:2, length:4, sampleRate:48000, getChannelData:i=>channels[i]};
+  const context = {createBuffer:(count,length,rate)=>{
+    assert.equal(rate,48000);
+    const data = Array.from({length:count},()=>new Float32Array(length));
+    return {getChannelData:i=>data[i]};
+  }};
+  const reverse = reverseTrack(context, buffer);
+  assert.deepEqual([...reverse.getChannelData(1)], [4,3,2,1]);
+  assert.deepEqual([...reverse.getChannelData(0)], [...channels[0]].reverse());
+  assert.deepEqual([...channels[1]], [1,2,3,4]);
+});
+
+test('scratch voice selects reverse offsets, changes pitch, fades, and stays inside the track', async () => {
+  const {createScratchVoice} = await import('../public/audio-player.js');
+  const sources=[], gains=[];
+  const context={currentTime:2,createBufferSource:()=>{
+    const source={playbackRate:parameter(),connect(){},disconnect(){},start:(...args)=>source.started=args,stop:t=>source.stopped=t};
+    sources.push(source);return source;
+  },createGain:()=>{const gain={gain:parameter(),connect(){},disconnect(){}};gains.push(gain);return gain;}};
+  const forward={duration:180}, reverse={duration:180};
+  const voice=createScratchVoice(context,{},forward,reverse);
+  voice.move(30,-2);
+  assert.equal(sources[0].buffer,reverse);
+  assert.deepEqual(sources[0].started,[2,150]);
+  assert.deepEqual(sources[0].playbackRate.calls,[['set',2,2]]);
+  assert.equal(gains[0].gain.calls[0][1],0);
+  assert.equal(gains[0].gain.calls.at(-1)[1],0);
+  voice.move(31,100);
+  assert.equal(sources[1].buffer,forward);
+  assert.equal(sources[1].playbackRate.calls[0][1],8);
+  assert.equal(sources[0].stopped,2.009);
+  voice.move(0,-1); voice.move(180,1); voice.move(30,0);
+  assert.equal(sources.length,2);
+  voice.move(179.99,2);
+  assert.ok(sources[2].stopped <= 2.006);
+  voice.stop();
+  assert.equal(gains.at(-1).gain.calls.at(-1)[1],0);
+});
+
+function scratchFixture() {
+  const f=transportFixture({startAt:3});
+  const channels=[Float32Array.from([1,2,3,4])];
+  f.audio.src='/track.mp3';
+  f.context.decodeAudioData=async()=>({numberOfChannels:1,length:4,sampleRate:1,duration:180,getChannelData:i=>channels[i]});
+  f.context.createBuffer=(count,length)=>({duration:180,getChannelData:()=>new Float32Array(length)});
+  f.context.createBufferSource=()=>({playbackRate:parameter(),connect(){},disconnect(){},start(){},stop(){}});
+  return f;
+}
+
+test('scratch release resumes only previously active playback and preserves the selected position', async t => {
+  t.mock.method(globalThis,'fetch',async()=>({ok:true,arrayBuffer:async()=>new ArrayBuffer(4)}));
+  for (const active of [false,true]) {
+    const f=scratchFixture();
+    if(active) await f.transport.play();
+    f.audio.currentTime=30;
+    assert.equal(await f.transport.beginScratch(),true);
+    assert.equal(f.audio.paused,true);
+    f.transport.moveScratch(12,-2);
+    assert.equal(f.transport.position,12);
+    await f.transport.endScratch();
+    assert.equal(f.audio.currentTime,12);
+    assert.equal(f.audio.paused,!active);
+    f.transport.stop();
+    assert.equal(f.audio.currentTime,0);
+    assert.equal(f.transport.scratching,false);
+  }
+});
+
+test('page exit during scratch decoding cannot start a late voice or resume audio', async t => {
+  let decode;
+  t.mock.method(globalThis,'fetch',async()=>({ok:true,arrayBuffer:async()=>new ArrayBuffer(4)}));
+  const f=scratchFixture();await f.transport.play();
+  const original=f.context.decodeAudioData;
+  f.context.decodeAudioData=()=>new Promise(resolve=>{decode=()=>original().then(resolve);});
+  const pending=f.transport.beginScratch();
+  await new Promise(resolve=>setTimeout(resolve,0));
+  f.transport.stop();decode();
+  assert.equal(await pending,false);
+  f.transport.moveScratch(100,-2);await f.transport.endScratch();
+  assert.equal(f.audio.paused,true);
+  assert.equal(f.audio.currentTime,0);
+});

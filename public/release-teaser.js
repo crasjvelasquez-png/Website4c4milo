@@ -1,3 +1,4 @@
+import { claimSiteAudio } from './site-audio.js';
 // Brevo signup and the public early-listen reveal. Never autoplay.
 export function validatePreviewContact(mode, value) {
   const contact = value.trim();
@@ -107,7 +108,7 @@ export function mountReleaseTeaser(section) {
   }
   toggle.addEventListener('click', async () => {
     if (!audio.paused) { audio.pause(); return; }
-    for (const other of document.querySelectorAll('audio')) if (other !== audio) other.pause();
+    claimSiteAudio(audio);
     try {
       audioStatus.textContent = '';
       await audio.play();

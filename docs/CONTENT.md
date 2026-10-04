@@ -45,6 +45,16 @@ The other releases show only square covers. Tapping CRUSH., circles or NMF blurs
 
 The array order controls the cover order, excluding the featured release. An empty `releases` array is supported, with a no-releases message. A nonempty array requires a matching featured ID. Artwork is square-cropped; portraits currently use the same square aspect ratio. Adjust `.portrait` in the stylesheet if your photo needs a different crop.
 
+## Mixing portfolio
+
+The `/portafolio.html` page reads its 15 projects from `portfolio.projects` in `content.json`. To replace a placeholder, edit its title, artist, contribution, artwork path and audio paths. Put square cover files and paired MP3s in `public/assets/`, for example:
+
+```json
+{"id":"project-01","title":"Song title","artist":"Artist name","contribution":"Mixing & Mastering","artwork":"/assets/song-cover.webp","artworkAlt":"Song title cover","placeholder":false,"audio":{"before":"/assets/song-before.mp3","after":"/assets/song-after.mp3"}}
+```
+
+Both MP3s are required to enable playback. Keep their export start, duration and loudness aligned so the synchronized comparison reflects the mix. The player decodes both versions before enabling Play; switching versions crossfades on the shared audio clock without restarting. Project changes load paused at the beginning. Rebuild with `npm run build` after content or asset changes. The first tap on a phone reveals the project credits; tap it again to load and scroll to the player.
+
 Optional `date` uses `YYYY-MM-DD` and displays a full date for the featured release. Optional `statusLabel` overrides its introductory label, such as "Out now".
 
 ## Music embeds
@@ -108,3 +118,23 @@ Every release uses five services: Spotify, YouTube Music, Pandora, Amazon Music 
 Each release's `links` object has `kind: "release"` for a verified direct destination or `kind: "search"` for a provider search. Searches are honestly named in accessible labels and hover tooltips; no extra text is displayed in the picker. Replace a search URL with a verified release URL and change its kind to `release` when supplied. Querida is currently pre-release: only its Apple Music destination is verified. The three older releases have direct Spotify, Apple Music, Amazon Music and Pandora links; YouTube Music links search for the artist and release.
 
 Querida's nonmodal dialogue opens by cover tap or Enter and sits above the cover on desktop, below it on mobile (up to 760px). The other three covers reveal inline logo choices over the blurred cover, with 44px tap targets and three logos above two. A close control, Escape or an outside tap closes them; keyboard activation focuses the first service, and closing with the control or Escape returns focus to the cover. At widths up to 560px, gallery covers use one column so all five buttons remain tappable. Without JavaScript, covers follow their first configured streaming URL directly. No music autoplays when choosing a service.
+
+### Singles cover previews
+
+Past singles keep their optimized display artwork. To enable a cover preview,
+place the original PNG and MP3 with **exactly the same case-sensitive stem** in
+that artwork's asset directory: `crush.png` + `crush.mp3`, for example. Rebuild
+with `npm run build`. Missing exact pairs produce build warnings and leave the
+existing streaming-service chooser available without a preview. The featured
+cassette keeps its existing audio configuration.
+
+Hover previews on desktop; click if the browser requests activation. On touch,
+tap the cover. Enter previews and opens streaming services; Space toggles the
+preview; Escape, leaving the cover/focus area, or tapping outside pauses it.
+Positions are retained until the page session ends. Other site audio, streaming
+links, tab hiding, window blur, and page exit interrupt playback.
+
+`node --test test/cover-previews.test.mjs` checks exact filename matching.
+`scripts/verify-cover-previews.mjs` runs optional Chrome/Playwright interaction
+checks using temporary audio fixtures; its header documents the runtime paths.
+Fixtures never become published singles audio.

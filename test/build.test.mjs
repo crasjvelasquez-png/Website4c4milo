@@ -141,6 +141,46 @@ test('hidden signup omits the early-listen box while keeping page spacing',async
   assert.match(html,/id="releases"/);
 }));
 
+test('portfolio builds a 15-project grid and leaves incomplete paired audio disabled',async()=>fixture(async({directory})=>{
+  await buildSite({directory});
+  const html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
+  assert.equal((html.match(/class="portfolio-project(?: is-selected)?"/g) ?? []).length,15);
+  assert.match(html,/data-active-side="before"/);
+  assert.match(html,/data-side="before" aria-pressed="true"/);
+  assert.match(html,/data-side="after" aria-pressed="false"/);
+  assert.match(html,/data-play aria-label="Play" disabled/);
+  assert.match(html,/<p class="portfolio-audio-status" data-audio-status role="status" aria-live="polite"><\/p>/);
+  assert.doesNotMatch(html,/Audio pending/);
+  assert.match(html,/portfolio-player\.js/);
+  assert.match(html,/Project 01/);
+}));
+
+test('portfolio audio is enabled only after both configured MP3s exist and content stays escaped',async()=>fixture(async({directory,content,save})=>{
+  content.portfolio.projects[0].title = '<Song>';
+  content.portfolio.projects[0].audio = {before:'/assets/before.mp3',after:'/assets/after.mp3'};
+  await save();
+  await buildSite({directory});
+  let html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
+  assert.doesNotMatch(html,/Audio pending/);
+  await writeFile(join(directory,'public/assets/before.mp3'),'before');
+  await writeFile(join(directory,'public/assets/after.mp3'),'after');
+  await buildSite({directory});
+  html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
+  assert.match(html,/&lt;Song&gt;/);
+  assert.match(html,/"before":"\/assets\/before\.mp3","after":"\/assets\/after\.mp3"/);
+  assert.match(html,/data-play aria-label="Play" disabled/);
+  assert.equal(await readFile(join(directory,'dist/assets/before.mp3'),'utf8'),'before');
+}));
+
+test('portfolio requires exactly 15 uniquely identified projects and MP3 tracks',()=>{
+  const content = structuredClone(baseline);
+  content.portfolio = {projects:[]};
+  assert.throws(()=>validateContent(content),/exactly 15 projects/);
+  content.portfolio.projects = Array.from({length:15},(_,i)=>({id:`p${i}`,title:`P${i}`,artist:'Artist',contribution:'Mixing',artwork:'',audio:{before:'',after:''}}));
+  content.portfolio.projects[1].audio.before = '/assets/track.wav';
+  assert.throws(()=>validateContent(content),/needs a local MP3/);
+});
+
 test('secret release enables playback and a local MP3 download only when its file exists',async()=>fixture(async({directory,content,save})=>{
   content.signup = {enabled:true};
   content.upcomingRelease = {audio:'/assets/secret-test.mp3',cover:''};

@@ -19,6 +19,7 @@
     <section id="music" class="featured" aria-labelledby="featured-heading">
       <div class="cassette-label"><span class="featured-cover"><img class="artwork " src="/assets/querida.webp" alt="" width="800" height="800" loading="eager" fetchpriority="high" decoding="async" onload="this.classList.add('is-loaded')" onerror="this.classList.add('is-loaded')"></span><div class="featured-copy"><p class="section-label">Out now</p><h1 id="featured-heading">Querida</h1></div></div><div class="tape-player" data-audio-player data-fade-in="1" data-fade-out="1.5">
     <div class="tape-main"><span class="audio-time" role="timer" aria-label="Elapsed time: 0:00"><span data-time-minutes aria-hidden="true">0</span><span class="audio-time-colon" aria-hidden="true">:</span><span data-time-seconds aria-hidden="true">00</span></span><button class="audio-toggle" aria-label="Play Querida" ><span data-play-symbol aria-hidden="true">▶</span></button><label class="audio-volume-label"><span class="sr-only">Volume</span><input class="audio-volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume" ></label>
+      <button type="button" class="tape-head-handle" role="slider" aria-label="Scratch track: drag left to rewind" aria-description="Drag left to rewind, right to scratch forward. Arrow keys seek one second; Shift seeks five. Home and End select track boundaries." aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00" ></button>
       <svg class="tape-loop" viewBox="0 0 600 140" aria-hidden="true">
         <!-- The continuous tape outline expands into the outer reel edges.
              Only the inner halves are added, so no stroke is hidden or doubled. -->
@@ -26,6 +27,7 @@
           <path class="tape-ribbon" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
           <path class="tape-travel" pathLength="1200" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
         </g>
+        <g class="tape-head-mark"><path d="M80 26 H108"/></g>
         <g class="tape-guides">
           <path class="tape-inner-rim tape-inner-rim-left" pathLength="1" d="M80 26 A44 44 0 0 1 80 114"/>
           <path class="tape-inner-rim tape-inner-rim-right" pathLength="1" d="M520 114 A44 44 0 0 1 520 26"/>
@@ -87,6 +89,7 @@
     <section id="socials" class="socials-section" aria-label="Social media"><div class="social-logos"><a class="platform-logo floating-link" href="https://www.tiktok.com/@allthingsc4milo" aria-label="TikTok (opens in a new tab)" target="_blank" rel="noopener noreferrer"><img src="/assets/logos/tiktok.svg" alt="" width="32" height="32"></a><a class="platform-logo floating-link" href="https://www.instagram.com/allthingsc4milo/" aria-label="Instagram (opens in a new tab)" target="_blank" rel="noopener noreferrer"><img src="/assets/logos/instagram.svg" alt="" width="32" height="32"></a></div></section>
 
 
+    <section id="page-links" class="page-links" aria-label="Explore"><a class="page-button" href="/portafolio.html">Portafolio</a><a class="page-button" href="/shop.html">Shop</a></section>
   </main>
   <footer><span>c4milo</span><a href="#main" aria-label="Back to top" title="Back to top"><span aria-hidden="true">↑</span></a></footer>
 </body></html>

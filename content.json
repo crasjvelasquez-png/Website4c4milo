@@ -9,6 +9,25 @@
     "aboutEnabled": false
   },
   "featuredReleaseId": "querida",
+  "portfolio": {
+    "projects": [
+      {"id":"project-01","title":"Project 01","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-02","title":"Project 02","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-03","title":"Project 03","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-04","title":"Project 04","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-05","title":"Project 05","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-06","title":"Project 06","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-07","title":"Project 07","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-08","title":"Project 08","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-09","title":"Project 09","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-10","title":"Project 10","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-11","title":"Project 11","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-12","title":"Project 12","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-13","title":"Project 13","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-14","title":"Project 14","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
+      {"id":"project-15","title":"Project 15","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}}
+    ]
+  },
   "signup": {
     "enabled": true
   },

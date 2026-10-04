@@ -1,7 +1,11 @@
+import { mountSiteAudio } from './site-audio.js';
+import { mountCoverPreviews } from './cover-previews.js';
 import { mountReleaseTeaser } from './release-teaser.js';
 import { mountPlayer } from './audio-player.js';
 import { mountSpotifySave } from './spotify-save.js';
 import { mountNoiseVideo } from './noise-video.js';
+mountSiteAudio();
+mountCoverPreviews();
 mountNoiseVideo();
 document.documentElement.classList.remove('no-js');
 // Cached featured artwork may already be complete before its load event runs.
