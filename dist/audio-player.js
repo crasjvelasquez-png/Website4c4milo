@@ -394,9 +394,16 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     }
     headPath.setAttribute('d', d);
   };
-  reveal.onDraw = () => drawHead(headX);
+  reveal.onDraw = () => { drawHead(headX); startTick(); };
+  const startTick = () => {
+    if (!frame && !document.hidden) {
+      lastTick = undefined;
+      frame = requestAnimationFrame(tick);
+    }
+  };
   async function begin(pointerId, x, y = 0) {
     if (gesture || finishing) return;
+    startTick();
     const current = {pointerId, x, y, lastX:x, lastY:y, travel:0, headOrigin:headX, origin:transport.position, position:transport.position,
       lastPosition:transport.position, lastTime:performance.now(), ready:false};
     gesture = current;
@@ -539,18 +546,33 @@ function mountScratchHandle(root, transport, render, status, reveal) {
         for (const reel of reels) reel.style.transform = transform;
       }
     }
-    if (!document.hidden) frame = requestAnimationFrame(tick);
+    const shouldAnimate = !document.hidden && (gesture !== undefined || finishing || (!audio.paused && !audio.ended));
+    if (shouldAnimate) {
+      frame = requestAnimationFrame(tick);
+    } else {
+      frame = undefined;
+      lastTick = undefined;
+      mediaSample = undefined;
+    }
   };
+  audio.addEventListener('play', startTick);
+  audio.addEventListener('playing', startTick);
+  audio.addEventListener('pause', () => { lastTick = undefined; });
   document.addEventListener('visibilitychange', () => {
     cancelAnimationFrame(frame);
-    // Resume from the media clock instead of a stale frame timestamp.
+    frame = undefined;
     lastTick = undefined;
     reelPosition = undefined;
     mediaSample = undefined;
-    if (!document.hidden) frame = requestAnimationFrame(tick);
+    if (!document.hidden && (gesture !== undefined || finishing || (!audio.paused && !audio.ended))) {
+      startTick();
+    }
   });
+  // Initial frame to render the handle and head path at starting position
   frame = requestAnimationFrame(tick);
   return () => {
+    cancelAnimationFrame(frame);
+    frame = undefined;
     void finish(false);
     lastTick = undefined;
     drawHead(headX);

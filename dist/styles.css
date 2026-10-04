@@ -58,14 +58,14 @@ body::before,body::after{
 }
 body::before{
   opacity:.025;
-  animation:green-pulse-a 72s ease-in-out infinite,ocean-drift-a 296s ease-in-out infinite;
+  animation:green-pulse-a 36s ease-in-out infinite,ocean-drift-a 148s ease-in-out infinite;
 }
 body::after{
   background-image:url("/assets/ocean-glow-b.png");
   background-position:center;
   opacity:.015;
   transform:rotate(180deg);
-  animation:green-pulse-b 104s ease-in-out infinite,ocean-drift-b 424s ease-in-out infinite;
+  animation:green-pulse-b 52s ease-in-out infinite,ocean-drift-b 212s ease-in-out infinite;
 }
 @keyframes green-pulse-a{
   0%,100%{opacity:.025}
@@ -129,7 +129,7 @@ main>section#links{margin-top:0}
 .tape-guides{fill:none;stroke:#fff;stroke-width:1}.tape-guides circle:nth-child(n+3){fill:#fff;stroke:none}.tape-heads{fill:none;stroke:#fff;stroke-width:2}
 /* Match clockwise reel rotation to the expanded clockwise tape loop:
    (2 * PI * 48) / ((880 + 2 * PI * 48) / 5) = 1.276s per revolution. */
-.tape-reel{transform-box:view-box;transform-origin:var(--reel-x) var(--reel-y);animation:tape-reel-turn 1.276s linear infinite;animation-play-state:paused}
+.tape-reel{transform-box:view-box;transform-origin:var(--reel-x) var(--reel-y);animation:tape-reel-turn 1.276s linear infinite;animation-play-state:paused;will-change:transform}
 .tape-reel .tape-hub{fill:#fff;stroke:none}
 .is-playing .tape-travel,.is-playing .tape-reel{animation-play-state:running}
 .tape-readout{display:flex;align-items:center;margin-top:10px;gap:12px}
@@ -243,34 +243,34 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 @media(prefers-reduced-motion:no-preference){
   html.page-reveal-preparing main>section,html.page-reveal-preparing body>footer,
   html.page-reveal-running main>section:not(.is-page-revealed),html.page-reveal-running body>footer:not(.is-page-revealed){opacity:0}
-  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation:page-fade-in 1.4s ease-out var(--reveal-delay,0ms) backwards}
+  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation:page-fade-in 700ms ease-out var(--reveal-delay,0ms) backwards}
   html.page-reveal-preparing main>section:focus-within,html.page-reveal-preparing body>footer:focus-within,
   html.page-reveal-running main>section:focus-within,html.page-reveal-running body>footer:focus-within{opacity:1;animation:none}
 }
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){
-  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation-duration:1.68s}
+  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation-duration:850ms}
 }
 /* Featured artwork is above the fold and can finish loading after its section
    has already faded in. Keep the same fade on the image itself so the large
    cover never pops in abruptly on mobile or desktop. */
 @media(prefers-reduced-motion:no-preference){
-  html:not(.no-js) .featured-cover img{opacity:0;transition:opacity 1.4s ease-out}
+  html:not(.no-js) .featured-cover img{opacity:0;transition:opacity 700ms ease-out}
   html:not(.no-js) .featured-cover img.is-loaded{opacity:1}
 }
 @media(max-width:760px) and (prefers-reduced-motion:no-preference){
-  html:not(.no-js) .featured-cover img{transition-duration:1.68s}
+  html:not(.no-js) .featured-cover img{transition-duration:850ms}
 }
 .early-listen-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;width:100%;padding:16px 24px;border:1px solid color-mix(in srgb,var(--ink),transparent 54%);border-radius:14px;background:color-mix(in srgb,var(--bg),var(--ink) 3%)}
 .early-listen-invitation{grid-column:1;grid-row:1}
 .upcoming-preview{display:grid;grid-template-columns:64px minmax(0,1fr);grid-column:1;grid-row:2;align-items:center;gap:16px;min-width:0;min-height:88px;z-index:0;pointer-events:none}
 .upcoming-cover{width:64px;aspect-ratio:1;background:color-mix(in srgb,var(--bg),var(--ink) 8%);border-radius:var(--cover-radius-sm,10px);overflow:hidden}
 .early-listen-copy{position:relative;grid-column:1;grid-row:2;z-index:1;width:100%;min-width:0}
-.upcoming-identity{opacity:0;filter:blur(9px);user-select:none;pointer-events:none;transition:opacity 2s ease,filter 2s ease-out}
+.upcoming-identity{opacity:0;filter:blur(9px);user-select:none;pointer-events:none;transition:opacity 700ms ease,filter 700ms ease-out}
 .upcoming-title{font:400 1.25rem/1.2 Georgia,"Times New Roman",serif;letter-spacing:0;margin:0;overflow-wrap:anywhere;text-wrap:pretty}
 .upcoming-credit{font-size:.6875rem;line-height:1.4;color:var(--muted);margin:4px 0 0}
 .is-revealed .upcoming-identity{opacity:1;filter:none;user-select:auto;pointer-events:auto}
-.early-listen-invitation{font-size:.8125rem;line-height:1.5;margin:0;white-space:nowrap;transition:opacity 2s ease,visibility 2s}
-.is-revealed .early-listen-invitation{opacity:0;visibility:hidden;transition:opacity 2s ease,visibility 0s linear 2s}
+.early-listen-invitation{font-size:.8125rem;line-height:1.5;margin:0;white-space:nowrap;transition:opacity 700ms ease,visibility 700ms}
+.is-revealed .early-listen-invitation{opacity:0;visibility:hidden;transition:opacity 700ms ease,visibility 0s linear 700ms}
 .signup-entry{display:flex;align-items:center;gap:10px;width:100%}
 .signup-method{display:flex;align-items:center;gap:5px;flex:0 0 auto}
 .signup-method button{display:grid;place-items:center;width:36px;height:36px;padding:0;border:1px solid color-mix(in srgb,var(--ink),transparent 60%);border-radius:8px;background:transparent;color:var(--ink)}
@@ -376,9 +376,9 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .portrait{border-radius:var(--cover-radius,14px)}
 .featured-cover .artwork,.release-cover .artwork{border-radius:inherit}
 .cassette-label .featured-cover{border-radius:var(--cover-radius-sm,10px)}
-.release-tile.is-open .release-services{opacity:1;transition-duration:800ms}
-.release-services-grid .platform-logo{opacity:0;transform:translateY(5px);transition:opacity 600ms ease-out,transform 700ms cubic-bezier(.22,1,.36,1)}
-.release-tile.is-open .release-services-grid .platform-logo{opacity:1;transform:none;transition-duration:800ms,900ms;transition-delay:var(--service-delay,0ms)}
+.release-tile.is-open .release-services{opacity:1;transition-duration:240ms}
+.release-services-grid .platform-logo{opacity:0;transform:translateY(5px);transition:opacity 140ms ease-out,transform 180ms cubic-bezier(.22,1,.36,1)}
+.release-tile.is-open .release-services-grid .platform-logo{opacity:1;transform:none;transition-duration:200ms,240ms;transition-delay:var(--service-delay,0ms)}
 .release-services-grid .platform-logo:nth-child(2){--service-delay:55ms}
 /* 4 sits bottom-left, visually before top-right 3 on the diagonal. */
 .release-services-grid .platform-logo:nth-child(4){--service-delay:110ms}
@@ -389,6 +389,7 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 }
 
 @media(min-width:761px){body{zoom:1.3}}
+@media(max-width:760px){body{zoom:1.2}}
 
 /* Bottom navigation stays within the catalogue's outer artwork edges. */
 main>section.page-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;max-width:calc(660px + clamp(24px,4vw,48px) + clamp(24px,4vw,48px));margin:64px auto 0}
@@ -397,7 +398,7 @@ main>section.page-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr
 .blank-page{min-height:calc(100dvh / 1.3);display:flex;flex-direction:column}
 .blank-page main{flex:1}
 .blank-page footer{flex-shrink:0}
-@media(max-width:760px){main>section.page-links{grid-template-columns:1fr;max-width:464px;gap:16px;margin-top:48px}.blank-page{min-height:100dvh}}
+@media(max-width:760px){main>section.page-links{grid-template-columns:1fr;max-width:464px;gap:16px;margin-top:48px}.blank-page{min-height:calc(100dvh / 1.2)}}
 @media(max-width:560px){main>section.page-links{max-width:220px}}
 @media(prefers-reduced-motion:reduce){.page-button{transition:none}}
 
