@@ -108,19 +108,19 @@
           "kind": "release"
         },
         {
-          "label": "Pandora",
-          "url": "https://www.pandora.com/TR:188510726",
-          "kind": "release"
-        },
-        {
-          "label": "Tidal",
-          "url": "https://tidal.com/track/488930554/u",
+          "label": "Amazon Music",
+          "url": "https://music.amazon.com/albums/B0GG932N39?trackAsin=B0GG8Q4NWR",
           "kind": "release"
         },
         {
           "label": "YouTube Music",
           "url": "https://music.youtube.com/search?q=c4milo%20CRUSH.",
           "kind": "search"
+        },
+        {
+          "label": "Tidal",
+          "url": "https://tidal.com/track/488930554/u",
+          "kind": "release"
         }
       ],
       "embed": {
@@ -151,19 +151,19 @@
           "kind": "release"
         },
         {
-          "label": "Pandora",
-          "url": "https://www.pandora.com/TR:173129757",
-          "kind": "release"
-        },
-        {
-          "label": "Tidal",
-          "url": "https://tidal.com/track/460897420/u",
+          "label": "Amazon Music",
+          "url": "https://music.amazon.com/albums/B0FR8LYVWK?trackAsin=B0FR8RWDJP",
           "kind": "release"
         },
         {
           "label": "YouTube Music",
           "url": "https://music.youtube.com/search?q=c4milo%20circles",
           "kind": "search"
+        },
+        {
+          "label": "Tidal",
+          "url": "https://tidal.com/track/460897420/u",
+          "kind": "release"
         }
       ],
       "embed": {
@@ -194,19 +194,19 @@
           "kind": "release"
         },
         {
-          "label": "Pandora",
-          "url": "https://www.pandora.com/AL:45693699",
-          "kind": "release"
-        },
-        {
-          "label": "Tidal",
-          "url": "https://tidal.com/track/422741086/u",
+          "label": "Amazon Music",
+          "url": "https://music.amazon.com/albums/B0DZTWTT2Y",
           "kind": "release"
         },
         {
           "label": "YouTube Music",
           "url": "https://music.youtube.com/search?q=c4milo%20NMF",
           "kind": "search"
+        },
+        {
+          "label": "Tidal",
+          "url": "https://tidal.com/track/422741086/u",
+          "kind": "release"
         }
       ],
       "embed": {

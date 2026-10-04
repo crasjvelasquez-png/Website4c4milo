@@ -101,7 +101,7 @@ function player(release) {
   return src ? `<div class="player-slot"><button type="button" class="load-player" data-embed="${e(src)}" data-provider="${e(release.embed.provider)}" data-title="${e(release.title)}">Load ${e(release.embed.provider)} player</button><p class="muted">Loads an external player when you choose. Playback stays under your control.</p></div>` : '<div class="player-placeholder"><span>Music player</span><small>Embed placeholder · Spotify / SoundCloud / YouTube</small></div>';
 }
 function releaseBody(r) { return `${r.description ? `<p>${e(r.description)}</p>` : ''}<div class="release-links">${(r.links ?? []).map(x => link(x)).join('')}</div>${r.audio ? '' : player(r)}`; }
-const streamingServices = ['Spotify', 'Apple Music', 'Pandora', 'Tidal', 'YouTube Music'];
+const streamingServices = ['Spotify', 'Apple Music', 'Amazon Music', 'YouTube Music', 'Tidal'];
 function inlineServicesId(r) { return `services-inline-${c.releases.indexOf(r)}`; }
 function serviceLogoLinks(r) {
   return streamingServices.map(label => {

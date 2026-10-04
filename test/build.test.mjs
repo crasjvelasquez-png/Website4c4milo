@@ -122,7 +122,7 @@ test('gallery covers have five inline services while featured Querida has no pop
     assert.match(tile,new RegExp(`data-inline-services="services-inline-${index+1}"`));
     assert.match(tile,new RegExp(`class="release-services" id="services-inline-${index+1}"`));
     assert.equal((tile.match(/<a class="platform-logo/g) ?? []).length,5);
-    for (const name of ['spotify','applemusic','pandora','tidal','youtubemusic']) assert.ok(tile.includes(`/logos/${name}.svg`));
+    for (const name of ['spotify','applemusic','amazonmusic','youtubemusic','tidal']) assert.ok(tile.includes(`/logos/${name}.svg`));
   }
   assert.doesNotMatch(gallery,/<img[^>]*alt="[^"\s]+/);
   assert.match(html,/<h1 id="featured-heading">Querida &lt;special&gt;<\/h1>/);
