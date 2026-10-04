@@ -368,6 +368,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
   const reels = root.querySelectorAll('.tape-reel');
   const audio = root.querySelector('audio');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = window.matchMedia('(max-width: 760px)');
   let gesture, finishing = false, frame, keyTimer, lastTick;
   let headX = 94, lastHeadGeometry, reelPosition, lastReelTransform;
   // Measure outside the frame loop: reading layout right after the previous
@@ -402,7 +403,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     }
   };
   async function begin(pointerId, x, y = 0) {
-    if (gesture || finishing) return;
+    if (mobile.matches || gesture || finishing) return;
     startTick();
     const current = {pointerId, x, y, lastX:x, lastY:y, travel:0, headOrigin:headX, origin:transport.position, position:transport.position,
       lastPosition:transport.position, lastTime:performance.now(), ready:false};
@@ -444,7 +445,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
   handle.addEventListener('focus', () => { transport.prepareScratch().catch(() => {}); });
   root.querySelector('.audio-toggle').addEventListener('click', () => { transport.prepareScratch().catch(() => {}); });
   handle.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || gesture || finishing) return;
+    if (mobile.matches || event.button !== 0 || gesture || finishing) return;
     event.preventDefault(); handle.focus({preventScroll:true});
     handle.setPointerCapture(event.pointerId);
     measure();
@@ -459,6 +460,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     });
   }
   handle.addEventListener('keydown', event => {
+    if (mobile.matches) return;
     if (!['ArrowLeft','ArrowRight','Home','End','Escape'].includes(event.key)) return;
     event.preventDefault();
     if (event.key === 'Escape') { void finish(); return; }
@@ -472,6 +474,12 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     if (gesture.ready) keyTimer = setTimeout(() => { void finish(); }, 180);
   });
   handle.addEventListener('blur', () => { void finish(); });
+  const syncMobileHandle = () => {
+    handle.inert = mobile.matches;
+    if (mobile.matches) void finish();
+  };
+  mobile.addEventListener('change', syncMobileHandle);
+  syncMobileHandle();
   // audio.currentTime advances in coarse steps (one audio callback, or up to
   // 250 ms in some browsers), so reels driven by it directly stutter. Advance
   // a frame clock instead and discipline it toward the media clock, estimated

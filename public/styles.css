@@ -123,13 +123,15 @@ main>section#links{margin-top:0}
 .tape-player{--reel-reveal-duration:480ms;--reel-reveal-easing:cubic-bezier(.22,1,.36,1)}
 .tape-inner-rim{stroke-dasharray:1 1;stroke-dashoffset:0;transition:stroke-dashoffset var(--reel-reveal-duration) var(--reel-reveal-easing)}
 .player-reveal-ready #music .tape-inner-rim,.progressive-player:not(.is-playing) .tape-inner-rim{stroke-dashoffset:1}
-.tape-reel-reveal{clip-path:circle(49px at var(--reel-x) var(--reel-y)) view-box;transition:clip-path var(--reel-reveal-duration) var(--reel-reveal-easing)}
-.player-reveal-ready #music .tape-reel-reveal,.progressive-player:not(.is-playing) .tape-reel-reveal{clip-path:circle(0px at var(--reel-x) var(--reel-y)) view-box}
+/* Local SVG coordinates keep Safari's reveal and rotation centered on each hub.
+   Avoid basic-shape clip paths on transformed SVG groups on iOS. */
+.tape-reel-reveal{transform-box:view-box;transform-origin:0 0;transform:scale(1);opacity:1;transition:transform var(--reel-reveal-duration) var(--reel-reveal-easing),opacity var(--reel-reveal-duration) var(--reel-reveal-easing)}
+.player-reveal-ready #music .tape-reel-reveal,.progressive-player:not(.is-playing) .tape-reel-reveal{transform:scale(0);opacity:0}
 @media(prefers-reduced-motion:reduce){.tape-reel-reveal,.tape-ribbon,.tape-travel,.tape-inner-rim{transition:none}}
 .tape-guides{fill:none;stroke:#fff;stroke-width:1}.tape-guides circle:nth-child(n+3){fill:#fff;stroke:none}.tape-heads{fill:none;stroke:#fff;stroke-width:2}
 /* Match clockwise reel rotation to the expanded clockwise tape loop:
    (2 * PI * 48) / ((880 + 2 * PI * 48) / 5) = 1.276s per revolution. */
-.tape-reel{transform-box:view-box;transform-origin:var(--reel-x) var(--reel-y);animation:tape-reel-turn 1.276s linear infinite;animation-play-state:paused;will-change:transform}
+.tape-reel{transform-box:view-box;transform-origin:0 0;animation:tape-reel-turn 1.276s linear infinite;animation-play-state:paused}
 .tape-reel .tape-hub{fill:#fff;stroke:none}
 .is-playing .tape-travel,.is-playing .tape-reel{animation-play-state:running}
 .tape-readout{display:flex;align-items:center;margin-top:10px;gap:12px}
@@ -496,6 +498,7 @@ main>section#early-listen,main>section#page-links{display:none}
 .featured .tape-head-handle:hover,.featured .tape-head-handle:active{background:transparent;color:#fff}
 .featured .tape-head-handle:focus-visible{outline:1px solid #ffffff80;outline-offset:-8px}
 .featured .tape-head-handle:disabled{pointer-events:none}
+@media(max-width:760px){.featured .tape-head-handle{display:none;pointer-events:none;touch-action:auto}}
 .featured .is-scratching .tape-head-handle{cursor:grabbing}
 .tape-head-mark{fill:none;stroke:#fff;stroke-width:2.5;pointer-events:none}
 .tape-head-mark path{transition:stroke-width 100ms ease}
