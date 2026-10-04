@@ -395,9 +395,9 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     headPath.setAttribute('d', d);
   };
   reveal.onDraw = () => drawHead(headX);
-  async function begin(pointerId, x) {
+  async function begin(pointerId, x, y = 0) {
     if (gesture || finishing) return;
-    const current = {pointerId, startX:x, x, headOrigin:headX, origin:transport.position, position:transport.position,
+    const current = {pointerId, x, y, lastX:x, lastY:y, travel:0, headOrigin:headX, origin:transport.position, position:transport.position,
       lastPosition:transport.position, lastTime:performance.now(), ready:false};
     gesture = current;
     root.classList.add('is-scratching');
@@ -441,10 +441,10 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     event.preventDefault(); handle.focus({preventScroll:true});
     handle.setPointerCapture(event.pointerId);
     measure();
-    void begin(event.pointerId, event.clientX);
+    void begin(event.pointerId, event.clientX, event.clientY);
   });
   handle.addEventListener('pointermove', event => {
-    if (gesture?.pointerId === event.pointerId) gesture.x = event.clientX;
+    if (gesture?.pointerId === event.pointerId) { gesture.x = event.clientX; gesture.y = event.clientY; }
   });
   for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) {
     handle.addEventListener(name, event => {
@@ -491,7 +491,22 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     lastTick = now;
     const length = tapeLength(reveal.radius());
     if (gesture?.ready) {
-      const displacement = (gesture.x - gesture.startX) * 600 / Math.max(1, tapeWidth);
+      // The tape runs clockwise: rightward on top, down the right reel,
+      // leftward on the bottom, and up the left reel. Project pointer motion
+      // onto the tape direction under the bump, in small steps so a fast drag
+      // still turns the corners, so the bump always follows the pointer.
+      const scale = 600 / Math.max(1, tapeWidth), radius = reveal.radius();
+      let dx = (gesture.x - gesture.lastX) * scale, dy = (gesture.y - gesture.lastY) * scale;
+      gesture.lastX = gesture.x; gesture.lastY = gesture.y;
+      const steps = Math.ceil(Math.hypot(dx, dy) / 2);
+      dx /= steps || 1; dy /= steps || 1;
+      for (let i = 0; i < steps; i++) {
+        const at = gesture.headOrigin + gesture.travel - 80;
+        const a = tapePoint(radius, at - 1), b = tapePoint(radius, at + 1);
+        const tx = b.x - a.x, ty = b.y - a.y, norm = Math.hypot(tx, ty) || 1;
+        gesture.travel += (dx * tx + dy * ty) / norm;
+      }
+      const displacement = gesture.travel;
       // Map one complete trip around the actual tape to two audio seconds,
       // independent of player size or drag speed.
       const target = clamp(gesture.keyboardPosition ?? gesture.origin + displacement / length * 2, 0, transport.duration);
