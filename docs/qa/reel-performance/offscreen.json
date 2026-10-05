@@ -1,0 +1,14 @@
+[
+  {
+    "browser": "chromium",
+    "offscreenReelsStopped": true,
+    "audioContinued": true,
+    "reelsResumed": true
+  },
+  {
+    "browser": "webkit",
+    "offscreenReelsStopped": true,
+    "audioContinued": true,
+    "reelsResumed": true
+  }
+]

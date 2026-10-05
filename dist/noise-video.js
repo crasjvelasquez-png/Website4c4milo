@@ -10,27 +10,26 @@ export function mountNoiseVideo() {
   // CSS pixels per tile: the supplied 640 × 360 clip stays at native scale.
   const tileWidth = 640;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const compact = window.matchMedia('(max-width: 760px), (pointer: coarse)');
-  // Grain has no fine edges to preserve at Retina resolution. Keep its native
-  // CSS-pixel scale on phones and leave rendering time for touch and playback.
+  // Grain has no fine edges to preserve at Retina resolution. Use CSS pixels
+  // on every screen so decoration leaves rendering time for the player.
   let width, height, pixelRatio, barHeight, barVisible = true;
   let lastPaint;
   function measure() {
     width = window.innerWidth;
     height = window.innerHeight;
-    pixelRatio = compact.matches ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+    pixelRatio = 1;
     barHeight = bar?.clientHeight || 0;
     lastPaint = undefined;
   }
   measure();
   window.addEventListener('resize', measure, {passive:true});
-  compact.addEventListener('change', measure);
   if (bar && window.IntersectionObserver) {
     new window.IntersectionObserver(([entry]) => { barVisible = entry.isIntersecting; }).observe(bar);
   }
+  let ready = false;
   let leaving = false;
   let failed = false;
-  const canPlay = () => !document.hidden && !reducedMotion.matches && !leaving && !failed;
+  const canPlay = () => ready && !document.hidden && !reducedMotion.matches && !leaving && !failed;
   let frame = null;
   const videoFrames = typeof video.requestVideoFrameCallback === 'function';
   function showFallback() {
@@ -75,11 +74,10 @@ export function mountNoiseVideo() {
   function draw(now = 0) {
     frame = null;
     if (!canPlay() || video.paused) return;
-    // The clip is 30fps. Sample every other source frame on phones; fallback
-    // rAF browsers must not repaint at their display's 60/120Hz refresh rate.
-    const interval = 1000 / (compact.matches ? 15 : 30);
+    // Sample the 30fps decoration at 15fps; keep the player at display cadence.
+    const interval = 1000 / 15;
     try {
-      if ((videoFrames && !compact.matches) || lastPaint === undefined || now - lastPaint >= interval - 2) {
+      if (lastPaint === undefined || now - lastPaint >= interval - 2) {
         if (paint()) lastPaint = now;
       }
     }
@@ -108,5 +106,12 @@ export function mountNoiseVideo() {
   reducedMotion.addEventListener('change', sync);
   window.addEventListener('pagehide', () => { leaving = true; sync(); });
   window.addEventListener('pageshow', () => { leaving = false; sync(); });
-  sync();
+  // Give artwork and the initial reveal priority over decorative video loading.
+  const start = () => {
+    const activate = () => { ready = true; sync(); };
+    if (window.requestIdleCallback) window.requestIdleCallback(activate, {timeout:1500});
+    else window.setTimeout(activate, 200);
+  };
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start, {once:true});
 }

@@ -370,6 +370,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const mobile = window.matchMedia('(max-width: 760px), (pointer: coarse)');
   let gesture, finishing = false, frame, keyTimer, lastTick;
+  let visible = true;
   let headX = 94, lastHeadGeometry, reelPosition, lastReelTransform;
   // Measure outside the frame loop: reading layout right after the previous
   // frame's style writes would force a synchronous layout every frame.
@@ -397,7 +398,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
   };
   reveal.onDraw = () => { drawHead(headX); startTick(); };
   const startTick = () => {
-    if (!frame && !document.hidden) {
+    if (!frame && !document.hidden && visible) {
       lastTick = undefined;
       frame = requestAnimationFrame(tick);
     }
@@ -448,7 +449,6 @@ function mountScratchHandle(root, transport, render, status, reveal) {
   };
   handle.addEventListener('pointerenter', prepareScratch);
   handle.addEventListener('focus', prepareScratch);
-  root.querySelector('.audio-toggle').addEventListener('click', prepareScratch);
   handle.addEventListener('pointerdown', event => {
     if (mobile.matches || event.button !== 0 || gesture || finishing) return;
     event.preventDefault(); handle.focus({preventScroll:true});
@@ -559,7 +559,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
         for (const reel of reels) reel.style.transform = transform;
       }
     }
-    const shouldAnimate = !document.hidden && (gesture !== undefined || finishing || (!audio.paused && !audio.ended));
+    const shouldAnimate = !document.hidden && visible && (gesture !== undefined || finishing || (!audio.paused && !audio.ended));
     if (shouldAnimate) {
       frame = requestAnimationFrame(tick);
     } else {
@@ -568,6 +568,16 @@ function mountScratchHandle(root, transport, render, status, reveal) {
       mediaSample = undefined;
     }
   };
+  if (window.IntersectionObserver) {
+    new window.IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) {
+        reelPosition = undefined;
+        mediaSample = undefined;
+        startTick();
+      }
+    }).observe(tape);
+  }
   audio.addEventListener('play', startTick);
   audio.addEventListener('playing', startTick);
   audio.addEventListener('pause', () => { lastTick = undefined; });

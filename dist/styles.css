@@ -311,16 +311,16 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 @media(prefers-reduced-motion:reduce){.early-listen-invitation,.upcoming-identity,.is-revealed .early-listen-invitation{transition:none}}
 
 /* Keep the listening links grouped and evenly spaced at both viewport sizes. */
-#links.links-section{margin-top:64px;max-width:680px;margin-inline:auto}
+#links.links-section{margin-top:48px;max-width:680px;margin-inline:auto}
 .streaming-heading{margin-bottom:24px}
 #links .platform-logos{max-width:none;display:flex;align-items:center;justify-content:center;gap:clamp(24px,4.5vw,44px)}
 .save-status{font-size:.875rem;text-align:center;margin:12px 0 0;min-height:1.5em}
 .save-status a{text-decoration:underline;text-underline-offset:.25em}
 #releases{margin-top:24px}
-#socials.socials-section{margin-top:48px;display:flex;justify-content:center}
+#socials.socials-section{margin-top:64px;display:flex;justify-content:center}
 .social-logos{display:flex;align-items:center;justify-content:center;gap:24px}
-@media(max-width:760px){#links.links-section{margin-top:48px}.streaming-heading{margin-bottom:16px}#links .platform-logos{display:flex;justify-content:center;align-items:center;gap:24px;width:100%}#links .platform-logo{width:44px;height:48px}}
-@media(max-width:760px){#releases{margin-top:16px}#socials.socials-section{margin-top:32px}.social-logos{gap:16px}}
+@media(max-width:760px){#links.links-section{margin-top:32px}.streaming-heading{margin-bottom:16px}#links .platform-logos{display:flex;justify-content:center;align-items:center;gap:24px;width:100%}#links .platform-logo{width:44px;height:48px}}
+@media(max-width:760px){#releases{margin-top:16px}#socials.socials-section{margin-top:48px}.social-logos{gap:16px}}
 
 .upcoming-cover img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
 /* Keep the form's layout footprint when the release replaces it. */
@@ -360,7 +360,7 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
   #music .cassette-label .featured-copy{width:auto;max-width:none;justify-self:stretch;min-width:0}
   #music.featured .tape-player{width:100%;max-width:none;justify-self:stretch;margin-inline:0}
   #music .tape-loop{width:100%}
-  #links.links-section{margin-top:48px}
+  #links.links-section{margin-top:32px}
   .streaming-heading{margin-bottom:16px}
 }
 @media(max-width:480px){
