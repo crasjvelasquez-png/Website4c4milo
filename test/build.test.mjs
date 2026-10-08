@@ -24,7 +24,10 @@ test('noise video is optional and copied into the build when supplied',async()=>
   await writeFile(join(directory,'public/assets/vhs-noise.mp4'),'video fixture');
   await buildSite({directory});
   const html = await readFile(join(directory,'dist/index.html'),'utf8');
-  assert.match(html,/data-noise-video data-src="\/assets\/vhs-noise.mp4" muted loop playsinline preload="none"/);
+  const video = html.match(/data-noise-video data-src="(\/_assets\/assets\/vhs-noise\.[a-f0-9]{12}\.mp4)" muted loop playsinline preload="none"/);
+  assert.ok(video);
+  assert.equal(await readFile(join(directory,'dist'+video[1]),'utf8'),'video fixture');
+  assert.match(await readFile(join(directory,'dist/_headers'),'utf8'),/\/_assets\/\*[\s\S]*max-age=31536000, immutable/);
   assert.equal(await readFile(join(directory,'dist/assets/vhs-noise.mp4'),'utf8'),'video fixture');
 }));
 
@@ -122,7 +125,7 @@ test('gallery covers have five inline services while featured Querida has no pop
     assert.match(tile,new RegExp(`data-inline-services="services-inline-${index+1}"`));
     assert.match(tile,new RegExp(`class="release-services" id="services-inline-${index+1}"`));
     assert.equal((tile.match(/<a class="platform-logo/g) ?? []).length,5);
-    for (const name of ['spotify','applemusic','amazonmusic','youtubemusic','tidal']) assert.ok(tile.includes(`/logos/${name}.svg`));
+    for (const name of ['spotify','applemusic','amazonmusic','youtubemusic','tidal']) assert.match(tile,new RegExp(`/_assets/assets/logos/${name}\\.[a-f0-9]{12}\\.svg`));
   }
   assert.doesNotMatch(gallery,/<img[^>]*alt="[^"\s]+/);
   assert.match(html,/<h1 id="featured-heading">Querida &lt;special&gt;<\/h1>/);
@@ -167,9 +170,11 @@ test('portfolio audio is enabled only after both configured MP3s exist and conte
   await buildSite({directory});
   html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
   assert.match(html,/&lt;Song&gt;/);
-  assert.match(html,/"before":"\/assets\/before\.mp3","after":"\/assets\/after\.mp3"/);
+  const before = html.match(/"before":"(\/_assets\/assets\/before\.[a-f0-9]{12}\.mp3)"/);
+  assert.match(html,/"after":"\/_assets\/assets\/after\.[a-f0-9]{12}\.mp3"/);
+  assert.ok(before);
   assert.match(html,/data-play aria-label="Play" disabled/);
-  assert.equal(await readFile(join(directory,'dist/assets/before.mp3'),'utf8'),'before');
+  assert.equal(await readFile(join(directory,'dist'+before[1]),'utf8'),'before');
 }));
 
 test('portfolio requires exactly 15 uniquely identified projects and MP3 tracks',()=>{
@@ -192,10 +197,11 @@ test('secret release enables playback and a local MP3 download only when its fil
   await writeFile(join(directory,'public/assets/secret-test.mp3'),'test media fixture');
   await buildSite({directory});
   html = await readFile(join(directory,'dist/index.html'),'utf8');
-  assert.match(html,/<audio preload="none" aria-labelledby="upcoming-heading" data-src="\/assets\/secret-test.mp3"/);
-  assert.match(html,/href="\/assets\/secret-test.mp3" download="how-deep-is-your-love.mp3"/);
+  const secret = html.match(/<audio preload="none" aria-labelledby="upcoming-heading" data-src="(\/_assets\/assets\/secret-test\.[a-f0-9]{12}\.mp3)"/);
+  assert.ok(secret);
+  assert.match(html,/href="\/_assets\/assets\/secret-test\.[a-f0-9]{12}\.mp3" download="how-deep-is-your-love.mp3"/);
   assert.doesNotMatch(html,/disabled>Download MP3/);
-  assert.equal(await readFile(join(directory,'dist/assets/secret-test.mp3'),'utf8'),'test media fixture');
+  assert.equal(await readFile(join(directory,'dist'+secret[1]),'utf8'),'test media fixture');
   content.upcomingRelease.audio = '/assets/secret.wav';
   assert.throws(()=>validateContent(content),/upcomingRelease.audio needs a local MP3/);
 }));

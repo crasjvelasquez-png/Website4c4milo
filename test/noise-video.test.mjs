@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { createApp } from '../server.mjs';
 
 const source = (await readFile(new URL('../public/noise-video.js',import.meta.url),'utf8')).replace('export function','function');
-function fixture({ reduced = false, reject = false, videoFrames = true, hasBar = true, compact = false } = {}) {
+function fixture({ reduced = false, reject = false, videoFrames = true, hasBar = true, compact = false, saveData = false, lowEnd = false } = {}) {
   const video = new EventTarget();
   const classes = new Set();
   const callbacks = new Map();
@@ -39,13 +39,14 @@ function fixture({ reduced = false, reject = false, videoFrames = true, hasBar =
   const device = new EventTarget();device.matches = compact;
   let intersect;
   const document = new EventTarget();
-  Object.assign(document, {hidden:false,querySelector:selector => selector === '[data-noise-video]' ? video : selector === '[data-noise-bar]' ? (hasBar ? bar : null) : canvas,body:{classList:{add:c=>classes.add(c),remove:c=>classes.delete(c)}}});
+  Object.assign(document, {hidden:false,readyState:'complete',querySelector:selector => selector === '[data-noise-video]' ? video : selector === '[data-noise-bar]' ? (hasBar ? bar : null) : canvas,body:{classList:{add:c=>classes.add(c),remove:c=>classes.delete(c)}}});
   const window = new EventTarget();Object.assign(window,{matchMedia:query => query.includes('reduced-motion') ? motion : device,innerWidth:1280,innerHeight:900,devicePixelRatio:2,
+    requestIdleCallback:callback=>{callback();return 1;},
     IntersectionObserver:class { constructor(callback) { intersect = callback; } observe() {} },
     requestAnimationFrame:callback=>{callbacks.set(++callbackId,callback);return callbackId;},
     cancelAnimationFrame:id=>callbacks.delete(id)
   });
-  runInNewContext(`${source}\nmountNoiseVideo();`, {document,window});
+  runInNewContext(`${source}\nmountNoiseVideo();`, {document,window,navigator:{deviceMemory:lowEnd?2:8,hardwareConcurrency:lowEnd?4:8,connection:{saveData}}});
   const nextFrame = now => {
     const [id,callback] = [...callbacks][0];
     callbacks.delete(id);callback(now);
@@ -75,19 +76,19 @@ test('video frames tile the full viewport at native scale and resize without ext
   assert.equal(f.context.fillStyle.source,f.video);
   assert.equal(f.context.fillStyle.repeat,'repeat');
   assert.deepEqual(f.draws[0],[0,0,1280,900]);
-  assert.equal(f.canvas.width,2560);
-  assert.equal(f.canvas.height,1800);
+  assert.equal(f.canvas.width,1280);
+  assert.equal(f.canvas.height,900);
   assert.equal(f.barContext.fillStyle,f.context.fillStyle);
   assert.deepEqual(f.barDraws[0],[0,0,1280,40]);
-  assert.equal(f.bar.height,80);
+  assert.equal(f.bar.height,40);
   f.window.innerWidth = 390;f.window.innerHeight = 844;
   f.window.dispatchEvent(new Event('resize'));
   const [id,callback] = [...f.callbacks][0];
   f.callbacks.delete(id);callback();
   assert.deepEqual(f.draws.at(-1),[0,0,390,844]);
-  assert.equal(f.canvas.width,780);
-  assert.equal(f.canvas.height,1688);
-  assert.equal(f.bar.width,780);
+  assert.equal(f.canvas.width,390);
+  assert.equal(f.canvas.height,844);
+  assert.equal(f.bar.width,390);
   assert.deepEqual(f.barDraws.at(-1),[0,0,390,40]);
   assert.equal(f.video.plays,1);
   assert.equal(f.callbacks.size,1);
@@ -135,7 +136,7 @@ test('mobile grain samples 15fps and does not read bar layout during drawing',()
 test('fallback rAF caps 120Hz drawing, changes density at breakpoints, and resumes immediately',()=>{
   const f = fixture({videoFrames:false});
   for (let i=1;i<=120;i++) f.nextFrame(i * 1000 / 120);
-  assert.equal(f.draws.length,31);
+  assert.equal(f.draws.length,16);
   f.device.matches=true;f.device.dispatchEvent(new Event('change'));
   f.nextFrame(1001);
   assert.equal(f.canvas.width,1280);
@@ -147,10 +148,10 @@ test('fallback rAF caps 120Hz drawing, changes density at breakpoints, and resum
   assert.equal(f.callbacks.size,1);
 });
 
-test('desktop paints every decoded frame even when video callbacks arrive unevenly',()=>{
+test('desktop grain caps paint cadence at 15fps when video callbacks arrive unevenly',()=>{
   const f=fixture();
   for (const now of [31,61,99,127,166]) f.nextFrame(now);
-  assert.equal(f.draws.length,6);
+  assert.equal(f.draws.length,3);
 });
 
 test('older browsers use animation frames and pages without a white bar still work',()=>{
@@ -172,6 +173,16 @@ test('autoplay rejection and media errors keep the still fallback',async()=>{
   const starts = f.video.plays;
   f.document.dispatchEvent(new Event('visibilitychange'));
   assert.equal(f.video.plays,starts);
+});
+
+test('adaptive low-resource mode keeps static grain and skips video decoding',()=>{
+  for (const options of [{lowEnd:true},{saveData:true}]) {
+    const f = fixture(options);
+    assert.equal(f.video.src,'');
+    assert.ok(f.classes.has('lighter-effects'));
+    assert.equal(f.classes.has('video-noise-playing'),false);
+    assert.equal(f.callbacks.size,0);
+  }
 });
 
 test('local video serving supports byte ranges and the correct MIME type',async()=>{

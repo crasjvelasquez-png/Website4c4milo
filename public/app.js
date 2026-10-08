@@ -8,52 +8,11 @@ mountSiteAudio();
 mountCoverPreviews();
 mountNoiseVideo();
 document.documentElement.classList.remove('no-js');
-// Cached featured artwork may already be complete before its load event runs.
-for (const img of document.querySelectorAll('.featured-cover img')) {
-  if (img.complete && img.naturalWidth > 0) img.classList.add('is-loaded');
-  else {
-    img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
-    img.addEventListener('error', () => img.classList.add('is-loaded'), { once: true });
-  }
-}
 function syncBackgroundMotion() {
   document.body.classList.toggle('background-paused', document.hidden);
 }
 document.addEventListener('visibilitychange', syncBackgroundMotion);
 syncBackgroundMotion();
-const pageReveal = document.documentElement.classList.contains('page-reveal-preparing')
-  && window.IntersectionObserver
-  && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (pageReveal) {
-  const revealableSections = [...document.querySelectorAll('main > section, body > footer')];
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const observer = new IntersectionObserver(entries => {
-    const entering = entries.filter(entry => entry.isIntersecting)
-      .sort((a, b) => revealableSections.indexOf(a.target) - revealableSections.indexOf(b.target));
-    for (const [index, entry] of entering.entries()) {
-      entry.target.style.setProperty('--reveal-delay', `${Math.min(index * 110, 330)}ms`);
-      entry.target.classList.add('is-page-revealed');
-      observer.unobserve(entry.target);
-    }
-  }, { rootMargin: '0px 0px -32px 0px', threshold: 0 });
-  for (const section of revealableSections) observer.observe(section);
-  document.documentElement.classList.replace('page-reveal-preparing', 'page-reveal-running');
-  document.addEventListener('focusin', event => {
-    const section = revealableSections.find(section => section.contains(event.target));
-    if (!section) return;
-    // Keep it visible after focus leaves, without restarting the entrance.
-    section.style.animation = 'none';
-    section.classList.add('is-page-revealed');
-    observer.unobserve(section);
-  });
-  function stopRevealForReducedMotion(event) {
-    if (!event.matches) return;
-    document.documentElement.classList.remove('page-reveal-preparing', 'page-reveal-running');
-    observer.disconnect();
-  }
-  if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', stopRevealForReducedMotion);
-  else reducedMotion.addListener(stopRevealForReducedMotion);
-}
 const tabs = [...document.querySelectorAll('[role=tab]')];
 function selectTab(tab, focus = false) {
   for (const item of tabs) {
