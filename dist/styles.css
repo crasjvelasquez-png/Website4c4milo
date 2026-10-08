@@ -6,7 +6,7 @@ body{
   isolation:isolate;
   min-height:100vh;
   background-color:var(--bg);
-  background-image:url("/assets/film-grain.svg");
+  background-image:url("/_assets/assets/film-grain.772130b6b1f4.svg");
   background-size:180px 180px;
   background-blend-mode:soft-light;
 }
@@ -43,7 +43,8 @@ body.video-noise-playing .vhs-noise{opacity:.4}
 body.video-noise-playing .vhs-noise-bar{opacity:.4}
 @media(prefers-reduced-motion:reduce){
   .vhs-noise,.vhs-noise-bar{display:none}
-  body.video-noise-playing{background-image:url("/assets/film-grain.svg")}
+  body.video-noise-playing{background-image:url("/_assets/assets/film-grain.772130b6b1f4.svg")}
+  body::before,body::after{animation:none;will-change:auto}
 }
 body::before,body::after{
   content:"";
@@ -52,7 +53,7 @@ body::before,body::after{
   z-index:-1;
   pointer-events:none;
   background-repeat:no-repeat;
-  background-image:url("/assets/ocean-glow-a.png");
+  background-image:url("/_assets/assets/ocean-glow-a.9b7a09516afc.webp");
   background-size:100% 100%;
   will-change:opacity,transform;
 }
@@ -61,12 +62,15 @@ body::before{
   animation:green-pulse-a 36s ease-in-out infinite,ocean-drift-a 148s ease-in-out infinite;
 }
 body::after{
-  background-image:url("/assets/ocean-glow-b.png");
+  background-image:url("/_assets/assets/ocean-glow-b.ac50830d7571.webp");
   background-position:center;
   opacity:.015;
   transform:rotate(180deg);
   animation:green-pulse-b 52s ease-in-out infinite,ocean-drift-b 212s ease-in-out infinite;
 }
+body.lighter-effects::before,body.lighter-effects::after{animation:none;will-change:auto}
+body.lighter-effects::before{opacity:.025;transform:none}
+body.lighter-effects::after{opacity:.015;transform:rotate(180deg)}
 @keyframes green-pulse-a{
   0%,100%{opacity:.025}
   19%{opacity:.095}
@@ -122,11 +126,9 @@ main>section#links{margin-top:0}
    CSS d:path() is not supported reliably by mobile Safari. */
 .tape-player{--reel-reveal-duration:480ms;--reel-reveal-easing:cubic-bezier(.22,1,.36,1)}
 .tape-inner-rim{stroke-dasharray:1 1;stroke-dashoffset:0;transition:stroke-dashoffset var(--reel-reveal-duration) var(--reel-reveal-easing)}
-.player-reveal-ready #music .tape-inner-rim,.progressive-player:not(.is-playing) .tape-inner-rim{stroke-dashoffset:1}
 /* Local SVG coordinates keep Safari's reveal and rotation centered on each hub.
    Avoid basic-shape clip paths on transformed SVG groups on iOS. */
 .tape-reel-reveal{transform-box:view-box;transform-origin:0 0;transform:scale(1);opacity:1;transition:transform var(--reel-reveal-duration) var(--reel-reveal-easing),opacity var(--reel-reveal-duration) var(--reel-reveal-easing)}
-.player-reveal-ready #music .tape-reel-reveal,.progressive-player:not(.is-playing) .tape-reel-reveal{transform:scale(0);opacity:0}
 @media(prefers-reduced-motion:reduce){.tape-reel-reveal,.tape-ribbon,.tape-travel,.tape-inner-rim{transition:none}}
 .tape-guides{fill:none;stroke:#fff;stroke-width:1}.tape-guides circle:nth-child(n+3){fill:#fff;stroke:none}.tape-heads{fill:none;stroke:#fff;stroke-width:2}
 /* Match clockwise reel rotation to the expanded clockwise tape loop:
@@ -137,7 +139,7 @@ main>section#links{margin-top:0}
 .tape-readout{display:flex;align-items:center;margin-top:10px;gap:12px}
 .audio-time{font-size:.6875rem;font-variant-numeric:tabular-nums;color:#fff;white-space:nowrap}
 .audio-seek{appearance:none;display:block;flex:1;min-width:0;width:100%;height:28px;margin:0;background:transparent;cursor:pointer}.audio-seek::-webkit-slider-runnable-track{height:var(--control-line-weight);background:#fff}.audio-seek::-moz-range-track{height:var(--control-line-weight);background:#fff}.audio-seek::-webkit-slider-thumb{appearance:none;width:7px;height:7px;margin-top:-3px;background:#fff;border-radius:50%}.audio-seek::-moz-range-thumb{width:7px;height:7px;background:#fff;border:0;border-radius:50%}.audio-seek:disabled{opacity:1;cursor:default}.audio-seek:focus-visible{outline:2px solid #fff;outline-offset:4px}
-.audio-status{font-size:.6875rem;color:#fff;margin:0;min-height:18px}.tape-player audio{display:none}
+.audio-status{font-size:.6875rem;color:#fff;margin:0;min-height:18px;text-align:center}.tape-player audio{display:none}
 @keyframes tape-travel{to{stroke-dashoffset:-1200}}
 @keyframes tape-reel-turn{to{transform:rotate(360deg)}}
 @media(hover:hover) and (pointer:fine){a.floating-link{transition:transform 240ms cubic-bezier(.22,1,.36,1)}a.floating-link:hover{transform:translateY(-3px) scale(1.02);text-decoration:none}a.floating-link:active{transform:translateY(-2px) scale(.96);transition-duration:120ms}a.floating-link.platform-logo:hover{transform:translateY(-2px) scale(1.02)}a.floating-link.platform-logo:active{transform:translateY(-1px) scale(.99)}}
@@ -207,12 +209,16 @@ a.floating-link[aria-expanded=true]{transform:none;filter:none;transition:none}
 .featured .audio-volume::-moz-range-thumb{width:7px;height:7px;border:0;border-radius:50%;background:#fff}
 .featured .audio-volume:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .featured .progressive-player .audio-time,.featured .progressive-player .audio-volume-label{transition:opacity 250ms cubic-bezier(.22,1,.36,1)}
-.player-reveal-ready #music .audio-time,.player-reveal-ready #music .audio-volume-label,.featured .progressive-player:not(.is-playing) .audio-time,.featured .progressive-player:not(.is-playing) .audio-volume-label{opacity:0}
+.featured .progressive-player:not(.is-playing) .audio-time,.featured .progressive-player:not(.is-playing) .audio-volume-label{opacity:0}
 @media(prefers-reduced-motion:reduce){.featured .progressive-player .audio-time,.featured .progressive-player .audio-volume-label{transition:opacity 150ms ease-out}}
 .is-playing .audio-time-colon{animation:time-colon-blink 1s steps(1,end) infinite}
 @keyframes time-colon-blink{0%,100%{opacity:1}50%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.is-playing .audio-time-colon{animation:none}}
-.featured .audio-status{min-height:0}
+.featured .tape-player{position:relative}
+.featured .audio-status{position:absolute;width:1px;height:1px;min-height:0;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%);border:0}
+.featured .tape-player.is-loading::after,.featured .tape-player.is-buffering::after{content:"";position:absolute;z-index:3;left:50%;bottom:7%;width:9px;height:9px;border:1px solid #ffffffa6;border-right-color:transparent;border-radius:50%;transform:translateX(-50%);pointer-events:none;animation:player-feedback-turn 700ms linear infinite}
+@keyframes player-feedback-turn{to{transform:translateX(-50%) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.featured .tape-player.is-loading::after,.featured .tape-player.is-buffering::after{animation:none;border-right-color:#ffffffa6;opacity:.7}}
 .cassette-base{display:none}
 /* Match the label's lower edge to the visible tape, including its reveal.
    Portrait phones retain their stacked layout; unfolded phones share the row. */
@@ -242,26 +248,8 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .early-listen{width:min(100%,680px);margin-inline:auto}
 /* Keep pending sections hidden through initialization; reveal each only once. */
 @keyframes page-fade-in{from{opacity:0}to{opacity:1}}
-@media(prefers-reduced-motion:no-preference){
-  html.page-reveal-preparing main>section,html.page-reveal-preparing body>footer,
-  html.page-reveal-running main>section:not(.is-page-revealed),html.page-reveal-running body>footer:not(.is-page-revealed){opacity:0}
-  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation:page-fade-in 700ms ease-out var(--reveal-delay,0ms) backwards}
-  html.page-reveal-preparing main>section:focus-within,html.page-reveal-preparing body>footer:focus-within,
-  html.page-reveal-running main>section:focus-within,html.page-reveal-running body>footer:focus-within{opacity:1;animation:none}
-}
-@media(max-width:760px) and (prefers-reduced-motion:no-preference){
-  html.page-reveal-running main>section.is-page-revealed,html.page-reveal-running body>footer.is-page-revealed{animation-duration:420ms;animation-delay:0ms}
-}
-/* Featured artwork is above the fold and can finish loading after its section
-   has already faded in. Keep the same fade on the image itself so the large
-   cover never pops in abruptly on mobile or desktop. */
-@media(prefers-reduced-motion:no-preference){
-  html:not(.no-js) .featured-cover img{opacity:0;transition:opacity 700ms ease-out}
-  html:not(.no-js) .featured-cover img.is-loaded{opacity:1}
-}
-@media(max-width:760px) and (prefers-reduced-motion:no-preference){
-  html:not(.no-js) .featured-cover img{transition-duration:850ms}
-}
+@media(prefers-reduced-motion:no-preference){html.entrance-fade-ready body{animation:page-fade-in 180ms ease-out both}}
+@media(prefers-reduced-motion:reduce){html.entrance-fade-ready body{animation:none}}
 .early-listen-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;width:100%;padding:16px 24px;border:1px solid color-mix(in srgb,var(--ink),transparent 54%);border-radius:14px;background:color-mix(in srgb,var(--bg),var(--ink) 3%)}
 .early-listen-invitation{grid-column:1;grid-row:1}
 .upcoming-preview{display:grid;grid-template-columns:64px minmax(0,1fr);grid-column:1;grid-row:2;align-items:center;gap:16px;min-width:0;min-height:88px;z-index:0;pointer-events:none}
@@ -494,13 +482,14 @@ main>section#early-listen,main>section#page-links{display:none}
 @media(prefers-reduced-motion:reduce){.portfolio-side::after,.portfolio-art,.portfolio-credit,.portfolio-project-button::after{transition:none}}
 
 /* The original upper-left thick tape segment is the scratch handle. */
-.featured .tape-head-handle{position:absolute;left:15.6667%;top:var(--head-top,18.5714%);transform:translate(-50%,-50%);width:48px;height:48px;padding:0;margin:0;border:0;border-radius:50%;background:transparent;color:#fff;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;z-index:2}
+.featured .tape-head-handle{position:absolute;left:0;top:0;transform:translate3d(94px,26px,0) translate(-50%,-50%);width:48px;height:48px;padding:0;margin:0;border:0;border-radius:50%;background:transparent;color:#fff;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;z-index:2;will-change:transform}
 .featured .tape-head-handle:hover,.featured .tape-head-handle:active{background:transparent;color:#fff}
 .featured .tape-head-handle:focus-visible{outline:1px solid #ffffff80;outline-offset:-8px}
 .featured .tape-head-handle:disabled{pointer-events:none}
 @media(max-width:760px),(pointer:coarse){.featured .tape-head-handle{display:none;pointer-events:none;touch-action:auto}}
 .featured .is-scratching .tape-head-handle{cursor:grabbing}
 .tape-head-mark{fill:none;stroke:#fff;stroke-width:2.5;pointer-events:none}
+.tape-head-mark path{stroke-dasharray:28 1172;stroke-linecap:butt}
 .tape-head-mark path{transition:stroke-width 100ms ease}
 .tape-player:has(.tape-head-handle:hover) .tape-head-mark,.is-scratching .tape-head-mark{stroke-width:3}
 .featured .tape-travel{opacity:0;animation:none}

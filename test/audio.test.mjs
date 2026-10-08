@@ -179,6 +179,17 @@ test('scratch reverses every channel of actual PCM without changing the original
   assert.deepEqual([...channels[1]], [1,2,3,4]);
 });
 
+test('scratch reversal copies only the selected window around the requested playhead', async () => {
+  const {reverseTrack} = await import('../public/audio-player.js');
+  const input=Float32Array.from([0,1,2,3,4,5,6,7,8,9]);
+  const buffer={numberOfChannels:1,length:10,sampleRate:1,duration:10,getChannelData:()=>input};
+  const context={createBuffer:(_channels,length,rate)=>{const output=new Float32Array(length);return{length,sampleRate:rate,getChannelData:()=>output};}};
+  const reverse=reverseTrack(context,buffer,2,6);
+  assert.equal(reverse.length,4);
+  assert.deepEqual([...reverse.getChannelData(0)],[5,4,3,2]);
+  assert.deepEqual([...input],[0,1,2,3,4,5,6,7,8,9]);
+});
+
 test('scratch voice selects reverse offsets, changes pitch, fades, and stays inside the track', async () => {
   const {createScratchVoice} = await import('../public/audio-player.js');
   const sources=[], gains=[];
@@ -210,7 +221,7 @@ function scratchFixture() {
   const f=transportFixture({startAt:3});
   const channels=[Float32Array.from([1,2,3,4])];
   f.audio.src='/track.mp3';
-  f.context.decodeAudioData=async()=>({numberOfChannels:1,length:4,sampleRate:1,duration:180,getChannelData:i=>channels[i]});
+  f.context.decodeAudioData=async()=>({numberOfChannels:1,length:180,sampleRate:1,duration:180,getChannelData:()=>Float32Array.from({length:180},(_,i)=>channels[0][i%channels[0].length])});
   f.context.createBuffer=(count,length)=>({duration:180,getChannelData:()=>new Float32Array(length)});
   f.context.createBufferSource=()=>({playbackRate:parameter(),connect(){},disconnect(){},start(){},stop(){}});
   return f;

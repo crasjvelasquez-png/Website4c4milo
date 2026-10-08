@@ -3,6 +3,13 @@ export function mountNoiseVideo() {
   const video = document.querySelector('[data-noise-video]');
   const canvas = document.querySelector('[data-noise-canvas]');
   if (!video || !canvas) return;
+  const {deviceMemory = 8, hardwareConcurrency = 8, connection} = typeof navigator === 'undefined' ? {} : navigator;
+  const lighterEffects = connection?.saveData === true
+    || (deviceMemory <= 4 && hardwareConcurrency <= 4);
+  if (lighterEffects) {
+    document.body.classList.add('lighter-effects');
+    return;
+  }
   const context = canvas.getContext('2d');
   if (!context) return;
   const bar = document.querySelector('[data-noise-bar]');
@@ -112,6 +119,6 @@ export function mountNoiseVideo() {
     if (window.requestIdleCallback) window.requestIdleCallback(activate, {timeout:1500});
     else window.setTimeout(activate, 200);
   };
-  if (document.readyState === 'complete') start();
+  if (document.readyState === 'complete' || document.readyState == null) start();
   else window.addEventListener('load', start, {once:true});
 }

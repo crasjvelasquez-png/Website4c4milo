@@ -15,11 +15,13 @@ export function scheduleEnvelope(param, now, position, duration, fadeIn, fadeOut
 
 // Reverse the decoded samples, not the media clock. The two buffers share
 // the same timeline; reverse offsets are measured from the end of the track.
-export function reverseTrack(context, buffer) {
-  const reversed = context.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
+export function reverseTrack(context, buffer, start = 0, end = buffer.duration ?? buffer.length / buffer.sampleRate) {
+  const first = Math.max(0, Math.floor(start * buffer.sampleRate));
+  const last = Math.min(buffer.length, Math.ceil(end * buffer.sampleRate));
+  const reversed = context.createBuffer(buffer.numberOfChannels, last - first, buffer.sampleRate);
   for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
     const input = buffer.getChannelData(channel), output = reversed.getChannelData(channel);
-    for (let i = 0; i < input.length; i++) output[i] = input[input.length - 1 - i];
+    for (let i = 0; i < output.length; i++) output[i] = input[last - 1 - i];
   }
   return reversed;
 }
@@ -35,9 +37,12 @@ function ramp(param, context, value, seconds = 0.012) {
   param.linearRampToValueAtTime(value, now + seconds);
 }
 
-export function createScratchVoice(context, output, forward, reverse) {
+export function createScratchVoice(context, output, forward, reverseSource) {
   let voice;
   const voices = new Set();
+  const reverseWindowAt = typeof reverseSource === 'function'
+    ? reverseSource
+    : () => ({buffer:reverseSource, start:0, end:forward.duration});
   function silence() {
     if (!voice) return;
     const old = voice;
@@ -49,11 +54,12 @@ export function createScratchVoice(context, output, forward, reverse) {
     silence();
     const rate = Math.min(8, Math.abs(velocity));
     const backwards = velocity < 0;
-    const offset = backwards ? forward.duration - position : position;
-    const remaining = forward.duration - offset;
+    const window = backwards ? reverseWindowAt(position) : undefined;
+    const offset = backwards ? window.end - position : position;
+    const remaining = backwards ? window.buffer.duration - offset : forward.duration - offset;
     if (rate < 0.08 || offset < 0 || remaining <= 0) return;
     const source = context.createBufferSource(), gain = context.createGain();
-    source.buffer = backwards ? reverse : forward;
+    source.buffer = backwards ? window.buffer : forward;
     source.playbackRate.setValueAtTime(rate, context.currentTime);
     source.connect(gain); gain.connect(output);
     const length = Math.min(0.045, remaining / rate);
@@ -83,6 +89,7 @@ export function createScratchVoice(context, output, forward, reverse) {
 export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5, startAt = 0, volume = 1}) {
   let context, gain, volumeGain, generation = 0, needsStart = true, attackPending = false, wantsPlayback = false;
   let scratchVoice, buffers, bufferPromise, scratching = false, scratchPosition = 0, resumeAfterScratch = false;
+  const scratchWindow = 8;
   const envelope = (attack = 0) => {
     if (gain && Number.isFinite(audio.duration)) scheduleEnvelope(gain.gain, context.currentTime, audio.currentTime, audio.duration, attack, fadeOut);
   };
@@ -115,8 +122,21 @@ export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5
         const response = await fetch(audio.currentSrc || audio.src);
         if (!response.ok) throw new Error('Track download failed');
         const forward = await context.decodeAudioData(await response.arrayBuffer());
-        buffers = {forward, reverse:reverseTrack(context, forward)};
-        scratchVoice = createScratchVoice(context, volumeGain, buffers.forward, buffers.reverse);
+        let reverse;
+        const reverseWindowAt = position => {
+          if (!reverse || position < reverse.start + 1 || position > reverse.end - 1) {
+            const duration = Math.min(scratchWindow, forward.duration);
+            const start = Math.max(0, Math.min(forward.duration - duration, position - duration / 2));
+            const end = Math.min(forward.duration, start + duration);
+            reverse = {buffer:reverseTrack(context, forward, start, end), start, end};
+          }
+          return reverse;
+        };
+        buffers = {forward};
+        scratchVoice = createScratchVoice(context, volumeGain, forward, reverseWindowAt);
+        // Build one small reverse window at the engaged playhead, never a
+        // second full-length PCM copy of the track.
+        reverseWindowAt(audio.currentTime);
       })().catch(error => { bufferPromise = undefined; throw error; });
     }
     return bufferPromise;
@@ -132,11 +152,23 @@ export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5
     // Unlock in the pointer/key activation, before download or decode yields.
     const resumed = context.resume();
     await Promise.all([resumed, prepareScratch()]);
-    if (token !== generation || !scratching) return false;
+    if (token !== generation || !scratching) {
+      scratchVoice?.stop();
+      scratchVoice = undefined;
+      buffers = undefined;
+      bufferPromise = undefined;
+      return false;
+    }
     ramp(gain.gain, context, 0);
     // Let the outgoing media fade finish before freezing its clock.
     await new Promise(resolve => setTimeout(resolve, 14));
-    if (token !== generation || !scratching) return false;
+    if (token !== generation || !scratching) {
+      scratchVoice?.stop();
+      scratchVoice = undefined;
+      buffers = undefined;
+      bufferPromise = undefined;
+      return false;
+    }
     audio.pause();
     wantsPlayback = false;
     needsStart = false;
@@ -152,6 +184,9 @@ export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5
     generation++;
     scratching = false;
     scratchVoice?.stop();
+    scratchVoice = undefined;
+    buffers = undefined;
+    bufferPromise = undefined;
     audio.pause();
     audio.currentTime = Math.max(0, Math.min(Number.isFinite(audio.duration) ? audio.duration : scratchPosition, scratchPosition));
     needsStart = false;
@@ -179,9 +214,15 @@ export function createTransport(audio, {createContext, fadeIn = 1, fadeOut = 1.5
   }
   function pause() {
     generation++;
+    const hadScratch = scratching;
     scratching = false;
     resumeAfterScratch = false;
     scratchVoice?.stop();
+    if (!hadScratch) {
+      scratchVoice = undefined;
+      buffers = undefined;
+      bufferPromise = undefined;
+    }
     wantsPlayback = false;
     audio.pause();
     if (gain) {
@@ -302,7 +343,6 @@ export function mountPlayer(root) {
   if (!Context) { status.textContent = 'This browser cannot use the audio player.'; toggle.disabled = true; return; }
   const volumeLabel = root.querySelector('.audio-volume-label');
   root.classList.add('progressive-player');
-  document.documentElement.classList.remove('player-reveal-ready');
   const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut), startAt:3, volume:Number(volume.value)});
   volume.addEventListener('input', () => transport.setVolume(volume.value));
   const reveal = mountTapeReveal(root);
@@ -330,16 +370,17 @@ export function mountPlayer(root) {
   toggle.addEventListener('click', async () => {
     if (loading || transport.scratching) return;
     if (!audio.paused) { transport.pause(); status.textContent = 'Paused'; render(); return; }
-    loading = true; toggle.disabled = true; status.textContent = 'Loading audio…';
+    loading = true; toggle.disabled = true; root.classList.add('is-loading'); status.textContent = 'Loading audio…';
     try { await transport.play(); status.textContent = audio.paused ? 'Stopped' : 'Playing'; }
     catch { transport.stop(); status.textContent = 'Audio could not play. Try again or check the file.'; }
-    finally { loading = false; toggle.disabled = false; render(); }
+    finally { loading = false; toggle.disabled = false; root.classList.remove('is-loading'); render(); }
   });
   const cancelGesture = mountScratchHandle(root, transport, render, status, reveal);
   const exit = () => { cancelGesture(); transport.stop(); status.textContent = 'Stopped'; render(); };
   for (const event of ['timeupdate','loadedmetadata','seeked','playing','pause']) audio.addEventListener(event, render);
-  audio.addEventListener('waiting', () => { status.textContent = 'Buffering…'; });
-  audio.addEventListener('playing', () => { status.textContent = 'Playing'; });
+  audio.addEventListener('waiting', () => { root.classList.add('is-buffering'); status.textContent = 'Buffering…'; });
+  audio.addEventListener('playing', () => { root.classList.remove('is-buffering'); status.textContent = 'Playing'; });
+  audio.addEventListener('pause', () => root.classList.remove('is-buffering'));
   audio.addEventListener('ended', () => { status.textContent = 'Finished'; render(); });
   audio.addEventListener('error', () => { exit(); status.textContent = 'Audio file unavailable. Check the local file and rebuild.'; });
   document.addEventListener('visibilitychange', () => { if (document.hidden && !allowsBackgroundAudio()) exit(); });
@@ -371,7 +412,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
   const mobile = window.matchMedia('(max-width: 760px), (pointer: coarse)');
   let gesture, finishing = false, frame, keyTimer, lastTick;
   let visible = true;
-  let headX = 94, lastHeadGeometry, reelPosition, lastReelTransform;
+  let headX = 94, lastHeadRadius, reelPosition, lastReelTransform;
   // Measure outside the frame loop: reading layout right after the previous
   // frame's style writes would force a synchronous layout every frame.
   let tapeWidth = tape.getBoundingClientRect().width;
@@ -383,22 +424,21 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     // Follow the existing continuous path around the left reel when pulled
     // past its top tangent, so the bump never separates from the white tape.
     const radius = reveal.radius();
-    const geometry = `${x}:${radius}`;
-    if (geometry === lastHeadGeometry) return;
-    lastHeadGeometry = geometry;
-    const middle = tapePoint(radius, x - 80);
-    handle.style.left = `${middle.x / 6}%`;
-    handle.style.top = `${middle.y / 140 * 100}%`;
-    let d = '';
-    for (let i = 0; i < 11; i++) {
-      const p = tapePoint(radius, x - 94 + i * 2.8);
-      d += `${i ? 'L' : 'M'}${p.x.toFixed(3)} ${p.y.toFixed(3)}`;
+    if (radius !== lastHeadRadius) {
+      lastHeadRadius = radius;
+      headPath.setAttribute('d', tapeGeometry(radius).loop);
     }
-    headPath.setAttribute('d', d);
+    const length = tapeLength(radius);
+    const distance = ((x - 94) % length + length) % length;
+    headPath.style.strokeDashoffset = String(-distance * 1200 / length);
+    if (!mobile.matches) {
+      const middle = tapePoint(radius, x - 80);
+      handle.style.transform = `translate3d(${middle.x * tapeWidth / 600}px,${middle.y * tapeWidth / 600}px,0) translate(-50%,-50%)`;
+    }
   };
   reveal.onDraw = () => { drawHead(headX); startTick(); };
   const startTick = () => {
-    if (!frame && !document.hidden && visible) {
+    if (!frame && !document.hidden && visible && !reduced.matches) {
       lastTick = undefined;
       frame = requestAnimationFrame(tick);
     }
@@ -421,6 +461,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
       current.ready = true;
       if (current.pointerId === null) keyTimer = setTimeout(() => { void finish(); }, 180);
       status.textContent = 'Scratching';
+      if (reduced.matches) updateGesture(performance.now());
     } catch {
       await finish();
       status.textContent = 'Scratch audio could not load. Try the handle again.';
@@ -442,13 +483,8 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     catch { transport.pause(); status.textContent = 'Audio could not resume. Press play to retry.'; }
     finally { finishing = false; render(); }
   }
-  const prepareScratch = () => {
-    // The handle is unavailable on mobile: do not download, decode, and reverse
-    // the entire track just because the visitor pressed Play.
-    if (!mobile.matches) transport.prepareScratch().catch(() => {});
-  };
-  handle.addEventListener('pointerenter', prepareScratch);
-  handle.addEventListener('focus', prepareScratch);
+  // Scratch PCM is prepared only after an intentional pointer or keyboard
+  // gesture begins, never from incidental hover or focus.
   handle.addEventListener('pointerdown', event => {
     if (mobile.matches || event.button !== 0 || gesture || finishing) return;
     event.preventDefault(); handle.focus({preventScroll:true});
@@ -457,7 +493,9 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     void begin(event.pointerId, event.clientX, event.clientY);
   });
   handle.addEventListener('pointermove', event => {
-    if (gesture?.pointerId === event.pointerId) { gesture.x = event.clientX; gesture.y = event.clientY; }
+    if (gesture?.pointerId !== event.pointerId) return;
+    gesture.x = event.clientX; gesture.y = event.clientY;
+    if (reduced.matches && gesture.ready) updateGesture(performance.now());
   });
   for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) {
     handle.addEventListener(name, event => {
@@ -475,6 +513,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     const step = event.shiftKey ? 5 : 1;
     gesture.keyboardPosition = event.key === 'Home' ? 0 : event.key === 'End' ? transport.duration :
       (gesture.keyboardPosition ?? gesture.origin) + (event.key === 'ArrowLeft' ? -step : step);
+    if (reduced.matches && gesture.ready) updateGesture(performance.now());
     clearTimeout(keyTimer);
     if (gesture.ready) keyTimer = setTimeout(() => { void finish(); }, 180);
   });
@@ -506,15 +545,11 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     reelPosition += elapsed * rate;
     reelPosition += clamp((estimate - reelPosition) * Math.min(1, elapsed * 2), -elapsed / 2, elapsed / 2);
   };
-  const tick = now => {
-    const elapsedTick = lastTick === undefined ? 0 : Math.min(0.1, (now - lastTick) / 1000);
-    lastTick = now;
+  function updateGesture(now) {
+    if (!gesture?.ready) return;
     const length = tapeLength(reveal.radius());
-    if (gesture?.ready) {
-      // The tape runs clockwise: rightward on top, down the right reel,
-      // leftward on the bottom, and up the left reel. Project pointer motion
-      // onto the tape direction under the bump, in small steps so a fast drag
-      // still turns the corners, so the bump always follows the pointer.
+    if (gesture.pointerId !== null) {
+      // Project each pointer segment onto the tape direction, including turns.
       const scale = 600 / Math.max(1, tapeWidth), radius = reveal.radius();
       let dx = (gesture.x - gesture.lastX) * scale, dy = (gesture.y - gesture.lastY) * scale;
       gesture.lastX = gesture.x; gesture.lastY = gesture.y;
@@ -526,18 +561,22 @@ function mountScratchHandle(root, transport, render, status, reveal) {
         const tx = b.x - a.x, ty = b.y - a.y, norm = Math.hypot(tx, ty) || 1;
         gesture.travel += (dx * tx + dy * ty) / norm;
       }
-      const displacement = gesture.travel;
-      // Map one complete trip around the actual tape to two audio seconds,
-      // independent of player size or drag speed.
-      const target = clamp(gesture.keyboardPosition ?? gesture.origin + displacement / length * 2, 0, transport.duration);
-      const position = gesture.pointerId === null ? gesture.lastPosition + clamp(target - gesture.lastPosition, -0.12, 0.12) : target;
-      const elapsed = Math.max(0.008, (now - gesture.lastTime) / 1000);
-      const velocity = (position - gesture.lastPosition) / elapsed;
-      transport.moveScratch(position, velocity);
-      gesture.lastPosition = position; gesture.lastTime = now;
-      drawHead(gesture.headOrigin + displacement);
-      render();
     }
+    const displacement = gesture.travel;
+    const target = clamp(gesture.keyboardPosition ?? gesture.origin + displacement / length * 2, 0, transport.duration);
+    const position = gesture.pointerId === null ? gesture.lastPosition + clamp(target - gesture.lastPosition, -0.12, 0.12) : target;
+    const elapsed = Math.max(0.008, (now - gesture.lastTime) / 1000);
+    const velocity = (position - gesture.lastPosition) / elapsed;
+    transport.moveScratch(position, velocity);
+    gesture.lastPosition = position; gesture.lastTime = now;
+    drawHead(gesture.headOrigin + displacement);
+    render();
+  }
+  const tick = now => {
+    const elapsedTick = lastTick === undefined ? 0 : Math.min(0.1, (now - lastTick) / 1000);
+    lastTick = now;
+    const length = tapeLength(reveal.radius());
+    if (gesture?.ready) updateGesture(now);
     if (!gesture && !finishing && !reduced.matches && !audio.paused && !handle.matches(':focus-visible')) {
       // Keep the bump and its invisible target together: one complete tape
       // circuit every eight seconds. Release continues from the grabbed point.
@@ -546,9 +585,11 @@ function mountScratchHandle(root, transport, render, status, reveal) {
     }
     drawHead(headX);
     const position = transport.position;
-    setAttr(handle, 'aria-valuemax', String(Number.isFinite(transport.duration) ? transport.duration : 0));
-    setAttr(handle, 'aria-valuenow', String(Math.round(position * 10) / 10));
-    setAttr(handle, 'aria-valuetext', `${Math.floor(position / 60)}:${String(Math.floor(position % 60)).padStart(2, '0')}`);
+    if (!mobile.matches && (handle.matches(':focus') || gesture?.ready)) {
+      setAttr(handle, 'aria-valuemax', String(Number.isFinite(transport.duration) ? transport.duration : 0));
+      setAttr(handle, 'aria-valuenow', String(Math.round(position * 10) / 10));
+      setAttr(handle, 'aria-valuetext', `${Math.floor(position / 60)}:${String(Math.floor(position % 60)).padStart(2, '0')}`);
+    }
     advanceReels(position, elapsedTick);
     if (!reduced.matches && reelPosition !== undefined) {
       // Wrap to one turn so the angle keeps full float precision.
@@ -559,7 +600,7 @@ function mountScratchHandle(root, transport, render, status, reveal) {
         for (const reel of reels) reel.style.transform = transform;
       }
     }
-    const shouldAnimate = !document.hidden && visible && (gesture !== undefined || finishing || (!audio.paused && !audio.ended));
+    const shouldAnimate = !reduced.matches && !document.hidden && visible && (gesture !== undefined || finishing || (!audio.paused && !audio.ended));
     if (shouldAnimate) {
       frame = requestAnimationFrame(tick);
     } else {
@@ -591,6 +632,15 @@ function mountScratchHandle(root, transport, render, status, reveal) {
       startTick();
     }
   });
+  const onReducedMotionChange = () => {
+    if (reduced.matches) {
+      cancelAnimationFrame(frame);
+      frame = undefined;
+      lastTick = undefined;
+    } else if (!audio.paused && !audio.ended) startTick();
+  };
+  if (typeof reduced.addEventListener === 'function') reduced.addEventListener('change', onReducedMotionChange);
+  else reduced.addListener(onReducedMotionChange);
   // Initial frame to render the handle and head path at starting position
   frame = requestAnimationFrame(tick);
   return () => {

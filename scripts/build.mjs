@@ -1,6 +1,7 @@
 import { readFile, mkdir, writeFile, cp, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, sep } from 'node:path';
+import { createHash } from 'node:crypto';
 import { matchCoverPreviews } from '../lib/cover-previews.mjs';
 import { escape as e, externalUrl, assetUrl, embedUrl, validateContent } from '../lib/content.mjs';
 
@@ -53,7 +54,7 @@ function tapePlayer(r) {
           <path class="tape-ribbon" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
           <path class="tape-travel" pathLength="1200" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/>
         </g>
-        <g class="tape-head-mark"><path d="M80 26 H108"/></g>
+        <g class="tape-head-mark"><path pathLength="1200" d="M80 26 H520 A44 44 0 0 1 520 114 H80 A44 44 0 0 1 80 26 Z"/></g>
         <g class="tape-guides">
           <path class="tape-inner-rim tape-inner-rim-left" pathLength="1" d="M80 26 A44 44 0 0 1 80 114"/>
           <path class="tape-inner-rim tape-inner-rim-right" pathLength="1" d="M520 114 A44 44 0 0 1 520 26"/>
@@ -62,7 +63,7 @@ function tapePlayer(r) {
         </g>
       </svg>
     </div>
-    <p class="audio-status sr-only" role="status">${ready ? 'Ready to play' : 'Audio file pending'}</p>
+    <p class="audio-status" role="status" aria-live="polite">${ready ? 'Ready to play' : 'Audio file pending'}</p>
     <audio preload="none" ${ready ? `src="${e(r.audio.src)}"` : ''}></audio>
     <noscript><p>Enable JavaScript to use the audio player.</p></noscript>
   </div>`;
@@ -88,8 +89,7 @@ function logoLink(item) {
 function image(path, alt, label, className = '', eager = false) {
   const src = missingArtwork.has(path) ? '' : assetUrl(path);
   const loading = eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
-  const loaded = eager ? ' onload="this.classList.add(\'is-loaded\')" onerror="this.classList.add(\'is-loaded\')"' : '';
-  return src ? `<img class="artwork ${className}" src="${e(src)}" alt="${e(alt)}" width="800" height="800" ${loading} decoding="async"${loaded}>` : `<div class="artwork empty-art ${className}" role="img" aria-label="${e(label)}"><span>${e(label)}</span><span class="asset-note">Image placeholder</span></div>`;
+  return src ? `<img class="artwork ${className}" src="${e(src)}" alt="${e(alt)}" width="800" height="800" ${loading} decoding="async">` : `<div class="artwork empty-art ${className}" role="img" aria-label="${e(label)}"><span>${e(label)}</span><span class="asset-note">Image placeholder</span></div>`;
 }
 function link(item, row = false) {
   const url = externalUrl(item.url);
@@ -290,8 +290,45 @@ for (const [slug, title] of [['shop', 'Shop']]) {
 }
 await writeFile(`${root}dist/listening-config.json`, JSON.stringify({demo:!!c.listening?.demo,period:c.listening?.period ?? '1month'}));
 await writeFile(`${root}dist/spotify-config.json`, JSON.stringify({clientId:(process.env.SPOTIFY_CLIENT_ID ?? '').trim()}));
+await fingerprintReferencedAssets(`${root}dist`, root);
 return { previewWarnings, placeholder:!!placeholder, outputDirectory:`${root}dist` };
 }
+
+async function fingerprintReferencedAssets(outputDirectory, projectRoot) {
+  const textExtensions = new Set(['.css','.html','.js','.json','.svg','.txt','.xml']);
+  const walk = async directory => {
+    const files = [];
+    for (const entry of await (await import('node:fs/promises')).readdir(directory, {withFileTypes:true})) {
+      const path = `${directory}/${entry.name}`;
+      if (entry.isDirectory()) files.push(...await walk(path));
+      else if (entry.isFile()) files.push(path);
+    }
+    return files;
+  };
+  const textFiles = (await walk(outputDirectory)).filter(path => textExtensions.has(path.slice(path.lastIndexOf('.'))));
+  const sources = await Promise.all(textFiles.map(async path => [path, await readFile(path, 'utf8')]));
+  const references = new Set(sources.flatMap(([, text]) => text.match(/\/assets\/[\w./-]+/g) ?? []));
+  const versioned = new Map();
+  for (const reference of references) {
+    const sourcePath = `${projectRoot}public${reference}`;
+    try {
+      const bytes = await readFile(sourcePath);
+      const hash = createHash('sha256').update(bytes).digest('hex').slice(0, 12);
+      const slash = reference.lastIndexOf('/');
+      const dot = reference.lastIndexOf('.');
+      const versionedPath = `/_assets${reference.slice(0, slash + 1)}${reference.slice(slash + 1, dot)}.${hash}${reference.slice(dot)}`;
+      const outputPath = `${outputDirectory}${versionedPath}`;
+      await mkdir(outputPath.slice(0, outputPath.lastIndexOf('/')), {recursive:true});
+      await writeFile(outputPath, bytes);
+      versioned.set(reference, versionedPath);
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+  }
+  const rewrite = text => text.replace(/\/assets\/[\w./-]+/g, path => versioned.get(path) ?? path);
+  await Promise.all(sources.map(([path, text]) => writeFile(path, rewrite(text))));
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
 await buildSite();
 console.log('Built dist/ from content.json.');
