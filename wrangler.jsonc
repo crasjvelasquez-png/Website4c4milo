@@ -10,6 +10,11 @@
       "pattern": "c4milo.com",
       "zone_name": "c4milo.com",
       "custom_domain": true
+    },
+    {
+      "pattern": "www.c4milo.com",
+      "zone_name": "c4milo.com",
+      "custom_domain": true
     }
   ],
   "assets": {
