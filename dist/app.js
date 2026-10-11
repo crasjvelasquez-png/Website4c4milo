@@ -99,7 +99,7 @@ function closeReleaseTile(tile, restoreFocus = false) {
   const trigger = tile.querySelector('[data-inline-services]');
   trigger.setAttribute('aria-expanded', 'false');
   // Wait only for these CSS transitions; reopening invalidates this completion.
-  Promise.allSettled([...panel.querySelectorAll('.platform-logo')].flatMap(icon => icon.getAnimations().map(animation => animation.finished))).then(() => {
+  Promise.allSettled([panel, ...panel.querySelectorAll('.platform-logo')].flatMap(icon => icon.getAnimations().map(animation => animation.finished))).then(() => {
     if (releaseClosures.get(tile) !== closing) return;
     panel.hidden = true;
     tile.classList.remove('is-closing');

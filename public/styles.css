@@ -367,8 +367,8 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .featured-cover .artwork,.release-cover .artwork{border-radius:inherit}
 .cassette-label .featured-cover{border-radius:var(--cover-radius-sm,10px)}
 #releases .release-services{transition:none}
-#releases .release-tile.is-open .release-services,#releases .release-tile.is-closing .release-services{opacity:1}
-#releases .release-tile.is-closing .release-services{pointer-events:none}
+#releases .release-tile.is-open .release-services{opacity:1}
+#releases .release-tile.is-closing .release-services{opacity:0;pointer-events:none;transition:opacity 240ms ease-out}
 #releases .release-services-grid .platform-logo{opacity:0;transform:translateY(5px);transition:opacity 120ms ease-out,transform 120ms ease-out;transition-delay:var(--service-exit-delay,120ms)}
 #releases .release-tile.is-open .release-services-grid .platform-logo{opacity:1;transform:none;transition-duration:200ms,240ms;transition-delay:var(--service-delay,0ms)}
 #releases .release-services-grid .platform-logo:nth-child(2){--service-delay:55ms;--service-exit-delay:90ms}
@@ -380,9 +380,11 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 /* Touch screens use one quick fade, without blur or staggered movement. */
 @media(max-width:760px),(pointer:coarse){
   #releases .release-services{backdrop-filter:none;-webkit-backdrop-filter:none}
+  #releases .release-tile.is-closing .release-services{transition-duration:120ms}
   #releases .release-services-grid .platform-logo,#releases .release-tile.is-open .release-services-grid .platform-logo{transform:none;transition:opacity 120ms ease-out;transition-delay:0ms}
 }
 @media(prefers-reduced-motion:reduce){
+  #releases .release-tile.is-closing .release-services{transition:none}
   #releases .release-services-grid .platform-logo,#releases .release-tile.is-open .release-services-grid .platform-logo{transition:none;transform:none}
 }
 
