@@ -288,18 +288,8 @@ function mountTapeReveal(root) {
   const left = root.querySelector('.tape-inner-rim-left');
   const right = root.querySelector('.tape-inner-rim-right');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const section = root.closest('.featured');
   const tape = root.querySelector('.tape-loop');
-  let tapeWidth = tape.getBoundingClientRect().width;
   let radius = 44, target = 44, frame;
-  const alignLabel = () => {
-    section?.style.setProperty('--tape-bottom-inset', `${(70 - radius) * tapeWidth / 600}px`);
-  };
-  const resize = new ResizeObserver(entries => {
-    tapeWidth = entries[0].contentRect.width;
-    alignLabel();
-  });
-  resize.observe(tape);
   const draw = value => {
     radius = value;
     const paths = tapeGeometry(radius);
@@ -308,7 +298,6 @@ function mountTapeReveal(root) {
     right.setAttribute('d', paths.right);
     root.style.setProperty('--head-shift', `${44 - radius}px`);
     root.style.setProperty('--head-top', `${(70 - radius) / 140 * 100}%`);
-    alignLabel();
     // Redraw dependents in this same frame so nothing trails the tape.
     update.onDraw?.(radius);
   };
@@ -340,9 +329,8 @@ export function mountPlayer(root) {
   const volume = root.querySelector('.audio-volume');
   if (!audio.getAttribute('src')) return;
   const Context = window.AudioContext || window.webkitAudioContext;
-  if (!Context) { status.textContent = 'This browser cannot use the audio player.'; toggle.disabled = true; return; }
+  if (!Context) { root.classList.remove('progressive-player'); status.textContent = 'This browser cannot use the audio player.'; toggle.disabled = true; return; }
   const volumeLabel = root.querySelector('.audio-volume-label');
-  root.classList.add('progressive-player');
   const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut), startAt:3, volume:Number(volume.value)});
   volume.addEventListener('input', () => transport.setVolume(volume.value));
   const reveal = mountTapeReveal(root);

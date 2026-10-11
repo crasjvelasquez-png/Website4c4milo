@@ -217,9 +217,7 @@ a.floating-link[aria-expanded=true]{transform:none;filter:none;transition:none}
 .featured .tape-player{position:relative}
 .featured .audio-status{position:absolute;width:1px;height:1px;min-height:0;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%);border:0}
 .cassette-base{display:none}
-/* Match the label's lower edge to the visible tape, including its reveal.
-   Portrait phones retain their stacked layout; unfolded phones share the row. */
-@media(min-width:481px){#music .cassette-label{transform:translateY(calc(-1 * var(--tape-bottom-inset,0px)))}}
+/* Keep the cassette label stationary while the tape reveal animates. */
 @media(max-width:319px){#music.featured{grid-template-columns:minmax(0,1fr)}#music .tape-player{width:100%;max-width:240px;justify-self:end}.platform-logos{flex-wrap:wrap}}
 @media(max-width:760px){.featured{gap:24px}.cassette-label{gap:16px}.cassette-label .empty-art{font-size:.625rem}.featured .tape-player{width:min(100%,360px);justify-self:center}}
 @media(max-width:480px){.featured{grid-template-columns:minmax(0,1fr);gap:20px}.cassette-label{grid-template-columns:48px minmax(0,1fr);gap:10px}.cassette-label .featured-cover{width:48px}.cassette-label .empty-art{padding:4px;font-size:.5625rem}.cassette-label h1{font-size:1.5rem}.featured .tape-player{width:min(100%,300px)}.featured .tape-main{min-height:44px;display:flex;align-items:center}.featured .audio-toggle{width:44px;height:44px}}

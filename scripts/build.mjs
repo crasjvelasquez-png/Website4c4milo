@@ -44,7 +44,7 @@ for (const r of c.releases) if (r.audio?.src) {
 }
 function tapePlayer(r) {
   const ready = availableAudio.has(r.id);
-  return `<div class="tape-player" data-audio-player data-fade-in="${r.audio.fadeIn ?? 1}" data-fade-out="${r.audio.fadeOut ?? 1.5}">
+  return `<div class="tape-player${ready ? ' progressive-player' : ''}" data-audio-player data-fade-in="${r.audio.fadeIn ?? 1}" data-fade-out="${r.audio.fadeOut ?? 1.5}">
     <div class="tape-main"><span class="audio-time" role="timer" aria-label="Elapsed time: 0:00"><span data-time-minutes aria-hidden="true">0</span><span class="audio-time-colon" aria-hidden="true">:</span><span data-time-seconds aria-hidden="true">00</span></span><button class="audio-toggle" aria-label="Play ${e(r.title)}" ${ready ? '' : 'disabled'}><span data-play-symbol aria-hidden="true">▶</span></button><label class="audio-volume-label"><span class="sr-only">Volume</span><input class="audio-volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume" ${ready ? '' : 'disabled'}></label>
       <button type="button" class="tape-head-handle" role="slider" aria-label="Scratch track: drag left to rewind" aria-description="Drag left to rewind, right to scratch forward. Arrow keys seek one second; Shift seeks five. Home and End select track boundaries." aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00" ${ready ? '' : 'disabled'}></button>
       <svg class="tape-loop" viewBox="0 0 600 140" aria-hidden="true">
