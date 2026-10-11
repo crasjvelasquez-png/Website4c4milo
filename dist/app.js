@@ -85,23 +85,27 @@ updateListening();
 
 for (const root of document.querySelectorAll('[data-audio-player]')) mountPlayer(root);
 
-const releaseTiles = [...document.querySelectorAll('[data-release-tile]')];
+const releaseTiles = [...document.querySelectorAll('#releases [data-release-tile]')];
 const releaseClosures = new WeakMap();
 function closeReleaseTile(tile, restoreFocus = false) {
   const panel = tile.querySelector('.release-services');
   if (panel.hidden || !tile.classList.contains('is-open')) return;
-  const closing = {};
-  releaseClosures.set(tile, closing);
   const focusInside = panel.contains(document.activeElement);
   panel.inert = true;
+  const closing = {};
+  releaseClosures.set(tile, closing);
+  tile.classList.add('is-closing');
   tile.classList.remove('is-open');
   const trigger = tile.querySelector('[data-inline-services]');
   trigger.setAttribute('aria-expanded', 'false');
-  if (restoreFocus || focusInside) trigger.focus({preventScroll:true});
-  // Keep the panel painted through its exit; reopening invalidates this completion.
-  Promise.allSettled(panel.getAnimations({subtree:true}).map(animation => animation.finished)).then(() => {
-    if (releaseClosures.get(tile) === closing) panel.hidden = true;
+  // Wait only for these CSS transitions; reopening invalidates this completion.
+  Promise.allSettled([...panel.querySelectorAll('.platform-logo')].flatMap(icon => icon.getAnimations().map(animation => animation.finished))).then(() => {
+    if (releaseClosures.get(tile) !== closing) return;
+    panel.hidden = true;
+    tile.classList.remove('is-closing');
+    releaseClosures.delete(tile);
   });
+  if (restoreFocus || focusInside) trigger.focus({preventScroll:true});
 }
 for (const tile of releaseTiles) {
   const trigger = tile.querySelector('[data-inline-services]');
@@ -112,9 +116,10 @@ for (const tile of releaseTiles) {
     if (tile.classList.contains('is-open')) { closeReleaseTile(tile, true); return; }
     for (const other of releaseTiles) if (other !== tile) closeReleaseTile(other);
     releaseClosures.delete(tile);
+    tile.classList.remove('is-closing');
     panel.hidden = false;
     panel.inert = false;
-    // Resolve the starting opacity before transitioning out of display:none.
+    // Resolve the icons' starting state before their staggered entrance.
     getComputedStyle(panel).opacity;
     tile.classList.add('is-open');
     trigger.setAttribute('aria-expanded', 'true');
