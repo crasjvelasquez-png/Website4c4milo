@@ -370,17 +370,16 @@ export function mountPlayer(root) {
   toggle.addEventListener('click', async () => {
     if (loading || transport.scratching) return;
     if (!audio.paused) { transport.pause(); status.textContent = 'Paused'; render(); return; }
-    loading = true; toggle.disabled = true; root.classList.add('is-loading'); status.textContent = 'Loading audio…';
+    loading = true; toggle.disabled = true; status.textContent = 'Loading audio…';
     try { await transport.play(); status.textContent = audio.paused ? 'Stopped' : 'Playing'; }
     catch { transport.stop(); status.textContent = 'Audio could not play. Try again or check the file.'; }
-    finally { loading = false; toggle.disabled = false; root.classList.remove('is-loading'); render(); }
+    finally { loading = false; toggle.disabled = false; render(); }
   });
   const cancelGesture = mountScratchHandle(root, transport, render, status, reveal);
   const exit = () => { cancelGesture(); transport.stop(); status.textContent = 'Stopped'; render(); };
   for (const event of ['timeupdate','loadedmetadata','seeked','playing','pause']) audio.addEventListener(event, render);
-  audio.addEventListener('waiting', () => { root.classList.add('is-buffering'); status.textContent = 'Buffering…'; });
-  audio.addEventListener('playing', () => { root.classList.remove('is-buffering'); status.textContent = 'Playing'; });
-  audio.addEventListener('pause', () => root.classList.remove('is-buffering'));
+  audio.addEventListener('waiting', () => { status.textContent = 'Buffering…'; });
+  audio.addEventListener('playing', () => { status.textContent = 'Playing'; });
   audio.addEventListener('ended', () => { status.textContent = 'Finished'; render(); });
   audio.addEventListener('error', () => { exit(); status.textContent = 'Audio file unavailable. Check the local file and rebuild.'; });
   document.addEventListener('visibilitychange', () => { if (document.hidden && !allowsBackgroundAudio()) exit(); });
