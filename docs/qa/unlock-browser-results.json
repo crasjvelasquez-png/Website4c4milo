@@ -1,0 +1,4064 @@
+{
+  "date": "2026-10-13",
+  "url": "http://127.0.0.1:3012/unlock",
+  "deployment": "local only",
+  "results": [
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          }
+        ],
+        "keys": [
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.8125,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.8125,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.859375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.859375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 40.796875,
+            "h": 48
+          },
+          {
+            "w": 27.1875,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 40.796875,
+            "h": 48
+          }
+        ],
+        "intro": 76,
+        "board": {
+          "x": 45,
+          "y": 88,
+          "width": 230,
+          "height": 277,
+          "top": 88,
+          "right": 275,
+          "bottom": 365,
+          "left": 45
+        },
+        "keyboard": {
+          "x": 8,
+          "y": 381,
+          "width": 304,
+          "height": 160,
+          "top": 381,
+          "right": 312,
+          "bottom": 541,
+          "left": 8
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/chromium-320x568.png"
+      ]
+    },
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.078125,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.078125,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.078125,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.078125,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 48.90625,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.609375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.609375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 48.90625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 30,
+          "y": 151.5,
+          "width": 330,
+          "height": 397,
+          "top": 151.5,
+          "right": 360,
+          "bottom": 548.5,
+          "left": 30
+        },
+        "keyboard": {
+          "x": 8,
+          "y": 642,
+          "width": 374,
+          "height": 190,
+          "top": 642,
+          "right": 382,
+          "bottom": 832,
+          "left": 8
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/chromium-390x844.png"
+      ]
+    },
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.078125,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.078125,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.078125,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.078125,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 54.90625,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.609375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.609375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 54.90625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 50,
+          "y": 195.5,
+          "width": 330,
+          "height": 397,
+          "top": 195.5,
+          "right": 380,
+          "bottom": 592.5,
+          "left": 50
+        },
+        "keyboard": {
+          "x": 8,
+          "y": 730,
+          "width": 414,
+          "height": 190,
+          "top": 730,
+          "right": 422,
+          "bottom": 920,
+          "left": 8
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/chromium-430x932.png"
+      ]
+    },
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          }
+        ],
+        "keys": [
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.078125,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.078125,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.078125,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.078125,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 65.40625,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.609375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.609375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 65.40625,
+            "h": 48
+          }
+        ],
+        "intro": 62,
+        "board": {
+          "x": 317,
+          "y": 70,
+          "width": 210,
+          "height": 253,
+          "top": 70,
+          "right": 527,
+          "bottom": 323,
+          "left": 317
+        },
+        "keyboard": {
+          "x": 180,
+          "y": 339,
+          "width": 484,
+          "height": 160,
+          "top": 339,
+          "right": 664,
+          "bottom": 499,
+          "left": 180
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/chromium-844x390.png"
+      ]
+    },
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "viewport": {
+        "width": 760,
+        "height": 900
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.609375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.609375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 215,
+          "y": 179.5,
+          "width": 330,
+          "height": 397,
+          "top": 179.5,
+          "right": 545,
+          "bottom": 576.5,
+          "left": 215
+        },
+        "keyboard": {
+          "x": 138,
+          "y": 698,
+          "width": 484,
+          "height": 190,
+          "top": 698,
+          "right": 622,
+          "bottom": 888,
+          "left": 138
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/chromium-760x900.png"
+      ]
+    },
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "viewport": {
+        "width": 761,
+        "height": 900
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.609375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.609375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 215.5,
+          "y": 179.5,
+          "width": 330,
+          "height": 397,
+          "top": 179.5,
+          "right": 545.5,
+          "bottom": 576.5,
+          "left": 215.5
+        },
+        "keyboard": {
+          "x": 138.5,
+          "y": 698,
+          "width": 484,
+          "height": 190,
+          "top": 698,
+          "right": 622.5,
+          "bottom": 888,
+          "left": 138.5
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/chromium-761x900.png"
+      ]
+    },
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.078125,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.609375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.609375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 475,
+          "y": 179.5,
+          "width": 330,
+          "height": 397,
+          "top": 179.5,
+          "right": 805,
+          "bottom": 576.5,
+          "left": 475
+        },
+        "keyboard": {
+          "x": 398,
+          "y": 698,
+          "width": 484,
+          "height": 190,
+          "top": 698,
+          "right": 882,
+          "bottom": 888,
+          "left": 398
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/chromium-1280x900.png"
+      ]
+    },
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "checks": [
+        "invalid words and incomplete guesses do not consume turns",
+        "refresh clears partial input",
+        "six losses automatically clear board and keyboard",
+        "input during reset ignored",
+        "sixth-guess win",
+        "help, Escape and focus restore",
+        "visible keyboard focus",
+        "reduced motion",
+        "orientation change",
+        "custom release config and link",
+        "custom answer accepted",
+        "config and dictionary request failures and retry",
+        "slow loading ignores input",
+        "letters-only mode",
+        "no destination when blank",
+        "no page errors"
+      ]
+    },
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "checks": [
+        "JavaScript-disabled fallback visible",
+        "blocked local storage still allows wins"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          },
+          {
+            "w": 42,
+            "h": 42
+          }
+        ],
+        "keys": [
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.796875,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 26.84375,
+            "h": 48
+          },
+          {
+            "w": 40.796875,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 27.203125,
+            "h": 48
+          },
+          {
+            "w": 40.796875,
+            "h": 48
+          }
+        ],
+        "intro": 76,
+        "board": {
+          "x": 45,
+          "y": 88,
+          "width": 230,
+          "height": 277,
+          "top": 88,
+          "right": 275,
+          "bottom": 365,
+          "left": 45
+        },
+        "keyboard": {
+          "x": 8,
+          "y": 381,
+          "width": 304,
+          "height": 160,
+          "top": 381,
+          "right": 312,
+          "bottom": 541,
+          "left": 8
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/webkit-320x568.png"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 32.0625,
+            "h": 58
+          },
+          {
+            "w": 48.90625,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 32.59375,
+            "h": 58
+          },
+          {
+            "w": 48.90625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 30,
+          "y": 151.484375,
+          "width": 330,
+          "height": 397,
+          "top": 151.484375,
+          "right": 360,
+          "bottom": 548.484375,
+          "left": 30
+        },
+        "keyboard": {
+          "x": 8,
+          "y": 641.984375,
+          "width": 374,
+          "height": 190,
+          "top": 641.984375,
+          "right": 382,
+          "bottom": 831.984375,
+          "left": 8
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/webkit-390x844.png"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 36.0625,
+            "h": 58
+          },
+          {
+            "w": 54.90625,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 36.59375,
+            "h": 58
+          },
+          {
+            "w": 54.90625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 50,
+          "y": 195.5,
+          "width": 330,
+          "height": 397,
+          "top": 195.5,
+          "right": 380,
+          "bottom": 592.5,
+          "left": 50
+        },
+        "keyboard": {
+          "x": 8,
+          "y": 730,
+          "width": 414,
+          "height": 190,
+          "top": 730,
+          "right": 422,
+          "bottom": 920,
+          "left": 8
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/webkit-430x932.png"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          },
+          {
+            "w": 38,
+            "h": 38
+          }
+        ],
+        "keys": [
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 43.0625,
+            "h": 48
+          },
+          {
+            "w": 65.40625,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 43.59375,
+            "h": 48
+          },
+          {
+            "w": 65.40625,
+            "h": 48
+          }
+        ],
+        "intro": 62,
+        "board": {
+          "x": 317,
+          "y": 70,
+          "width": 210,
+          "height": 253,
+          "top": 70,
+          "right": 527,
+          "bottom": 323,
+          "left": 317
+        },
+        "keyboard": {
+          "x": 180,
+          "y": 339,
+          "width": 484,
+          "height": 160,
+          "top": 339,
+          "right": 664,
+          "bottom": 499,
+          "left": 180
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/webkit-844x390.png"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "viewport": {
+        "width": 760,
+        "height": 900
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 215,
+          "y": 179.5,
+          "width": 330,
+          "height": 397,
+          "top": 179.5,
+          "right": 545,
+          "bottom": 576.5,
+          "left": 215
+        },
+        "keyboard": {
+          "x": 138,
+          "y": 698,
+          "width": 484,
+          "height": 190,
+          "top": 698,
+          "right": 622,
+          "bottom": 888,
+          "left": 138
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/webkit-760x900.png"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "viewport": {
+        "width": 761,
+        "height": 900
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 215.5,
+          "y": 179.5,
+          "width": 330,
+          "height": 397,
+          "top": 179.5,
+          "right": 545.5,
+          "bottom": 576.5,
+          "left": 215.5
+        },
+        "keyboard": {
+          "x": 138.5,
+          "y": 698,
+          "width": 484,
+          "height": 190,
+          "top": 698,
+          "right": 622.5,
+          "bottom": 888,
+          "left": 138.5
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/webkit-761x900.png"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "conditions": "touch emulation; release; English dictionary",
+      "checks": [
+        "no horizontal overflow",
+        "square tiles",
+        "key heights >=44px",
+        "board and keyboard do not overlap",
+        "touch guesses",
+        "configured-answer win",
+        "configured reward visibility",
+        "refresh clears board, keyboard and reward",
+        "play-again clears board, keyboard and reward",
+        "no page errors"
+      ],
+      "geometry": {
+        "overflow": false,
+        "zoom": "1",
+        "tiles": [
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          },
+          {
+            "w": 62,
+            "h": 62
+          }
+        ],
+        "keys": [
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 43.0625,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 43.59375,
+            "h": 58
+          },
+          {
+            "w": 65.40625,
+            "h": 58
+          }
+        ],
+        "intro": 66,
+        "board": {
+          "x": 475,
+          "y": 179.5,
+          "width": 330,
+          "height": 397,
+          "top": 179.5,
+          "right": 805,
+          "bottom": 576.5,
+          "left": 475
+        },
+        "keyboard": {
+          "x": 398,
+          "y": 698,
+          "width": 484,
+          "height": 190,
+          "top": 698,
+          "right": 882,
+          "bottom": 888,
+          "left": 398
+        }
+      },
+      "screenshots": [
+        "/Users/c4milo/Desktop/Website4c4milo/docs/qa/unlock/webkit-1280x900.png"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "checks": [
+        "invalid words and incomplete guesses do not consume turns",
+        "refresh clears partial input",
+        "six losses automatically clear board and keyboard",
+        "input during reset ignored",
+        "sixth-guess win",
+        "help, Escape and focus restore",
+        "visible keyboard focus",
+        "reduced motion",
+        "orientation change",
+        "custom release config and link",
+        "custom answer accepted",
+        "config and dictionary request failures and retry",
+        "slow loading ignores input",
+        "letters-only mode",
+        "no destination when blank",
+        "no page errors"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "checks": [
+        "JavaScript-disabled fallback visible",
+        "blocked local storage still allows wins"
+      ]
+    }
+  ],
+  "gaps": [
+    "Physical phones",
+    "Safari app",
+    "Instagram in-app browser",
+    "Production routing and deployment",
+    "10-second timeout branch not exercised"
+  ]
+}

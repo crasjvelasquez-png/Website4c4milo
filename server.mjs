@@ -22,7 +22,7 @@ export function createApp({ directory=resolve(root,'dist'), listening=createList
         res.setHeader('Cache-Control','no-store');
         send(data.status === 'unavailable' ? 503 : 200,JSON.stringify(data),'application/json; charset=utf-8');return;
       }
-      const requested = pathname === '/' ? '/index.html' : pathname;
+      const requested = pathname === '/' ? '/index.html' : ['/unlock','/unlock/'].includes(pathname) ? '/unlock/index.html' : pathname;
       if (requested.includes('\0') || requested.includes('\\') || requested.split('/').some(segment=>segment.startsWith('.'))) {send(404,'Not found');return;}
       const path = resolve(directory, `.${requested}`);
       if (!path.startsWith(directory + sep)) {send(404,'Not found');return;}

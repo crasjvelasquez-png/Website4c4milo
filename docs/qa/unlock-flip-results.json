@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-13",
+  "deployment": "local only",
+  "results": [
+    {
+      "browser": "Chromium",
+      "version": "151.0.7922.34",
+      "changes": [
+        {
+          "col": 0,
+          "time": 163.70000000298023
+        },
+        {
+          "col": 1,
+          "time": 263.70000000298023
+        },
+        {
+          "col": 2,
+          "time": 364.09999999403954
+        },
+        {
+          "col": 3,
+          "time": 464.29999999701977
+        },
+        {
+          "col": 4,
+          "time": 563.8999999910593
+        },
+        {
+          "col": 0,
+          "time": 722.3999999910593
+        },
+        {
+          "col": 1,
+          "time": 722.3999999910593
+        },
+        {
+          "col": 2,
+          "time": 722.3999999910593
+        },
+        {
+          "col": 3,
+          "time": 722.3999999910593
+        },
+        {
+          "col": 4,
+          "time": 722.3999999910593
+        }
+      ],
+      "checks": [
+        "left-to-right score reveal at tile midpoint",
+        "repeated input ignored during flip",
+        "keyboard scoring after reveal",
+        "win panel after final flip",
+        "restored guesses do not animate",
+        "reduced motion immediate",
+        "no page errors"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "version": "26.5",
+      "changes": [
+        {
+          "col": 0,
+          "time": 162
+        },
+        {
+          "col": 1,
+          "time": 263
+        },
+        {
+          "col": 2,
+          "time": 363
+        },
+        {
+          "col": 3,
+          "time": 463
+        },
+        {
+          "col": 4,
+          "time": 563
+        },
+        {
+          "col": 0,
+          "time": 730
+        },
+        {
+          "col": 1,
+          "time": 730
+        },
+        {
+          "col": 2,
+          "time": 730
+        },
+        {
+          "col": 3,
+          "time": 730
+        },
+        {
+          "col": 4,
+          "time": 730
+        }
+      ],
+      "checks": [
+        "left-to-right score reveal at tile midpoint",
+        "repeated input ignored during flip",
+        "keyboard scoring after reveal",
+        "win panel after final flip",
+        "restored guesses do not animate",
+        "reduced motion immediate",
+        "no page errors"
+      ]
+    }
+  ]
+}

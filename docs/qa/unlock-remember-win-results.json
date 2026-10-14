@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-13",
+  "deployment": "local only",
+  "results": [
+    {
+      "browser": "Chromium",
+      "checks": [
+        "first visit locked",
+        "win reveals supplied Untitled link",
+        "play again retains link",
+        "refresh clears board and colors while retaining link",
+        "fresh board playable after remembered win",
+        "new answer locked",
+        "no page errors"
+      ]
+    },
+    {
+      "browser": "WebKit",
+      "checks": [
+        "first visit locked",
+        "win reveals supplied Untitled link",
+        "play again retains link",
+        "refresh clears board and colors while retaining link",
+        "fresh board playable after remembered win",
+        "new answer locked",
+        "no page errors"
+      ]
+    }
+  ]
+}

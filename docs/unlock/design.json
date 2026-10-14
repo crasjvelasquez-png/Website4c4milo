@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T03:47:55.615791+00:00",
+  "title": "Design System: c4milo Unlock",
+  "extensions": {
+    "source": "public/unlock.css; local /unlock snapshot. Refresh after source changes.",
+    "colorMeta": {
+      "bg": {
+        "role": "primary",
+        "displayName": "CRUSH deep green"
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "CRUSH off-white"
+      },
+      "correct": {
+        "role": "primary",
+        "displayName": "Correct off-white"
+      },
+      "present": {
+        "role": "secondary",
+        "displayName": "Present mustard"
+      },
+      "absent": {
+        "role": "neutral",
+        "displayName": "Absent tile green"
+      },
+      "key-absent": {
+        "role": "neutral",
+        "displayName": "Absent key deep green"
+      }
+    },
+    "shadows": [
+      {
+        "name": "help-dialog",
+        "value": "0 8px 32px #0003",
+        "purpose": "Native help dialog only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "instant-scoring",
+        "value": "none",
+        "purpose": "Letter entry and scoring have no animation or transition."
+      },
+      {
+        "name": "reset-pause",
+        "value": "1200ms",
+        "purpose": "Input pauses after four misses, then the round clears."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow",
+        "value": "(max-width:360px)"
+      },
+      {
+        "name": "short",
+        "value": "(max-height:650px)"
+      },
+      {
+        "name": "short-landscape",
+        "value": "(orientation:landscape) and (max-height:500px)"
+      }
+    ],
+    "focus": {
+      "outline": "3px solid var(--focus, #e9e9e8)",
+      "outlineOffset": "3px"
+    },
+    "backdrop": {
+      "helpDialog": "#0005"
+    }
+  },
+  "components": [
+    {
+      "name": "Letter tile",
+      "kind": "custom",
+      "refersTo": "tile",
+      "description": "Square empty, filled, and scored letter states.",
+      "html": "<div class=\"ds-tiles\"><span class=\"ds-tile\" role=\"img\" aria-label=\"Letter 1, empty\"></span><span class=\"ds-tile ds-filled\" role=\"img\" aria-label=\"Letter 2, A\">A</span><span class=\"ds-tile ds-correct\" role=\"img\" aria-label=\"Letter 3, U, right place\">U</span><span class=\"ds-tile ds-present\" role=\"img\" aria-label=\"Letter 4, D, wrong place\">D</span><span class=\"ds-tile ds-absent\" role=\"img\" aria-label=\"Letter 5, X, no remaining match\">X</span></div>",
+      "css": ".ds-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;width:min(100%,330px)}.ds-tile{border:2px solid var(--line,#8da27d);aspect-ratio:1;display:grid;place-items:center;font:700 32px/1 Arial,Helvetica,sans-serif;text-transform:uppercase;color:var(--ink,#e9e9e8);user-select:none}.ds-filled{border-color:var(--ink,#e9e9e8)}.ds-correct{background:var(--correct,#e9e9e8);border-color:var(--correct,#e9e9e8);color:var(--bg,#183d00)}.ds-present{background:var(--present,#c9b458);border-color:var(--present,#c9b458);color:var(--bg,#183d00)}.ds-absent{background:var(--absent,#34531f);border-color:var(--absent,#34531f);color:var(--ink,#e9e9e8)}"
+    },
+    {
+      "name": "Keyboard keys",
+      "kind": "button",
+      "refersTo": "key",
+      "description": "Neutral green keys, off-white/mustard matches, and deeper absent keys; immediate hover/press feedback.",
+      "html": "<div class=\"ds-key-row\"><button class=\"ds-key\">Q</button><button class=\"ds-key ds-key-correct\">A</button><button class=\"ds-key ds-key-present\">U</button><button class=\"ds-key ds-key-absent\">X</button><button class=\"ds-key ds-wide\">ENTER</button></div>",
+      "css": ".ds-key-row{display:flex;gap:6px;width:100%}.ds-key{flex:1;min-width:0;height:58px;padding:0;border:0;border-radius:4px;background:var(--key,#34531f);color:var(--ink,#e9e9e8);font:700 14px/1.45 Arial,Helvetica,sans-serif;display:grid;place-items:center;cursor:pointer;touch-action:manipulation}.ds-key-correct{background:var(--correct,#e9e9e8);color:var(--bg,#183d00)}.ds-key-present{background:var(--present,#c9b458);color:var(--bg,#183d00)}.ds-key-absent{background:#142e03;color:var(--muted,#c6cfbe)}.ds-wide{flex:1.5;font-size:11px}.ds-key:hover:not(:disabled){filter:brightness(.94)}.ds-key:active:not(:disabled){filter:brightness(.86)}.ds-key:focus-visible{outline:3px solid var(--focus,#e9e9e8);outline-offset:3px}.ds-key:disabled{opacity:.5;cursor:default}"
+    },
+    {
+      "name": "Release action",
+      "kind": "button",
+      "refersTo": "release-link",
+      "description": "Destination appears only after solving a real release puzzle.",
+      "html": "<a class=\"ds-release\" href=\"#\">Open early access <span aria-hidden=\"true\">\u2197</span></a>",
+      "css": ".ds-release{display:block;background:var(--ink,#e9e9e8);color:var(--bg,#183d00);text-decoration:none;padding:12px 18px;border-radius:4px;margin:16px auto 10px;max-width:300px;min-height:48px;text-align:center;font:700 16px/1.45 Arial,Helvetica,sans-serif;touch-action:manipulation}.ds-release:hover{background:#fff}.ds-release:focus-visible{outline:3px solid var(--focus,#e9e9e8);outline-offset:3px}"
+    },
+    {
+      "name": "Help control",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "44px header hit area with inline stroke icon.",
+      "html": "<button class=\"ds-icon\" aria-label=\"How to play\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9a2.5 2.5 0 1 1 4 2c-1 .7-1.5 1-1.5 2\"/><path d=\"M12 16h.01\"/></svg></button>",
+      "css": ".ds-icon{width:44px;height:44px;display:grid;place-items:center;background:none;border:0;border-radius:4px;color:var(--ink,#e9e9e8);cursor:pointer;touch-action:manipulation}.ds-icon:hover{background:var(--hover,#24470e)}.ds-icon:focus-visible{outline:3px solid var(--focus,#e9e9e8);outline-offset:3px}.ds-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}"
+    },
+    {
+      "name": "Help dialog surface",
+      "kind": "custom",
+      "refersTo": "help-dialog",
+      "description": "Native modal instructions; rendered snippet shows its surface.",
+      "html": "<section class=\"ds-help\" aria-labelledby=\"ds-help-title\"><h2 id=\"ds-help-title\">How to play</h2><p>Find the five-letter passcode in four guesses.</p><p>Four misses? The board resets automatically. Try as many times as you like.</p></section>",
+      "css": ".ds-help{width:min(calc(100% - 32px),440px);max-height:calc(100svh - 32px);overflow:auto;border:0;border-radius:8px;padding:32px 24px 24px;box-shadow:0 8px 32px #0003;color:var(--ink,#e9e9e8);background:var(--hover,#24470e);font:16px/1.45 Arial,Helvetica,sans-serif}.ds-help h2{font:700 28px/1.15 Georgia,\"Times New Roman\",serif;margin:0 36px 16px 0;text-wrap:balance}.ds-help p{font-size:14px;margin:10px 0 18px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Familiar Word Board",
+    "overview": "This local system records the user-specified Wordle geometry in the CRUSH release palette, sampled from `public/assets/crush.webp`: deep-green canvas, off-white letters, serif masthead, square letter board, and full keyboard. Play is immediate and low pressure; scoring changes instantly without decorative animation.",
+    "keyCharacteristics": [
+      "familiar geometry",
+      "compact controls",
+      "semantic letter states",
+      "unlimited retries"
+    ],
+    "rules": [],
+    "dos": [
+      "Do preserve the four-by-five board, full keyboard, immediate scoring, and unlimited retries.",
+      "Do keep scoring meaning in text and accessibility labels as well as color.",
+      "Do update these local snapshots when source CSS changes."
+    ],
+    "donts": [
+      "Don't add decorative scoring motion, daily lockouts, or leaderboard pressure.",
+      "Don't apply this standalone palette or typography to the global artist site."
+    ]
+  }
+}

@@ -4,6 +4,7 @@ import { resolve, sep } from 'node:path';
 import { createHash } from 'node:crypto';
 import { matchCoverPreviews } from '../lib/cover-previews.mjs';
 import { escape as e, externalUrl, assetUrl, embedUrl, validateContent } from '../lib/content.mjs';
+import { validateUnlockConfig, unlockPage } from '../lib/unlock-page.mjs';
 
 export async function buildSite({ directory=fileURLToPath(new URL('../', import.meta.url)) } = {}) {
 const root = resolve(directory) + sep;
@@ -11,6 +12,7 @@ let noiseVideo = '';
 try { await access(`${root}public/assets/vhs-noise.mp4`); noiseVideo = '/assets/vhs-noise.mp4'; }
 catch { /* Use the still texture until a noise loop is supplied. */ }
 const c = validateContent(JSON.parse(await readFile(`${root}content.json`, 'utf8')));
+const unlock = validateUnlockConfig(c.unlock);
 const { previews: coverPreviews, warnings: previewWarnings } = await matchCoverPreviews(c.releases, `${root}public`, c.featuredReleaseId);
 for (const warning of previewWarnings) console.warn(warning);
 const missingArtwork = new Set();
@@ -208,6 +210,7 @@ const html = `<!doctype html>
   <a class="skip-link" href="#main">Skip to content</a>
   ${previewMarkup}
   <main id="main">
+    <a class="unlock-cta" href="/unlock">Play to unlock early-access to next release</a>
     <section id="music" class="featured" aria-labelledby="featured-heading">
       ${featured ? `<div class="cassette-label">${releaseCover(featured, true)}<div class="featured-copy"><p class="section-label">${e(featured.statusLabel || `Featured release${featured.placeholder ? ' · Placeholder' : ''}`)}</p><h1 id="featured-heading">${e(featured.title)}</h1>${featured.audio ? `${featured.description ? `<p>${e(featured.description)}</p>` : ''}` : releaseBody(featured)}</div></div>${featured.audio ? tapePlayer(featured) : ''}<div class="cassette-base" aria-hidden="true"><i></i><i></i><i></i><i></i></div>` : '<h1 id="featured-heading">Music</h1><p>No releases yet.</p>'}
     </section>
@@ -267,6 +270,9 @@ await mkdir(`${root}dist`, { recursive: true });
 await cp(`${root}public`, `${root}dist`, { recursive: true });
 await writeFile(`${root}dist/index.html`, html.replace(/^ +$/gm, ''));
 await writeFile(`${root}dist/portafolio.html`, portfolioPage().replace(/^ +$/gm, ''));
+await mkdir(`${root}dist/unlock`, { recursive: true });
+await writeFile(`${root}dist/unlock/index.html`, unlockPage(c.artist.name));
+await writeFile(`${root}dist/unlock-config.json`, JSON.stringify(unlock));
 for (const [slug, title] of [['shop', 'Shop']]) {
   const page = `<!doctype html>
 <html lang="en" class="no-js">

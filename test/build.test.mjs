@@ -31,6 +31,32 @@ test('noise video is optional and copied into the build when supplied',async()=>
   assert.equal(await readFile(join(directory,'dist/assets/vhs-noise.mp4'),'utf8'),'video fixture');
 }));
 
+test('unlock builds a standalone practice page and validates configuration before replacing output',async()=>fixture(async({directory,content,save})=>{
+  content.unlock = {answer:'',releaseUrl:'',dictionary:'english'};
+  await save(); await buildSite({directory});
+  const page = await readFile(join(directory,'dist/unlock/index.html'),'utf8');
+  assert.equal((page.match(/data-tile/g) ?? []).length,30);
+  assert.equal((page.match(/data-key=/g) ?? []).length,28);
+  assert.doesNotMatch(page,/src="\/app.js"|href="\/styles.css"/);
+  assert.deepEqual(JSON.parse(await readFile(join(directory,'dist/unlock-config.json'),'utf8')),content.unlock);
+  content.unlock = {answer:'amore',releaseUrl:'https://example.com/early?release=next',dictionary:'letters'};
+  await save(); await buildSite({directory});
+  assert.equal(JSON.parse(await readFile(join(directory,'dist/unlock-config.json'),'utf8')).answer,'AMORE');
+  content.unlock.answer = 'invalid';
+  await save();
+  await assert.rejects(buildSite({directory}),/five A–Z/);
+  assert.equal(JSON.parse(await readFile(join(directory,'dist/unlock-config.json'),'utf8')).answer,'AMORE');
+}));
+
+test('homepage places the early-access unlock link above the featured release',async()=>fixture(async({directory})=>{
+  await buildSite({directory});
+  const html = await readFile(join(directory,'dist/index.html'),'utf8');
+  const cta = html.indexOf('<a class="unlock-cta" href="/unlock">Play to unlock early-access to next release</a>');
+  const hero = html.indexOf('<section id="music" class="featured"');
+  assert.ok(cta >= 0);
+  assert.ok(hero > cta);
+}));
+
 test('bad content edits fail before replacing the working generated page',async()=>fixture(async({directory,content,save})=>{
   await buildSite({directory});
   const previous = await readFile(join(directory,'dist/index.html'),'utf8');

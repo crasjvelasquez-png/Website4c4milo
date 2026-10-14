@@ -1,0 +1,62 @@
+[
+  {
+    "browser": "Chromium",
+    "viewport": {
+      "width": 182,
+      "height": 493
+    },
+    "dimensions": {
+      "overflow": false,
+      "title": {
+        "x": 48,
+        "y": 20.5,
+        "width": 86,
+        "height": 24,
+        "top": 20.5,
+        "right": 134,
+        "bottom": 44.5,
+        "left": 48
+      },
+      "help": {
+        "x": 134,
+        "y": 10.5,
+        "width": 44,
+        "height": 44,
+        "top": 10.5,
+        "right": 178,
+        "bottom": 54.5,
+        "left": 134
+      }
+    }
+  },
+  {
+    "browser": "WebKit",
+    "viewport": {
+      "width": 182,
+      "height": 493
+    },
+    "dimensions": {
+      "overflow": false,
+      "title": {
+        "x": 48,
+        "y": 20.5,
+        "width": 86,
+        "height": 24,
+        "top": 20.5,
+        "right": 134,
+        "bottom": 44.5,
+        "left": 48
+      },
+      "help": {
+        "x": 134,
+        "y": 10.5,
+        "width": 44,
+        "height": 44,
+        "top": 10.5,
+        "right": 178,
+        "bottom": 54.5,
+        "left": 134
+      }
+    }
+  }
+]

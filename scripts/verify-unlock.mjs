@@ -1,0 +1,145 @@
+// Optional QA tool: use an available Playwright installation; no site dependency.
+const { chromium, webkit } = await import(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
+import { mkdir, writeFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
+const root = fileURLToPath(new URL('../', import.meta.url)).replace(/\/$/, '');
+const base = process.env.UNLOCK_QA_URL || 'http://127.0.0.1:3012';
+const puzzleConfig = await (await fetch(`${base}/unlock-config.json`)).json();
+const answer = puzzleConfig.answer || 'AUDIO';
+const practice = !puzzleConfig.answer;
+const artifacts = `${root}/docs/qa/unlock`;
+await mkdir(artifacts,{recursive:true});
+await mkdir(`${root}/.impeccable/review`,{recursive:true});
+const results=[];
+const sizes=[[320,568],[390,844],[430,932],[844,390],[760,900],[761,900],[1280,900]];
+for(const [name,type] of [['Chromium',chromium],['WebKit',webkit]]) {
+  const browser=await type.launch({headless:true});
+  const browserVersion = browser.version();
+  for(const [width,height] of sizes) {
+    const context=await browser.newContext({viewport:{width,height},hasTouch:true,isMobile:width<760});
+    await context.addInitScript(({answer,practice})=>{
+      localStorage.setItem(`c4milo-unlock:won:v1:${practice?'practice':'release'}:${answer}`,'won');
+      window.gameStorageCalls = [];
+      for (const method of ['getItem','setItem']) {
+        const original = Storage.prototype[method];
+        Storage.prototype[method] = function(...args) {
+          window.gameStorageCalls.push(method);
+          return original.apply(this,args);
+        };
+      }
+    },{answer,practice});
+    const page=await context.newPage();
+    const errors=[];
+    page.on('pageerror',e=>errors.push(e.message));
+    await page.goto(`${base}/unlock`);
+    await page.locator('[data-key="Q"]').waitFor({state:'visible'});
+    await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+    assert.equal(await page.locator('[data-win]').isVisible(),false,'old saved win ignored');
+    const geometry=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,zoom:getComputedStyle(document.body).zoom,tiles:[...document.querySelectorAll('[data-tile]')].map(x=>({w:x.getBoundingClientRect().width,h:x.getBoundingClientRect().height})),keys:[...document.querySelectorAll('[data-key]')].map(x=>({w:x.getBoundingClientRect().width,h:x.getBoundingClientRect().height})),intro:document.querySelector('.game-intro').getBoundingClientRect().bottom,board:document.querySelector('.board').getBoundingClientRect().toJSON(),keyboard:document.querySelector('.keyboard').getBoundingClientRect().toJSON()}));
+    assert.equal(await page.locator('.board').getByRole('img').count(),30);
+    assert.equal(geometry.overflow,false,`${name} ${width} overflow`);
+    assert.ok(geometry.tiles.every(t=>t.w>(width>height?30:40)&&Math.abs(t.w-t.h)<1));
+    assert.ok(geometry.keys.every(k=>k.h>=44&&k.w>20));
+    assert.ok(geometry.board.bottom<=geometry.keyboard.y);
+    const shot=`${artifacts}/${name.toLowerCase()}-${width}x${height}.png`;
+    await page.screenshot({path:shot,fullPage:true});
+    if(name==='Chromium'&&width===390) await page.screenshot({path:`${root}/.impeccable/review/mobile.png`,fullPage:true});
+    if(name==='Chromium'&&width===1280) await page.screenshot({path:`${root}/.impeccable/review/desktop.png`,fullPage:true});
+    async function tapGuess(word) {for(const letter of word) await page.locator(`[data-key="${letter}"]`).tap(); await page.locator('[data-key="Enter"]').tap(); await page.waitForFunction(()=>document.querySelector('.board').getAttribute('aria-busy')==='false');}
+    await tapGuess('CRANE');
+    assert.equal(await page.locator('.board-row').first().getByRole('img',{name:answer==='CRUSH'?'Letter 1, C, right place':'Letter 1, C, no remaining match',exact:true}).count(),1);
+    assert.equal(await page.locator('.board-row').first().locator('.tile.filled').count(),0);
+    assert.equal(await page.locator('.board-row').first().locator('.tile.absent,.tile.present,.tile.correct').count(),5);
+    await tapGuess(answer);
+    await page.locator('[data-win]').waitFor({state:'visible'});
+    assert.deepEqual(await page.evaluate(()=>window.gameStorageCalls),[],'game never reads or writes storage');
+    assert.equal(await page.locator('[data-passcode]').textContent(),answer);
+    assert.equal(await page.locator('[data-release]').isVisible(),!practice && !!puzzleConfig.releaseUrl);
+    await page.screenshot({path:`${artifacts}/${name.toLowerCase()}-${width}x${height}-win.png`,fullPage:true});
+    await page.locator('[data-again]').tap();
+    assert.equal(await page.locator('[data-win]').isVisible(),false);
+    assert.equal(await page.locator('.board .tile.correct,.board .tile.absent,.board .tile.present').count(),0);
+    assert.equal(await page.locator('.keyboard .correct,.keyboard .present,.keyboard .absent').count(),0);
+    await tapGuess(answer);
+    await page.locator('[data-win]').waitFor({state:'visible'});
+    await page.reload();
+    await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+    assert.equal(await page.locator('[data-win]').isVisible(),false);
+    assert.equal(await page.locator('.board .filled,.board .correct,.board .present,.board .absent').count(),0);
+    assert.equal(await page.locator('.keyboard .correct,.keyboard .present,.keyboard .absent').count(),0);
+    assert.deepEqual(errors,[]);
+    results.push({browser:name,version:browserVersion,viewport:{width,height},conditions:`touch emulation; ${practice?'practice':'release'}; English dictionary`,checks:['no horizontal overflow','square tiles','key heights >=44px','board and keyboard do not overlap','touch guesses','configured-answer win','configured reward visibility','refresh clears board, keyboard and reward','play-again clears board, keyboard and reward','no page errors'],geometry,screenshots:[shot]});
+    await context.close();
+  }
+  // Stateful, keyboard, failure and accessibility checks at one mobile viewport per engine.
+  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+  const page=await context.newPage();
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(`${base}/unlock/`);
+  await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+  async function guess(word){await page.keyboard.type(word);await page.keyboard.press('Enter');await page.waitForFunction(()=>document.querySelector('.board').getAttribute('aria-busy')==='false');}
+  await guess('ZZZZZ');
+  assert.match(await page.locator('[data-status]').textContent(),/Not in/);
+  assert.equal(await page.locator('.board-row').first().locator('.tile.filled').count(),5);
+  for(let i=0;i<5;i++)await page.keyboard.press('Backspace');
+  await page.keyboard.type('AU');await page.keyboard.press('Enter');
+  assert.match(await page.locator('[data-status]').textContent(),/five letters/);
+  await page.reload();await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+  assert.equal(await page.locator('.tile.filled').count(),0);
+  for(const word of ['CRANE','SLATE','STARE','ROAST','APPLE','TENSE'])await guess(word);
+  assert.match(await page.locator('[data-status]').textContent(),/Resetting/);
+  await page.keyboard.press('A');
+  assert.equal(await page.locator('.tile.filled').count(),0);
+  await page.waitForFunction(()=>document.querySelector('[data-status]').textContent==='Fresh board. Six guesses.');
+  assert.equal(await page.locator('.board .correct,.board .present,.board .absent').count(),0);
+  assert.equal(await page.locator('.keyboard .correct,.keyboard .present,.keyboard .absent').count(),0);
+  for(const word of ['CRANE','SLATE','STARE','ROAST','APPLE',answer])await guess(word);
+  await page.locator('[data-win]').waitFor({state:'visible'});
+  assert.match(await page.locator('[data-status]').textContent(),/6 guesses/);
+  await page.locator('[data-again]').tap();
+  await page.locator('[data-help]').tap();assert.equal(await page.locator('dialog').evaluate(d=>d.open),true);
+  await page.keyboard.press('A');assert.equal(await page.locator('.tile.filled').count(),0);
+  await page.keyboard.press('Escape');assert.equal(await page.locator('dialog').evaluate(d=>d.open),false);
+  assert.equal(await page.evaluate(()=>document.activeElement.hasAttribute('data-help')),true);
+  await page.locator('[data-key="Q"]').focus();
+  assert.notEqual(await page.locator('[data-key="Q"]').evaluate(k=>getComputedStyle(k).outlineStyle),'none');
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.setViewportSize({width:844,height:390});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  await page.setViewportSize({width:390,height:844});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  // Actual configuration path, mocked destination, custom answer accepted outside dictionary.
+  await page.route('**/unlock-config.json',r=>r.fulfill({json:{answer:'AMORE',releaseUrl:'https://example.com/early-access',dictionary:'english'}}));
+  await page.reload();await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+  await guess('AMORE');await page.locator('[data-win]').waitFor({state:'visible'});
+  assert.equal(await page.locator('[data-release]').getAttribute('href'),'https://example.com/early-access');
+  assert.equal(await page.locator('[data-mode]').isVisible(),false);
+  await page.screenshot({path:`${artifacts}/${name.toLowerCase()}-release-win.png`,fullPage:true});
+  await page.unroute('**/unlock-config.json');
+  await page.route('**/unlock-config.json',r=>r.fulfill({status:503,body:'unavailable'}));
+  await page.reload();await page.locator('[data-retry]').waitFor({state:'visible'});
+  assert.equal(await page.locator('[data-key="Q"]').isDisabled(),true);
+  await page.unroute('**/unlock-config.json');await page.locator('[data-retry]').tap();await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+  await page.route('**/unlock-words.txt',r=>r.fulfill({status:503,body:'unavailable'}));
+  await page.reload();await page.locator('[data-retry]').waitFor({state:'visible'});
+  await page.unroute('**/unlock-words.txt');await page.locator('[data-retry]').tap();await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+  await page.route('**/unlock-config.json',async r=>{await new Promise(resolve=>setTimeout(resolve,600));await r.continue();});
+  await page.reload({waitUntil:'domcontentloaded'});await page.keyboard.type('AUDIO');
+  await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+  assert.equal(await page.locator('.tile.filled').count(),0);
+  await page.unroute('**/unlock-config.json');
+  await page.route('**/unlock-config.json',r=>r.fulfill({json:{answer:'CODES',releaseUrl:'',dictionary:'letters'}}));
+  await page.reload();await page.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);
+  await guess('ZZZZZ');assert.equal(await page.locator('.board-row').first().locator('.tile.absent').count(),5);
+  await guess('CODES');await page.locator('[data-win]').waitFor({state:'visible'});assert.equal(await page.locator('[data-release]').isVisible(),false);
+  assert.deepEqual(errors,[]);
+  results.push({browser:name,version:browserVersion,checks:['invalid words and incomplete guesses do not consume turns','refresh clears partial input','six losses automatically clear board and keyboard','input during reset ignored','sixth-guess win','help, Escape and focus restore','visible keyboard focus','reduced motion','orientation change','custom release config and link','custom answer accepted','config and dictionary request failures and retry','slow loading ignores input','letters-only mode','no destination when blank','no page errors']});
+  await context.close();
+  const noJS=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}});const fallback=await noJS.newPage();await fallback.goto(`${base}/unlock`);assert.equal(await fallback.locator('noscript').isVisible(),true);await noJS.close();
+  const noStorage=await browser.newContext();await noStorage.addInitScript(()=>{Storage.prototype.getItem=()=>{throw Error('blocked')};Storage.prototype.setItem=()=>{throw Error('blocked')}});const safe=await noStorage.newPage();await safe.goto(`${base}/unlock`);await safe.waitForFunction(()=>!document.querySelector('[data-key="Q"]').disabled);await safe.keyboard.type(answer);await safe.keyboard.press('Enter');await safe.locator('[data-win]').waitFor({state:'visible'});await noStorage.close();
+  results.push({browser:name,version:browserVersion,checks:['JavaScript-disabled fallback visible','blocked local storage still allows wins']});
+  await browser.close();
+}
+await writeFile(`${root}/docs/qa/unlock-browser-results.json`,JSON.stringify({date:new Date().toISOString().slice(0,10),url:`${base}/unlock`,deployment:'local only',results,gaps:['Physical phones','Safari app','Instagram in-app browser','Production routing and deployment','10-second timeout branch not exercised']},null,2)+'\n');
+console.log(JSON.stringify({passed:results.length,engines:['Chromium','WebKit'],viewports:sizes.length,results:`${root}/docs/qa/unlock-browser-results.json`}));

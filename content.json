@@ -9,6 +9,11 @@
     "aboutEnabled": false
   },
   "featuredReleaseId": "querida",
+  "unlock": {
+    "answer": "CRUSH",
+    "releaseUrl": "https://untitled.stream/library/project/b9ByeI7v9WhElIUFOZrGQ",
+    "dictionary": "english"
+  },
   "portfolio": {
     "projects": [
       {"id":"project-01","title":"Project 01","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
