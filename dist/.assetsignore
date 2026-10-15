@@ -1,0 +1,2 @@
+# Temporary files are not deployable website assets.
+*.tmp
