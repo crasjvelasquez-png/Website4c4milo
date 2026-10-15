@@ -15,7 +15,7 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/unlock", "/unlock/*", "/unlock-config.json"]
   },
   "vars": {
     "BREVO_DOI_TEMPLATE_ID": "2",

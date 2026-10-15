@@ -4,16 +4,12 @@
     "bio": "Artist bio placeholder. A short introduction to your music, your story, and the work you make.",
     "photo": "",
     "photoAlt": "Artist portrait",
-    "email": "camiloakajuan@gmail.com",
+    "email": "miloproduces@gmail.com",
     "placeholder": true,
     "aboutEnabled": false
   },
-  "featuredReleaseId": "querida",
-  "unlock": {
-    "answer": "CRUSH",
-    "releaseUrl": "https://untitled.stream/library/project/b9ByeI7v9WhElIUFOZrGQ",
-    "dictionary": "english"
-  },
+  "featuredReleaseId": "how-deep-is-your-love",
+  "unlock": {"enabled": false},
   "portfolio": {
     "projects": [
       {"id":"project-01","title":"Project 01","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
@@ -42,6 +38,54 @@
     "audio": "/assets/how-deep-is-your-love.mp3"
   },
   "releases": [
+    {
+      "id": "how-deep-is-your-love",
+      "title": "How Deep Is Your Love",
+      "type": "Single",
+      "year": "2026",
+      "description": "",
+      "artwork": "/assets/how-deep-is-your-love.png",
+      "artworkAlt": "How Deep Is Your Love single cover",
+      "artworkOptional": true,
+      "placeholder": false,
+      "statusLabel": "Latest release",
+      "links": [
+        {
+          "label": "Spotify",
+          "url": "https://open.spotify.com/track/2XfmAVAC6I4At21ma7qh7d",
+          "kind": "release"
+        },
+        {
+          "label": "Apple Music",
+          "url": "https://music.apple.com/us/album/how-deep-is-your-love/6821152414?i=6821152415",
+          "kind": "release"
+        },
+        {
+          "label": "Amazon Music",
+          "url": "",
+          "kind": "release"
+        },
+        {
+          "label": "YouTube Music",
+          "url": "",
+          "kind": "release"
+        },
+        {
+          "label": "Tidal",
+          "url": "https://tidal.com/track/568437197",
+          "kind": "release"
+        }
+      ],
+      "embed": {
+        "provider": "spotify",
+        "url": ""
+      },
+      "audio": {
+        "src": "/assets/how-deep-is-your-love.mp3",
+        "fadeIn": 1,
+        "fadeOut": 1.5
+      }
+    },
     {
       "id": "querida",
       "title": "Querida",
@@ -225,27 +269,27 @@
     {
       "label": "Spotify",
       "description": "Stream my music",
-      "url": "https://open.spotify.com/album/4PW1l8X9u7tUq3REsGKe4R"
+      "url": "https://open.spotify.com/track/2XfmAVAC6I4At21ma7qh7d"
     },
     {
       "label": "Apple Music",
       "description": "Stream my music",
-      "url": "https://music.apple.com/us/album/querida/6809278154?i=6809278155"
+      "url": "https://music.apple.com/us/album/how-deep-is-your-love/6821152414?i=6821152415"
     },
     {
       "label": "Amazon Music",
       "description": "Stream my music",
-      "url": "https://music.amazon.com/albums/B0HJ19TNK5?trackAsin=B0HJ174D35"
+      "url": ""
     },
     {
       "label": "YouTube Music",
       "description": "Watch my work",
-      "url": "https://music.youtube.com/watch?v=lL6aG0SNCE8"
+      "url": ""
     },
     {
       "label": "Tidal",
       "description": "Stream my music",
-      "url": "https://tidal.com/track/558979437/u"
+      "url": "https://tidal.com/track/568437197"
     },
     {
       "label": "TikTok",

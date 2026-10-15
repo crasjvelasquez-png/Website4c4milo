@@ -11,6 +11,8 @@ const baseline = JSON.parse(await readFile(new URL('content.json',source),'utf8'
 async function fixture(run) {
   const directory = await mkdtemp(join(tmpdir(),'artist-build-'));
   const content = structuredClone(baseline);
+  content.releases = content.releases.filter(r => r.id !== 'how-deep-is-your-love');
+  content.featuredReleaseId = 'querida';
   await cp(new URL('public',source),join(directory,'public'),{recursive:true});
   const save = () => writeFile(join(directory,'content.json'),JSON.stringify(content));
   try { await save(); await run({directory,content,save}); }
@@ -31,30 +33,12 @@ test('noise video is optional and copied into the build when supplied',async()=>
   assert.equal(await readFile(join(directory,'dist/assets/vhs-noise.mp4'),'utf8'),'video fixture');
 }));
 
-test('unlock builds a standalone practice page and validates configuration before replacing output',async()=>fixture(async({directory,content,save})=>{
-  content.unlock = {answer:'',releaseUrl:'',dictionary:'english'};
-  await save(); await buildSite({directory});
-  const page = await readFile(join(directory,'dist/unlock/index.html'),'utf8');
-  assert.equal((page.match(/data-tile/g) ?? []).length,30);
-  assert.equal((page.match(/data-key=/g) ?? []).length,28);
-  assert.doesNotMatch(page,/src="\/app.js"|href="\/styles.css"/);
-  assert.deepEqual(JSON.parse(await readFile(join(directory,'dist/unlock-config.json'),'utf8')),content.unlock);
-  content.unlock = {answer:'amore',releaseUrl:'https://example.com/early?release=next',dictionary:'letters'};
-  await save(); await buildSite({directory});
-  assert.equal(JSON.parse(await readFile(join(directory,'dist/unlock-config.json'),'utf8')).answer,'AMORE');
-  content.unlock.answer = 'invalid';
-  await save();
-  await assert.rejects(buildSite({directory}),/five A–Z/);
-  assert.equal(JSON.parse(await readFile(join(directory,'dist/unlock-config.json'),'utf8')).answer,'AMORE');
-}));
-
-test('homepage places the early-access unlock link above the featured release',async()=>fixture(async({directory})=>{
+test('retired unlock page redirects without publishing game configuration',async()=>fixture(async({directory})=>{
   await buildSite({directory});
   const html = await readFile(join(directory,'dist/index.html'),'utf8');
-  const cta = html.indexOf('<a class="unlock-cta" href="/unlock">Play to unlock early-access to next release</a>');
-  const hero = html.indexOf('<section id="music" class="featured"');
-  assert.ok(cta >= 0);
-  assert.ok(hero > cta);
+  assert.doesNotMatch(html,/class="unlock-cta"|href="\/unlock"/);
+  assert.match(await readFile(join(directory,'dist/unlock/index.html'),'utf8'),/http-equiv="refresh" content="0;url=\/"/);
+  assert.deepEqual(JSON.parse(await readFile(join(directory,'dist/unlock-config.json'),'utf8')),{enabled:false});
 }));
 
 test('bad content edits fail before replacing the working generated page',async()=>fixture(async({directory,content,save})=>{
@@ -101,6 +85,8 @@ test('empty discography and safe content escaping build without inventing releas
 
 test('invalid link and asset edits explain the affected content field',()=>{
   const content = structuredClone(baseline);
+  content.releases = content.releases.filter(r => r.id !== 'how-deep-is-your-love');
+  content.featuredReleaseId = 'querida';
   content.links[0].url = 'spotify.com/artist/example';
   assert.throws(()=>validateContent(content),/Spotify needs a full https/);
   content.links[0].url = '';
@@ -205,6 +191,8 @@ test('portfolio audio is enabled only after both configured MP3s exist and conte
 
 test('portfolio requires exactly 15 uniquely identified projects and MP3 tracks',()=>{
   const content = structuredClone(baseline);
+  content.releases = content.releases.filter(r => r.id !== 'how-deep-is-your-love');
+  content.featuredReleaseId = 'querida';
   content.portfolio = {projects:[]};
   assert.throws(()=>validateContent(content),/exactly 15 projects/);
   content.portfolio.projects = Array.from({length:15},(_,i)=>({id:`p${i}`,title:`P${i}`,artist:'Artist',contribution:'Mixing',artwork:'',audio:{before:'',after:''}}));

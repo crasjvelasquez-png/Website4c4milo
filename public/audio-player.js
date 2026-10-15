@@ -290,18 +290,23 @@ function mountTapeReveal(root) {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const tape = root.querySelector('.tape-loop');
   let radius = 44, target = 44, frame;
+  let tapeHeight = tape?.getBoundingClientRect().height / (Number(getComputedStyle(document.body).zoom) || 1) || 0;
   const draw = value => {
     radius = value;
     const paths = tapeGeometry(radius);
     for (const path of loops) path.setAttribute('d', paths.loop);
     left.setAttribute('d', paths.left);
     right.setAttribute('d', paths.right);
+    // Follow the reveal in CSS pixels, accounting for the page zoom.
+    const labelInset = (70 - radius) / 140 * tapeHeight;
+    root.closest('.featured')?.style.setProperty('--tape-bottom-inset', `${labelInset}px`);
     root.style.setProperty('--head-shift', `${44 - radius}px`);
     root.style.setProperty('--head-top', `${(70 - radius) / 140 * 100}%`);
     // Redraw dependents in this same frame so nothing trails the tape.
     update.onDraw?.(radius);
   };
   const update = playing => {
+    tapeHeight = tape?.getBoundingClientRect().height / (Number(getComputedStyle(document.body).zoom) || 1) || 0;
     const next = playing ? 48 : 44;
     if (next === target) return;
     target = next;
@@ -317,6 +322,12 @@ function mountTapeReveal(root) {
   };
   update.radius = () => radius;
   draw(radius);
+  if (tape && typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(() => {
+      tapeHeight = tape.getBoundingClientRect().height / (Number(getComputedStyle(document.body).zoom) || 1);
+      draw(radius);
+    }).observe(tape);
+  }
   return update;
 }
 

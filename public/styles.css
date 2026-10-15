@@ -113,6 +113,7 @@ main>section#links{margin-top:0}
 .platform-logo{color:#fff;width:52px;height:56px;display:grid;place-items:center}
 .platform-logo img{display:block;object-fit:contain;width:30px;height:30px}
 .platform-logo.unavailable{cursor:default}
+#links .platform-logo.unavailable{opacity:.5}
 .platform-logo:focus-visible{outline-offset:4px}
 .featured-copy .section-label{margin-bottom:10px}.featured-copy h1{font-size:clamp(2.5rem,4.5vw,4.25rem);margin-bottom:0}
 .tape-player{max-width:360px;margin-top:28px;background:none;padding:0;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
@@ -522,3 +523,10 @@ main>section#early-listen,main>section#page-links{display:none}
 #releases .has-release-title .release-cover{position:relative}
 #releases .has-release-title .release-cover::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;background:#000;opacity:0;pointer-events:none;transition:none}
 @media(min-width:761px) and (hover:hover) and (pointer:fine){#releases .has-release-title:not(.is-open) .release-cover:hover::after,#releases .has-release-title:not(.is-open) .release-cover:focus-visible::after{opacity:.3}}
+
+/* Four catalogue releases, always arranged as two pairs. */
+#releases .release-covers{display:grid;grid-template-columns:repeat(2,minmax(0,220px));max-width:488px}
+#releases .release-tile{width:100%;max-width:220px}
+@media(min-width:831px){#music .cassette-label{transform:translateY(calc(-1 * var(--tape-bottom-inset,0px)))}}
+
+@media(min-width:831px){#music .tape-loop{display:block}#music .cassette-label h1{text-box-trim:trim-end;text-box-edge:cap alphabetic}}

@@ -16,6 +16,7 @@ export function createApp({ directory=resolve(root,'dist'), listening=createList
     if (!['GET','HEAD'].includes(req.method)) {res.setHeader('Allow','GET, HEAD');send(405,'Method not allowed');return;}
     try {
       const pathname = decodeURIComponent(new URL(req.url,'http://localhost').pathname);
+      if (/^\/unlock(?:\/|$)|^\/unlock-config\.json$/.test(pathname)) {res.writeHead(302, {Location:'/', 'Cache-Control':'no-store'});res.end();return;}
       if (pathname === '/health') {send(200,'ok');return;}
       if (pathname === '/api/listening') {
         const data = await listening();

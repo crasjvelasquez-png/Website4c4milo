@@ -1,0 +1,802 @@
+[
+  {
+    "name": "Chromium",
+    "width": 1280,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.11875,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1280,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.14375,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.11875,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.14375,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1024,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.11875,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1024,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.14375,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 831,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 303.304931640625,
+    "tapeBottom": 303.3049107142857,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 831,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 305.6834716796875,
+    "tapeBottom": 305.68348214285714,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 320,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 287.828125,
+    "tapeBottom": 377.8877232142857,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 320,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 287.828125,
+    "tapeBottom": 379.7006696428571,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 269.6875,
+    "tapeBottom": 373.05558035714284,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 269.6875,
+    "tapeBottom": 375.3354910714286,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 430,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 219.296875,
+    "tapeBottom": 330.2607142857143,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 430,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 219.296875,
+    "tapeBottom": 332.8071428571429,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 844,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 302.997314453125,
+    "tapeBottom": 302.9973214285714,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 844,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 305.4232177734375,
+    "tapeBottom": 305.42321428571427,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 760,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 240.9375,
+    "tapeBottom": 225.0183035714286,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 760,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 240.9375,
+    "tapeBottom": 227.46741071428573,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 761,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 228.78125,
+    "tapeBottom": 359.28482142857143,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 761,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 228.78125,
+    "tapeBottom": 362.4044642857143,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1280,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.11875,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1280,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.14375,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.11875,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.14375,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1024,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.11875,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 1024,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.14375,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 831,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 303.304931640625,
+    "tapeBottom": 303.3049107142857,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 831,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 305.6834716796875,
+    "tapeBottom": 305.68348214285714,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 320,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 287.828125,
+    "tapeBottom": 377.8877232142857,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 320,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 287.828125,
+    "tapeBottom": 379.7006696428571,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 269.6875,
+    "tapeBottom": 373.05558035714284,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 269.6875,
+    "tapeBottom": 375.3354910714286,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 430,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 219.296875,
+    "tapeBottom": 330.2607142857143,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 430,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 219.296875,
+    "tapeBottom": 332.8071428571429,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 844,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 302.997314453125,
+    "tapeBottom": 302.9973214285714,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 844,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 305.4232177734375,
+    "tapeBottom": 305.42321428571427,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 760,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 240.9375,
+    "tapeBottom": 225.0183035714286,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 760,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 240.9375,
+    "tapeBottom": 227.46741071428573,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 761,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 228.78125,
+    "tapeBottom": 359.28482142857143,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "Chromium",
+    "width": 761,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 228.78125,
+    "tapeBottom": 362.4044642857143,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1280,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.1187557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1280,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.1437557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.1187557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1440,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.1437557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1024,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.1187557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1024,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.1437557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 831,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 303.679931640625,
+    "tapeBottom": 303.67991525105066,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 831,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 306.0584716796875,
+    "tapeBottom": 306.0584866796221,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 320,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 287.828125,
+    "tapeBottom": 377.8877266722066,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 320,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 287.828125,
+    "tapeBottom": 379.70067310077803,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 269.6875,
+    "tapeBottom": 373.0555847057274,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 390,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 269.6875,
+    "tapeBottom": 375.33549542001316,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 430,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 219.296875,
+    "tapeBottom": 330.26071914264134,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 430,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 219.296875,
+    "tapeBottom": 332.8071477140699,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 844,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 303.372314453125,
+    "tapeBottom": 303.37232605559484,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 844,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 305.7982177734375,
+    "tapeBottom": 305.7982189127377,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 760,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 240.859375,
+    "tapeBottom": 224.94018324272974,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 760,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 240.859375,
+    "tapeBottom": 227.3892903855869,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 761,
+    "reducedMotion": "no-preference",
+    "playing": false,
+    "titleBottom": 228.78125,
+    "tapeBottom": 359.28482737881797,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 761,
+    "reducedMotion": "no-preference",
+    "playing": true,
+    "titleBottom": 228.78125,
+    "tapeBottom": 362.40447023596084,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1280,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.1187557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1280,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.1437557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.1187557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1440,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.1437557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1024,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 209.11874389648438,
+    "tapeBottom": 209.1187557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 1024,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 212.1437530517578,
+    "tapeBottom": 212.1437557697296,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 831,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 303.679931640625,
+    "tapeBottom": 303.67991525105066,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 831,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 306.0584716796875,
+    "tapeBottom": 306.0584866796221,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 320,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 287.828125,
+    "tapeBottom": 377.8877266722066,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 320,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 287.828125,
+    "tapeBottom": 379.70067310077803,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 269.6875,
+    "tapeBottom": 373.0555847057274,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 390,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 269.6875,
+    "tapeBottom": 375.33549542001316,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 430,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 219.296875,
+    "tapeBottom": 330.26071914264134,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 430,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 219.296875,
+    "tapeBottom": 332.8071477140699,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 844,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 303.372314453125,
+    "tapeBottom": 303.37232605559484,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 844,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 305.7982177734375,
+    "tapeBottom": 305.7982189127377,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 760,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 240.859375,
+    "tapeBottom": 224.94018324272974,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 760,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 240.859375,
+    "tapeBottom": 227.3892903855869,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 761,
+    "reducedMotion": "reduce",
+    "playing": false,
+    "titleBottom": 228.78125,
+    "tapeBottom": 359.28482737881797,
+    "overflow": false,
+    "trim": true
+  },
+  {
+    "name": "WebKit",
+    "width": 761,
+    "reducedMotion": "reduce",
+    "playing": true,
+    "titleBottom": 228.78125,
+    "tapeBottom": 362.40447023596084,
+    "overflow": false,
+    "trim": true
+  }
+]

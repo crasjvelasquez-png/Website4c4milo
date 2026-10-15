@@ -4,7 +4,6 @@ import { resolve, sep } from 'node:path';
 import { createHash } from 'node:crypto';
 import { matchCoverPreviews } from '../lib/cover-previews.mjs';
 import { escape as e, externalUrl, assetUrl, embedUrl, validateContent } from '../lib/content.mjs';
-import { validateUnlockConfig, unlockPage } from '../lib/unlock-page.mjs';
 
 export async function buildSite({ directory=fileURLToPath(new URL('../', import.meta.url)) } = {}) {
 const root = resolve(directory) + sep;
@@ -12,7 +11,6 @@ let noiseVideo = '';
 try { await access(`${root}public/assets/vhs-noise.mp4`); noiseVideo = '/assets/vhs-noise.mp4'; }
 catch { /* Use the still texture until a noise loop is supplied. */ }
 const c = validateContent(JSON.parse(await readFile(`${root}content.json`, 'utf8')));
-const unlock = validateUnlockConfig(c.unlock);
 const { previews: coverPreviews, warnings: previewWarnings } = await matchCoverPreviews(c.releases, `${root}public`, c.featuredReleaseId);
 for (const warning of previewWarnings) console.warn(warning);
 const missingArtwork = new Set();
@@ -121,7 +119,7 @@ function releaseCover(r, featuredCover = false) {
   const preview = coverPreviews.get(r.id);
   const previewAttributes = preview ? ` data-preview-src="${e(preview)}"` : '';
   const previewMarkup = preview ? `<audio data-cover-audio preload="none"></audio><span class="preview-status sr-only" data-preview-status role="status" aria-live="polite"></span>` : '';
-  const title = r.type === 'Single' && r.id !== 'querida' ? `<span class="release-title" aria-hidden="true">“${e(r.title)}”</span>` : '';
+  const title = r.type === 'Single' ? `<span class="release-title" aria-hidden="true">“${e(r.title)}”</span>` : '';
   return `<div class="release-tile${title ? ' has-release-title' : ''}" data-release-tile${previewAttributes}><a class="release-cover floating-link" href="${e(destination || `#${id}`)}" data-inline-services="${id}" aria-expanded="false" aria-controls="${id}" aria-label="${preview ? `Preview ${e(r.title)} and show streaming services` : `Show streaming services for ${e(r.title)}`}"${preview ? ' aria-keyshortcuts="Space Enter"' : ''}>${cover}</a>${title}${previewMarkup}<div class="release-services" id="${id}" role="group" aria-label="Streaming services for ${e(r.title)}" hidden><button type="button" class="release-services-close" aria-label="Close streaming services for ${e(r.title)}">×</button><div class="release-services-grid">${serviceLogoLinks(r)}</div></div></div>`;
 }
 const featured = c.releases.find(r => r.id === c.featuredReleaseId);
@@ -210,7 +208,6 @@ const html = `<!doctype html>
   <a class="skip-link" href="#main">Skip to content</a>
   ${previewMarkup}
   <main id="main">
-    <a class="unlock-cta" href="/unlock">Play to unlock early-access to next release</a>
     <section id="music" class="featured" aria-labelledby="featured-heading">
       ${featured ? `<div class="cassette-label">${releaseCover(featured, true)}<div class="featured-copy"><p class="section-label">${e(featured.statusLabel || `Featured release${featured.placeholder ? ' · Placeholder' : ''}`)}</p><h1 id="featured-heading">${e(featured.title)}</h1>${featured.audio ? `${featured.description ? `<p>${e(featured.description)}</p>` : ''}` : releaseBody(featured)}</div></div>${featured.audio ? tapePlayer(featured) : ''}<div class="cassette-base" aria-hidden="true"><i></i><i></i><i></i><i></i></div>` : '<h1 id="featured-heading">Music</h1><p>No releases yet.</p>'}
     </section>
@@ -271,8 +268,8 @@ await cp(`${root}public`, `${root}dist`, { recursive: true });
 await writeFile(`${root}dist/index.html`, html.replace(/^ +$/gm, ''));
 await writeFile(`${root}dist/portafolio.html`, portfolioPage().replace(/^ +$/gm, ''));
 await mkdir(`${root}dist/unlock`, { recursive: true });
-await writeFile(`${root}dist/unlock/index.html`, unlockPage(c.artist.name));
-await writeFile(`${root}dist/unlock-config.json`, JSON.stringify(unlock));
+await writeFile(`${root}dist/unlock/index.html`, '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=/"><title>Redirecting</title><a href="/">Continue to c4milo</a></html>');
+await writeFile(`${root}dist/unlock-config.json`, JSON.stringify({enabled:false}));
 for (const [slug, title] of [['shop', 'Shop']]) {
   const page = `<!doctype html>
 <html lang="en" class="no-js">

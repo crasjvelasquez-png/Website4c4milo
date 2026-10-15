@@ -1,0 +1,24 @@
+[
+  {
+    "browser": "Chromium",
+    "duration": 175.049813,
+    "currentTime": 4.012088,
+    "readyState": 4,
+    "rms": 0.05099363324408104,
+    "pauseResume": true,
+    "volume": true,
+    "seek": true,
+    "errors": []
+  },
+  {
+    "browser": "WebKit",
+    "duration": 175.08,
+    "currentTime": 4.014540166998366,
+    "readyState": 4,
+    "rms": 0.11707542683803535,
+    "pauseResume": true,
+    "volume": true,
+    "seek": true,
+    "errors": []
+  }
+]
