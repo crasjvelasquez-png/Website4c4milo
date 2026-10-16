@@ -117,7 +117,7 @@ function releaseCover(r, featuredCover = false) {
   const destination = (r.links ?? []).map(item => externalUrl(item.url)).find(Boolean);
   const id = inlineServicesId(r);
   const preview = coverPreviews.get(r.id);
-  const previewAttributes = preview ? ` data-preview-src="${e(preview)}"` : '';
+  const previewAttributes = preview ? ` data-preview-src="${e(preview)}" data-preview-start="${e(r.audio?.previewStart ?? 0)}"` : '';
   const previewMarkup = preview ? `<audio data-cover-audio preload="none"></audio><span class="preview-status sr-only" data-preview-status role="status" aria-live="polite"></span>` : '';
   const title = r.type === 'Single' ? `<span class="release-title" aria-hidden="true">“${e(r.title)}”</span>` : '';
   return `<div class="release-tile${title ? ' has-release-title' : ''}" data-release-tile${previewAttributes}><a class="release-cover floating-link" href="${e(destination || `#${id}`)}" data-inline-services="${id}" aria-expanded="false" aria-controls="${id}" aria-label="${preview ? `Preview ${e(r.title)} and show streaming services` : `Show streaming services for ${e(r.title)}`}"${preview ? ' aria-keyshortcuts="Space Enter"' : ''}>${cover}</a>${title}${previewMarkup}<div class="release-services" id="${id}" role="group" aria-label="Streaming services for ${e(r.title)}" hidden><button type="button" class="release-services-close" aria-label="Close streaming services for ${e(r.title)}">×</button><div class="release-services-grid">${serviceLogoLinks(r)}</div></div></div>`;

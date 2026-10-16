@@ -8,6 +8,8 @@ export function mountCoverPreviews() {
     const cover = tile.querySelector('.release-cover');
     const audio = tile.querySelector('[data-cover-audio]');
     const status = tile.querySelector('[data-preview-status]');
+    const startAt = Math.max(0, Number(tile.dataset.previewStart) || 0);
+    let needsStart = true;
     let gain, wanted = false, generation = 0, attackPending = false;
     const hint = text => { status.textContent = text; status.classList.toggle('sr-only', !text); };
     const silence = () => {
@@ -39,7 +41,10 @@ export function mountCoverPreviews() {
           gain.connect(context.destination);
           audio.src = tile.dataset.previewSrc;
         }
-        if (audio.ended) audio.currentTime = 0;
+        if (needsStart || audio.ended) {
+          audio.currentTime = Number.isFinite(audio.duration) ? Math.min(startAt, Math.max(0, audio.duration - 0.1)) : startAt;
+          needsStart = false;
+        }
         silence();
         attackPending = true;
         // Both calls stay inside the tap/key activation, including on iOS.

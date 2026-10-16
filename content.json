@@ -131,6 +131,7 @@
       "artworkOptional": true,
       "audio": {
         "src": "/assets/querida.mp3",
+        "previewStart": 4,
         "fadeIn": 1,
         "fadeOut": 1.5
       }
