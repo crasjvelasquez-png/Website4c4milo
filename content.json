@@ -62,7 +62,7 @@
         },
         {
           "label": "Amazon Music",
-          "url": "",
+          "url": "https://music.amazon.com/albums/B0HMGFZM6Q",
           "kind": "release"
         },
         {
@@ -280,7 +280,7 @@
     {
       "label": "Amazon Music",
       "description": "Stream my music",
-      "url": ""
+      "url": "https://music.amazon.com/albums/B0HMGFZM6Q"
     },
     {
       "label": "YouTube Music",
