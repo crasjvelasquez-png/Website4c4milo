@@ -302,6 +302,7 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 #links.links-section{margin-top:48px;max-width:680px;margin-inline:auto}
 .streaming-heading{margin-bottom:24px}
 #links .platform-logos{max-width:none;display:flex;align-items:center;justify-content:center;gap:clamp(24px,4.5vw,44px)}
+@media(min-width:761px){#links .platform-logos{width:100%;max-width:calc(440px + clamp(24px,4vw,48px));justify-content:space-between;gap:0}#links .platform-logo{width:30px;height:56px;flex-shrink:0}}
 .save-status{font-size:.875rem;text-align:center;margin:12px 0 0;min-height:1.5em}
 .save-status a{text-decoration:underline;text-underline-offset:.25em}
 #releases{margin-top:24px}
