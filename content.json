@@ -107,6 +107,11 @@
           "kind": "release"
         },
         {
+          "label": "Amazon Music",
+          "url": "https://music.amazon.com/albums/B0HJ19TNK5?trackAsin=B0HJ174D35",
+          "kind": "release"
+        },
+        {
           "label": "Pandora",
           "url": "https://www.pandora.com/search/c4milo%20Querida/all",
           "kind": "search"
