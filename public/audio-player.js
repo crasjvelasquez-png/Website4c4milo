@@ -342,7 +342,7 @@ export function mountPlayer(root) {
   const Context = window.AudioContext || window.webkitAudioContext;
   if (!Context) { root.classList.remove('progressive-player'); status.textContent = 'This browser cannot use the audio player.'; toggle.disabled = true; return; }
   const volumeLabel = root.querySelector('.audio-volume-label');
-  const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut), startAt:3, volume:Number(volume.value)});
+  const transport = createTransport(audio, {createContext:()=>new Context(), fadeIn:Number(root.dataset.fadeIn), fadeOut:Number(root.dataset.fadeOut), startAt:0, volume:Number(volume.value)});
   volume.addEventListener('input', () => transport.setVolume(volume.value));
   const reveal = mountTapeReveal(root);
   let loading = false;

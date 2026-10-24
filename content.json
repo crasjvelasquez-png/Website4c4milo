@@ -33,7 +33,7 @@
     "enabled": true
   },
   "upcomingRelease": {
-    "cover": "/assets/how-deep-is-your-love.png",
+    "cover": "/assets/how-deep-is-your-love.webp",
     "downloadUrl": "",
     "audio": "/assets/how-deep-is-your-love.mp3"
   },
@@ -44,7 +44,7 @@
       "type": "Single",
       "year": "2026",
       "description": "",
-      "artwork": "/assets/how-deep-is-your-love.png",
+      "artwork": "/assets/how-deep-is-your-love.webp",
       "artworkAlt": "How Deep Is Your Love single cover",
       "artworkOptional": true,
       "placeholder": false,

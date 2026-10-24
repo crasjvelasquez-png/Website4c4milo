@@ -55,22 +55,51 @@ body::before,body::after{
   background-repeat:no-repeat;
   background-image:url("/_assets/assets/ocean-glow-a.9b7a09516afc.webp");
   background-size:100% 100%;
-  will-change:opacity,transform;
+  will-change:opacity;
 }
 body::before{
   opacity:.025;
-  animation:green-pulse-a 36s ease-in-out infinite,ocean-drift-a 148s ease-in-out infinite;
+  transform:translate3d(-4%,2%,0) rotate(-3deg) scale(1.04);
+  animation:green-pulse-a 36s ease-in-out infinite;
 }
 body::after{
   background-image:url("/_assets/assets/ocean-glow-b.ac50830d7571.webp");
   background-position:center;
   opacity:.015;
   transform:rotate(180deg);
-  animation:green-pulse-b 52s ease-in-out infinite,ocean-drift-b 212s ease-in-out infinite;
+  animation:green-pulse-b 52s ease-in-out infinite;
 }
-body.lighter-effects::before,body.lighter-effects::after{animation:none;will-change:auto}
-body.lighter-effects::before{opacity:.025;transform:none}
-body.lighter-effects::after{opacity:.015;transform:rotate(180deg)}
+/* Phones and low-power devices: the glows keep their opacity pulse but do not
+   move, and grain flickers by stepping a pre-rendered tile. Both run on the
+   compositor, so nothing is repainted per frame. */
+body.lighter-effects::before,body.lighter-effects::after{inset:-4%}
+body.lighter-effects::before{transform:none}
+body.lighter-effects::after{transform:rotate(180deg)}
+@media(prefers-reduced-motion:no-preference){
+  body.lighter-effects{background-image:none}
+  body.lighter-effects .vhs-noise{
+    inset:-180px;
+    width:auto;
+    height:auto;
+    background:url("/_assets/assets/film-grain.772130b6b1f4.svg") 0 0/180px 180px;
+    mix-blend-mode:soft-light;
+    opacity:1;
+    will-change:transform;
+    animation:grain-flicker 1s steps(1,end) infinite;
+  }
+  body.background-paused .vhs-noise{animation-play-state:paused}
+}
+@keyframes grain-flicker{
+  0%{transform:translate3d(0,0,0)}
+  11%{transform:translate3d(-61px,37px,0)}
+  22%{transform:translate3d(83px,-112px,0)}
+  33%{transform:translate3d(-127px,-29px,0)}
+  44%{transform:translate3d(41px,94px,0)}
+  55%{transform:translate3d(-23px,-151px,0)}
+  66%{transform:translate3d(139px,58px,0)}
+  77%{transform:translate3d(-98px,121px,0)}
+  88%{transform:translate3d(67px,-73px,0)}
+}
 @keyframes green-pulse-a{
   0%,100%{opacity:.025}
   19%{opacity:.095}
@@ -84,18 +113,6 @@ body.lighter-effects::after{opacity:.015;transform:rotate(180deg)}
   48%{opacity:.045}
   71%{opacity:.085}
   89%{opacity:.03}
-}
-@keyframes ocean-drift-a{
-  0%,100%{transform:translate3d(-4%,2%,0) rotate(-3deg) scale(1.04)}
-  23%{transform:translate3d(3%,-4%,0) rotate(2deg) scale(1.09)}
-  57%{transform:translate3d(-2%,-1%,0) rotate(-1deg) scale(1.05)}
-  81%{transform:translate3d(4%,4%,0) rotate(3deg) scale(1.08)}
-}
-@keyframes ocean-drift-b{
-  0%,100%{transform:translate3d(3%,-3%,0) rotate(183deg) scale(1.08)}
-  31%{transform:translate3d(-4%,2%,0) rotate(177deg) scale(1.04)}
-  62%{transform:translate3d(2%,4%,0) rotate(181deg) scale(1.1)}
-  84%{transform:translate3d(-1%,-4%,0) rotate(178deg) scale(1.06)}
 }
 body.background-paused::before,body.background-paused::after{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){body::before,body::after{animation:none;will-change:auto}}
@@ -152,7 +169,7 @@ main>section#links{margin-top:0}
 .release-tile{position:relative;flex:0 1 220px;min-width:0;max-width:220px;width:100%;aspect-ratio:1;border-radius:var(--cover-radius,14px)}
 .release-cover{display:block;width:100%;height:100%;line-height:0;overflow:hidden;border-radius:var(--cover-radius,14px)}
 .release-cover .artwork{height:100%;border-radius:var(--cover-radius,14px);}
-.release-services{position:absolute;inset:0;display:grid;place-items:center;background:#0009;border-radius:var(--cover-radius,14px);overflow:hidden;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);opacity:0;transition:opacity 180ms ease-out}
+.release-services{position:absolute;inset:0;display:grid;place-items:center;background:#000b;border-radius:var(--cover-radius,14px);overflow:hidden;opacity:0;transition:opacity 180ms ease-out}
 .release-services-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:8px;row-gap:14px;width:min(calc(100% - 28px),190px)}
 .release-services-grid .platform-logo{grid-column:span 2;justify-self:center;width:46px;height:46px;border:1px solid #ffffff38;border-radius:11px;background:#ffffff0c;box-shadow:inset 0 1px 0 #ffffff16,0 0 12px #ffffff14}
 .release-services-grid .platform-logo img{width:22px;height:22px}
@@ -254,10 +271,10 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .upcoming-preview{display:grid;grid-template-columns:64px minmax(0,1fr);grid-column:1;grid-row:2;align-items:center;gap:16px;min-width:0;min-height:88px;z-index:0;pointer-events:none}
 .upcoming-cover{width:64px;aspect-ratio:1;background:color-mix(in srgb,var(--bg),var(--ink) 8%);border-radius:var(--cover-radius-sm,10px);overflow:hidden}
 .early-listen-copy{position:relative;grid-column:1;grid-row:2;z-index:1;width:100%;min-width:0}
-.upcoming-identity{opacity:0;filter:blur(9px);user-select:none;pointer-events:none;transition:opacity 700ms ease,filter 700ms ease-out}
+.upcoming-identity{opacity:0;user-select:none;pointer-events:none;transition:opacity 500ms ease}
 .upcoming-title{font:400 1.25rem/1.2 Georgia,"Times New Roman",serif;letter-spacing:0;margin:0;overflow-wrap:anywhere;text-wrap:pretty}
 .upcoming-credit{font-size:.6875rem;line-height:1.4;color:var(--muted);margin:4px 0 0}
-.is-revealed .upcoming-identity{opacity:1;filter:none;user-select:auto;pointer-events:auto}
+.is-revealed .upcoming-identity{opacity:1;user-select:auto;pointer-events:auto}
 .early-listen-invitation{font-size:.8125rem;line-height:1.5;margin:0;white-space:nowrap;transition:opacity 700ms ease,visibility 700ms}
 .is-revealed .early-listen-invitation{opacity:0;visibility:hidden;transition:opacity 700ms ease,visibility 0s linear 700ms}
 .signup-entry{display:flex;align-items:center;gap:10px;width:100%}
@@ -380,7 +397,6 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 #releases .release-services-close{font-size:.75rem}
 /* Touch screens use one quick fade, without blur or staggered movement. */
 @media(max-width:760px),(pointer:coarse){
-  #releases .release-services{backdrop-filter:none;-webkit-backdrop-filter:none}
   #releases .release-tile.is-closing .release-services{transition-duration:120ms}
   #releases .release-services-grid .platform-logo,#releases .release-tile.is-open .release-services-grid .platform-logo{transform:none;transition:opacity 120ms ease-out;transition-delay:0ms}
 }

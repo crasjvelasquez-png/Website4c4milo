@@ -4,7 +4,9 @@ export function mountNoiseVideo() {
   const canvas = document.querySelector('[data-noise-canvas]');
   if (!video || !canvas) return;
   const {deviceMemory = 8, hardwareConcurrency = 8, connection} = typeof navigator === 'undefined' ? {} : navigator;
-  const lighterEffects = connection?.saveData === true
+  // Phones and tablets skip the live grain; the static grain texture remains.
+  const touchOnly = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+  const lighterEffects = connection?.saveData === true || touchOnly
     || (deviceMemory <= 4 && hardwareConcurrency <= 4);
   if (lighterEffects) {
     document.body.classList.add('lighter-effects');
@@ -17,14 +19,14 @@ export function mountNoiseVideo() {
   // CSS pixels per tile: the supplied 640 × 360 clip stays at native scale.
   const tileWidth = 640;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  // Grain has no fine edges to preserve at Retina resolution. Use CSS pixels
-  // on every screen so decoration leaves rendering time for the player.
+  // Grain has no fine edges to preserve. Paint at half CSS resolution and let
+  // the compositor stretch it, so each frame touches a quarter of the pixels.
   let width, height, pixelRatio, barHeight, barVisible = true;
   let lastPaint;
   function measure() {
     width = window.innerWidth;
     height = window.innerHeight;
-    pixelRatio = 1;
+    pixelRatio = 0.5;
     barHeight = bar?.clientHeight || 0;
     lastPaint = undefined;
   }
