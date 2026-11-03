@@ -67,7 +67,7 @@
         },
         {
           "label": "YouTube Music",
-          "url": "",
+          "url": "https://music.youtube.com/watch?v=pIj_f_kcjmE",
           "kind": "release"
         },
         {
@@ -136,7 +136,7 @@
       "artworkOptional": true,
       "audio": {
         "src": "/assets/querida.mp3",
-        "previewStart": 4,
+        "previewStart": 53,
         "fadeIn": 1,
         "fadeOut": 1.5
       }
@@ -290,7 +290,7 @@
     {
       "label": "YouTube Music",
       "description": "Watch my work",
-      "url": ""
+      "url": "https://music.youtube.com/watch?v=pIj_f_kcjmE"
     },
     {
       "label": "Tidal",

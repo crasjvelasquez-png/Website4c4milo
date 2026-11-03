@@ -17,6 +17,8 @@ Querida's Apple Music page explicitly said PRE-RELEASE on the September 28 check
 
 September 29 update: Spotify's verified c4milo artist page now links to the [Querida single](https://open.spotify.com/album/4PW1l8X9u7tUq3REsGKe4R). YouTube search lists [Querida](https://www.youtube.com/watch?v=lL6aG0SNCE8) under “c4milo - Topic”; YouTube's oEmbed confirms the same title and channel. The corresponding YouTube Music watch link is used. The user supplied the [Tidal track](https://tidal.com/track/558979437/u). The four streaming icons in the main row and Querida's picker now use these release destinations; TikTok and Instagram remain profile links.
 
+November 3 update: the “c4milo - Topic” channel feed lists [How Deep Is Your Love](https://www.youtube.com/watch?v=pIj_f_kcjmE); YouTube's oEmbed confirms the same title and channel. The corresponding YouTube Music watch link is used in How Deep Is Your Love's links and the main YouTube Music icon.
+
 Spotify's official public oEmbed responses returned the titles and iframe sources for CRUSH., circles and NMF. Those sources are configured as click-to-load players. No playback, login, follow or save actions were taken. Provider playback restrictions remain outside the website's control.
 
 TikTok and Instagram use the `@allthingsc4milo` profile URLs. On September 29, TikTok's profile data identified the account as `c4milo`, and Instagram's page identified Camilo Velasquez with the same handle. The main YouTube Music and Tidal icons now link to Querida. No cover artwork was downloaded or inspected.
