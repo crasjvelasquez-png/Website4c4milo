@@ -385,24 +385,32 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .featured-cover .artwork,.release-cover .artwork{border-radius:inherit}
 .cassette-label .featured-cover{border-radius:var(--cover-radius-sm,10px)}
 #releases .release-services{transition:none}
-#releases .release-tile.is-open .release-services{opacity:1}
+#releases .release-tile.is-open .release-services{opacity:1;transition:opacity 180ms ease-out}
+/* An open sleeve settles from its hover lift or press instead of snapping flat. */
+#releases .release-tile.is-open .release-cover{transform:none;transition:transform 200ms cubic-bezier(.22,1,.36,1)}
+#releases .release-cover,#releases .release-services a,#releases .release-services-close{-webkit-tap-highlight-color:transparent}
+@media(hover:hover) and (pointer:fine){#releases a.release-cover:active{transform:translateY(-2px) scale(.99)}}
 #releases .release-tile.is-closing .release-services{opacity:0;pointer-events:none;transition:opacity 240ms ease-out}
-#releases .release-services-grid .platform-logo{opacity:0;transform:translateY(5px);transition:opacity 120ms ease-out,transform 120ms ease-out;transition-delay:var(--service-exit-delay,120ms)}
-#releases .release-tile.is-open .release-services-grid .platform-logo{opacity:1;transform:none;transition-duration:200ms,240ms;transition-delay:var(--service-delay,0ms)}
+/* Opacity only: a few pixels of travel renders as uneven whole-pixel steps.
+   Persistent layers avoid a repaint, and a visible tick, when fades finish. */
+#releases .release-services{will-change:opacity}
+#releases .release-services-grid .platform-logo{opacity:0;will-change:opacity;transition:opacity 120ms ease-out;transition-delay:var(--service-exit-delay,120ms)}
+#releases .release-tile.is-open .release-services-grid .platform-logo{opacity:1;transition-duration:220ms;transition-delay:var(--service-delay,0ms)}
 #releases .release-services-grid .platform-logo:nth-child(2){--service-delay:55ms;--service-exit-delay:90ms}
 /* 4 sits bottom-left, visually before top-right 3 on the diagonal. */
 #releases .release-services-grid .platform-logo:nth-child(4){--service-delay:110ms;--service-exit-delay:60ms}
 #releases .release-services-grid .platform-logo:nth-child(3){--service-delay:165ms;--service-exit-delay:30ms}
 #releases .release-services-grid .platform-logo:nth-child(5){--service-delay:220ms;--service-exit-delay:0ms}
 #releases .release-services-close{font-size:.75rem}
-/* Touch screens use one quick fade, without blur or staggered movement. */
+/* Touch screens fade the panel as one layer, without staggered movement. */
 @media(max-width:760px),(pointer:coarse){
+  #releases .release-tile.is-open .release-services{transition-duration:160ms}
   #releases .release-tile.is-closing .release-services{transition-duration:120ms}
-  #releases .release-services-grid .platform-logo,#releases .release-tile.is-open .release-services-grid .platform-logo{transform:none;transition:opacity 120ms ease-out;transition-delay:0ms}
+  #releases .release-services-grid .platform-logo,#releases .release-tile.is-open .release-services-grid .platform-logo{opacity:1;transition:none;will-change:auto}
 }
 @media(prefers-reduced-motion:reduce){
-  #releases .release-tile.is-closing .release-services{transition:none}
-  #releases .release-services-grid .platform-logo,#releases .release-tile.is-open .release-services-grid .platform-logo{transition:none;transform:none}
+  #releases .release-tile.is-open .release-services,#releases .release-tile.is-closing .release-services{transition:none}
+  #releases .release-services-grid .platform-logo,#releases .release-tile.is-open .release-services-grid .platform-logo{transition:none}
 }
 
 @media(min-width:761px){body{zoom:1.3}}
@@ -532,7 +540,9 @@ main>section#early-listen,main>section#page-links{display:none}
 
 /* Single titles are closed-state desktop hover feedback only. */
 #releases .release-title{position:absolute;z-index:2;top:50%;left:12px;right:12px;transform:translateY(-50%);opacity:0;pointer-events:none;text-align:center;color:#fff;font-size:1rem;font-weight:400;line-height:1.25;text-shadow:0 1px 12px #000,0 1px 4px #000;transition:none}
-#releases .has-release-title.is-open .release-title,#releases .has-release-title.is-closing .release-title{display:none}
+/* Title and dimming cross-fade with the panel; hover can restore them while it closes. */
+#releases .has-release-title.is-open .release-title,#releases .has-release-title.is-open .release-cover::after{opacity:0;transition:opacity 150ms ease-out}
+#releases .has-release-title.is-closing .release-title,#releases .has-release-title.is-closing .release-cover::after{transition:opacity 240ms ease-out}
 #releases .release-services-grid{row-gap:28px;transform:none}
 @media(min-width:761px) and (hover:hover) and (pointer:fine){#releases .has-release-title:not(.is-open):has(.release-cover:hover) .release-title,#releases .has-release-title:not(.is-open):has(.release-cover:focus-visible) .release-title{opacity:1}}
 
@@ -540,6 +550,7 @@ main>section#early-listen,main>section#page-links{display:none}
 #releases .has-release-title .release-cover{position:relative}
 #releases .has-release-title .release-cover::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;background:#000;opacity:0;pointer-events:none;transition:none}
 @media(min-width:761px) and (hover:hover) and (pointer:fine){#releases .has-release-title:not(.is-open) .release-cover:hover::after,#releases .has-release-title:not(.is-open) .release-cover:focus-visible::after{opacity:.3}}
+@media(prefers-reduced-motion:reduce){#releases .has-release-title .release-title,#releases .has-release-title .release-cover::after{transition:none!important}}
 
 /* Catalogue pairs on desktop, one full-size cover per row on mobile. */
 #releases .release-covers{display:grid;grid-template-columns:repeat(2,minmax(0,220px));max-width:488px}
