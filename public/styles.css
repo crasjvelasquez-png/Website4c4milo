@@ -386,10 +386,18 @@ main>section.early-listen{margin-top:clamp(64px,9vw,96px);margin-bottom:72px}
 .cassette-label .featured-cover{border-radius:var(--cover-radius-sm,10px)}
 #releases .release-services{transition:none}
 #releases .release-tile.is-open .release-services{opacity:1;transition:opacity 180ms ease-out}
-/* An open sleeve settles from its hover lift or press instead of snapping flat. */
-#releases .release-tile.is-open .release-cover{transform:none;transition:transform 200ms cubic-bezier(.22,1,.36,1)}
+/* The whole tile lifts, so the overlay moves with the artwork. Tile hover also
+   persists over the panel, so closing lifts and fades on one timeline. */
 #releases .release-cover,#releases .release-services a,#releases .release-services-close{-webkit-tap-highlight-color:transparent}
-@media(hover:hover) and (pointer:fine){#releases a.release-cover:active{transform:translateY(-2px) scale(.99)}}
+@media(hover:hover) and (pointer:fine){
+  #releases a.release-cover:hover,#releases a.release-cover:active{transform:none}
+  #releases .release-tile{transition:transform 240ms cubic-bezier(.22,1,.36,1)}
+  #releases .release-tile:not(.is-open):hover{transform:translateY(-3px) scale(1.02)}
+  #releases .release-tile:not(.is-open):has(.release-cover:active){transform:translateY(-2px) scale(.99);transition-duration:120ms}
+  /* An open sleeve settles from its hover lift or press instead of snapping flat. */
+  #releases .release-tile.is-open{transform:none;transition-duration:200ms}
+}
+@media(prefers-reduced-motion:reduce){#releases .release-tile{transition:none!important;transform:none!important}}
 #releases .release-tile.is-closing .release-services{opacity:0;pointer-events:none;transition:opacity 240ms ease-out}
 /* Opacity only: a few pixels of travel renders as uneven whole-pixel steps.
    Persistent layers avoid a repaint, and a visible tick, when fades finish. */
@@ -544,12 +552,12 @@ main>section#early-listen,main>section#page-links{display:none}
 #releases .has-release-title.is-open .release-title,#releases .has-release-title.is-open .release-cover::after{opacity:0;transition:opacity 150ms ease-out}
 #releases .has-release-title.is-closing .release-title,#releases .has-release-title.is-closing .release-cover::after{transition:opacity 240ms ease-out}
 #releases .release-services-grid{row-gap:28px;transform:none}
-@media(min-width:761px) and (hover:hover) and (pointer:fine){#releases .has-release-title:not(.is-open):has(.release-cover:hover) .release-title,#releases .has-release-title:not(.is-open):has(.release-cover:focus-visible) .release-title{opacity:1}}
+@media(min-width:761px) and (hover:hover) and (pointer:fine){#releases .has-release-title:not(.is-open):hover .release-title,#releases .has-release-title:not(.is-open):has(.release-cover:focus-visible) .release-title{opacity:1}}
 
 /* Hover uses half the opened panel's 60% artwork dimming. */
 #releases .has-release-title .release-cover{position:relative}
 #releases .has-release-title .release-cover::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;background:#000;opacity:0;pointer-events:none;transition:none}
-@media(min-width:761px) and (hover:hover) and (pointer:fine){#releases .has-release-title:not(.is-open) .release-cover:hover::after,#releases .has-release-title:not(.is-open) .release-cover:focus-visible::after{opacity:.3}}
+@media(min-width:761px) and (hover:hover) and (pointer:fine){#releases .has-release-title:not(.is-open):hover .release-cover::after,#releases .has-release-title:not(.is-open) .release-cover:focus-visible::after{opacity:.3}}
 @media(prefers-reduced-motion:reduce){#releases .has-release-title .release-title,#releases .has-release-title .release-cover::after{transition:none!important}}
 
 /* Catalogue pairs on desktop, one full-size cover per row on mobile. */
