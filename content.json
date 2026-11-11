@@ -29,6 +29,24 @@
       {"id":"project-15","title":"Project 15","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}}
     ]
   },
+  "services": {
+    "enabled": false,
+    "bookingEmail": "info@c4milo.com",
+    "currency": "USD",
+    "tiers": [
+      {"id": "master", "label": "Master", "pricePerSong": 100},
+      {"id": "mix", "label": "Mix", "pricePerSong": 150},
+      {"id": "mix-master", "label": "Mix + Master", "pricePerSong": 220}
+    ],
+    "trackLimit": "Depends on the project; agreed on the consult call.",
+    "rushFee": {"price": 100, "description": "First mix within 48 hours"},
+    "turnaround": "First mix in 5 business days",
+    "revisionsIncluded": 2,
+    "extraRevisionPrice": 35,
+    "payment": {"depositPercent": 50, "depositTerms": "50% deposit of the agreed fee to book; the balance is due before final files are delivered.", "refundPolicy": "Deposit is non-refundable after 3 days."},
+    "deliverables": ["24-bit WAV", "MP3", "Instrumental", "Group stems", "Lead and harmonies separated"],
+    "addOns": [{"label": "Clean version", "price": 25}]
+  },
   "signup": {
     "enabled": true
   },
