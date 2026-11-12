@@ -147,9 +147,9 @@ function portfolioPage() {
     }
   }));
   const first = projects[0];
-  const cover = (project, side) => project.artwork
-    ? `<img class="portfolio-art" data-cover-${side} src="${e(project.artwork)}" alt="${e(project.artworkAlt || `${project.title} cover`)}" width="800" height="800" decoding="async">`
-    : `<div class="portfolio-art portfolio-art-empty" data-cover-${side} role="img" aria-label="${e(project.title)} cover artwork placeholder"><span>Artwork pending</span></div>`;
+  const cover = project => project.artwork
+    ? `<img class="portfolio-art" data-cover src="${e(project.artwork)}" alt="${e(project.artworkAlt || `${project.title} cover`)}" width="800" height="800" decoding="async">`
+    : `<div class="portfolio-art portfolio-art-empty" data-cover role="img" aria-label="${e(project.title)} cover artwork placeholder"><span>Artwork pending</span></div>`;
   const cards = projects.map((project, index) => {
     const ready = Boolean(project.audio?.before && project.audio?.after);
     return `<li class="portfolio-project${index === 0 ? ' is-selected' : ''}" data-audio-ready="${ready}">
@@ -157,7 +157,7 @@ function portfolioPage() {
       <span class="portfolio-row-index">${String(index + 1).padStart(2, '0')}</span>
       <span class="portfolio-thumb">${project.artwork ? `<img src="${e(project.artwork)}" alt="" width="800" height="800" loading="lazy" decoding="async">` : `<span class="portfolio-thumb-empty" aria-hidden="true"></span>`}</span>
       <span class="portfolio-credit"><span class="portfolio-credit-title">${e(project.title)}</span><span class="portfolio-credit-meta">${e(project.artist)} · ${e(project.contribution)}</span></span>
-      <span class="portfolio-row-state">${ready ? 'Before / After' : 'Coming soon'}</span>
+      ${ready ? '' : '<span class="portfolio-row-state">Coming soon</span>'}
     </button>
   </li>`;
   }).join('');
@@ -176,14 +176,13 @@ function portfolioPage() {
     <header class="portfolio-top"><a class="portfolio-home" href="/" aria-label="Back to c4milo home">c4milo</a><p class="portfolio-top-note">Mixing and mastering</p></header>
     <section class="portfolio-hero" id="portfolio-player" aria-labelledby="portfolio-title" data-portfolio-player data-active-side="before">
       <div class="portfolio-identity"><h1 id="portfolio-title">${e(first.title)}</h1><p><span data-project-artist>${e(first.artist)}</span><span aria-hidden="true"> · </span><span data-project-contribution>${e(first.contribution)}</span></p></div>
-      <div class="portfolio-comparison" data-active-side="before" aria-label="Before and after artwork">
-        <button type="button" class="portfolio-side portfolio-side-before" data-side="before" aria-pressed="true" aria-label="Listen to the before version"><span class="portfolio-side-label">Before</span>${cover(first, 'before')}</button>
-        <button type="button" class="portfolio-side portfolio-side-after" data-side="after" aria-pressed="false" aria-label="Listen to the after version"><span class="portfolio-side-label">After</span>${cover(first, 'after')}</button>
+      <div class="portfolio-comparison" data-active-side="before">
+        <button type="button" class="portfolio-side" data-toggle-side aria-pressed="false" aria-label="After version">${cover(first)}</button>
       </div>
       <div class="portfolio-transport">
         <button class="portfolio-play" type="button" data-play aria-label="Play" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path data-icon-play d="m8 5 12 7-12 7Z"/><path data-icon-pause d="M8 5v14M16 5v14"/></svg></button>
         <div class="portfolio-progress-wrap"><input data-seek type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek through the selected project" disabled><div class="portfolio-time"><span data-current-time>0:00</span><span data-duration>0:00</span></div></div>
-        <div class="portfolio-switch" role="group" aria-label="Choose mix version"><button type="button" data-side="before" aria-pressed="true">Before</button><button type="button" data-side="after" aria-pressed="false">After</button></div>
+        <button type="button" class="portfolio-switch" data-toggle-side aria-pressed="false" aria-label="After version"><span data-side="before">Before</span><span data-side="after">After</span></button>
       </div>
       <p class="portfolio-audio-status" data-audio-status role="status" aria-live="polite"></p>
     </section>

@@ -53,7 +53,7 @@ The `/portafolio.html` page reads its 15 projects from `portfolio.projects` in `
 {"id":"project-01","title":"Song title","artist":"Artist name","contribution":"Mixing & Mastering","artwork":"/assets/song-cover.webp","artworkAlt":"Song title cover","placeholder":false,"audio":{"before":"/assets/song-before.mp3","after":"/assets/song-after.mp3"}}
 ```
 
-Both MP3s are required to enable playback. Keep their export start, duration and loudness aligned so the synchronized comparison reflects the mix. The player decodes both versions before enabling Play; switching versions crossfades on the shared audio clock without restarting. Project changes load paused at the beginning. Rebuild with `npm run build` after content or asset changes. The first tap on a phone reveals the project credits; tap it again to load and scroll to the player.
+Both MP3s are required to enable playback. Keep their export start, duration and loudness aligned so the synchronized comparison reflects the mix; the current clips are leveled to -15 LUFS integrated with peaks under -1.5 dBTP. The player decodes both versions before enabling Play; switching versions crossfades on the shared audio clock without restarting. Project changes load paused at the beginning. Rebuild with `npm run build` after content or asset changes. The first tap on a phone reveals the project credits; tap it again to load and scroll to the player.
 
 Optional `date` uses `YYYY-MM-DD` and displays a full date for the featured release. Optional `statusLabel` overrides its introductory label, such as "Out now".
 

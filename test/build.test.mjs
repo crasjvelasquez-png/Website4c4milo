@@ -157,6 +157,8 @@ test('hidden signup omits the early-listen box while keeping page spacing',async
 }));
 
 test('portfolio builds a project grid and leaves incomplete paired audio disabled',async()=>fixture(async({directory,content,save})=>{
+  content.portfolio.projects[2].audio = {before:'',after:''};
+  await save();
   await buildSite({directory});
   let html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
   assert.equal((html.match(/class="portfolio-project(?: is-selected)?"/g) ?? []).length,3);
@@ -165,10 +167,9 @@ test('portfolio builds a project grid and leaves incomplete paired audio disable
   assert.match(html,/aria-label="Load Spark by Ayush; Mixing; before and after coming soon"/);
   assert.match(html,/<span class="portfolio-row-state">Coming soon<\/span>/);
   assert.match(html,/data-active-side="before"/);
-  assert.match(html,/<button type="button" class="portfolio-side portfolio-side-before" data-side="before" aria-pressed="true" aria-label="Listen to the before version">/);
-  assert.match(html,/<button type="button" class="portfolio-side portfolio-side-after" data-side="after" aria-pressed="false" aria-label="Listen to the after version">/);
-  assert.match(html,/data-side="before" aria-pressed="true"/);
-  assert.match(html,/data-side="after" aria-pressed="false"/);
+  assert.equal((html.match(/data-cover\b/g) ?? []).length,1);
+  assert.match(html,/<button type="button" class="portfolio-side" data-toggle-side aria-pressed="false" aria-label="After version">/);
+  assert.match(html,/<button type="button" class="portfolio-switch" data-toggle-side aria-pressed="false" aria-label="After version"><span data-side="before">Before<\/span><span data-side="after">After<\/span><\/button>/);
   assert.match(html,/data-play aria-label="Play" disabled/);
   assert.match(html,/<p class="portfolio-audio-status" data-audio-status role="status" aria-live="polite"><\/p>/);
   assert.doesNotMatch(html,/Audio pending/);
@@ -200,7 +201,7 @@ test('portfolio audio is enabled only after both configured MP3s exist and conte
   assert.match(html,/"after":"\/_assets\/assets\/after\.[a-f0-9]{12}\.mp3"/);
   assert.ok(before);
   assert.match(html,/data-audio-ready="true"/);
-  assert.match(html,/<span class="portfolio-row-state">Before \/ After<\/span>/);
+  assert.doesNotMatch(html,/Before \/ After/);
   assert.match(html,/aria-label="Load &lt;Song&gt; by Paco; Mixing"/);
   assert.doesNotMatch(html,/Load &lt;Song&gt; by Paco; Mixing; before and after coming soon/);
   assert.match(html,/data-play aria-label="Play" disabled/);

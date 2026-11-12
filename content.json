@@ -13,8 +13,8 @@
   "portfolio": {
     "projects": [
       {"id":"forest","title":"Forest","artist":"Paco","contribution":"Mixing","artwork":"/assets/portfolio/forest-paco.webp","artworkAlt":"Forest cover","audio":{"before":"/assets/portfolio/forest-paco-before.mp3","after":"/assets/portfolio/forest-paco-after.mp3"}},
-      {"id":"fall-this-way","title":"Fall This Way","artist":"Zenny","contribution":"Mixing","artwork":"/assets/portfolio/fall-this-way-zenny.webp","artworkAlt":"Fall This Way cover","audio":{"before":"","after":""}},
-      {"id":"spark","title":"Spark","artist":"Ayush","contribution":"Mixing","artwork":"/assets/portfolio/spark-ayush.webp","artworkAlt":"Spark cover","audio":{"before":"","after":""}}
+      {"id":"fall-this-way","title":"Fall This Way","artist":"Zenny","contribution":"Mixing","artwork":"/assets/portfolio/fall-this-way-zenny.webp","artworkAlt":"Fall This Way cover","audio":{"before":"/assets/portfolio/fall-this-way-zenny-before.mp3","after":"/assets/portfolio/fall-this-way-zenny-after.mp3"}},
+      {"id":"spark","title":"Spark","artist":"Ayush","contribution":"Mixing","artwork":"/assets/portfolio/spark-ayush.webp","artworkAlt":"Spark cover","audio":{"before":"/assets/portfolio/spark-ayush-before.mp3","after":"/assets/portfolio/spark-ayush-after.mp3"}}
     ]
   },
   "services": {

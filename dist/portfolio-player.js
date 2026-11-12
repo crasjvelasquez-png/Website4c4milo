@@ -130,7 +130,7 @@ function mountPortfolio(root) {
   const durationTime = root.querySelector('[data-duration]');
   const status = root.querySelector('[data-audio-status]');
   const selectionStatus = root.closest('main').querySelector('[data-selection-status]');
-  const sideButtons = [...root.querySelectorAll('[data-side]')];
+  const toggles = [...root.querySelectorAll('[data-toggle-side]')];
   let selected = null;
   let transport = null;
   let audioContext = null;
@@ -187,12 +187,9 @@ function mountPortfolio(root) {
     transport?.dispose();
     transport = null;
     selected = project;
-    activeSide = 'before';
     loading = false;
     root.classList.remove('is-playing');
-    root.dataset.activeSide = activeSide;
-    comparison.dataset.activeSide = activeSide;
-    for (const button of sideButtons) button.setAttribute('aria-pressed', String(button.dataset.side === activeSide));
+    showSide('before');
     if (shouldSwap) {
       root.classList.add('is-swapping');
       setTimeout(() => {
@@ -239,14 +236,19 @@ function mountPortfolio(root) {
   }
 
   function updateHeroArtwork(project) {
-    for (const side of ['before', 'after']) {
-      const old = root.querySelector(`[data-cover-${side}]`);
-      const next = project.artwork
-        ? Object.assign(document.createElement('img'), {className: 'portfolio-art', src: project.artwork, alt: project.artworkAlt || `${project.title} cover`, width: 800, height: 800, decoding: 'async'})
-        : Object.assign(document.createElement('div'), {className: 'portfolio-art portfolio-art-empty', role: 'img', 'aria-label': `${project.title} cover artwork placeholder`, textContent: 'Artwork pending'});
-      next.setAttribute(`data-cover-${side}`, '');
-      old.replaceWith(next);
-    }
+    const next = project.artwork
+      ? Object.assign(document.createElement('img'), {className: 'portfolio-art', src: project.artwork, alt: project.artworkAlt || `${project.title} cover`, width: 800, height: 800, decoding: 'async'})
+      : Object.assign(document.createElement('div'), {className: 'portfolio-art portfolio-art-empty', role: 'img', ariaLabel: `${project.title} cover artwork placeholder`, textContent: 'Artwork pending'});
+    next.setAttribute('data-cover', '');
+    root.querySelector('[data-cover]').replaceWith(next);
+  }
+
+  function showSide(side) {
+    activeSide = side;
+    root.dataset.activeSide = side;
+    comparison.dataset.activeSide = side;
+    for (const button of toggles) button.setAttribute('aria-pressed', String(side === 'after'));
+    transport?.setSide(side);
   }
 
   for (const button of document.querySelectorAll('[data-project-id]')) button.addEventListener('click', () => {
@@ -256,13 +258,7 @@ function mountPortfolio(root) {
     if (coarsePointer.matches) root.scrollIntoView({behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'start'});
   });
 
-  for (const button of sideButtons) button.addEventListener('click', () => {
-    activeSide = button.dataset.side;
-    root.dataset.activeSide = activeSide;
-    comparison.dataset.activeSide = activeSide;
-    for (const item of sideButtons) item.setAttribute('aria-pressed', String(item.dataset.side === activeSide));
-    transport?.setSide(activeSide);
-  });
+  for (const button of toggles) button.addEventListener('click', () => showSide(activeSide === 'after' ? 'before' : 'after'));
   playButton.addEventListener('click', async () => {
     if (!transport) return;
     try {
