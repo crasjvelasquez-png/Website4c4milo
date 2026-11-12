@@ -131,7 +131,7 @@ function mountPortfolio(root) {
   const status = root.querySelector('[data-audio-status]');
   const selectionStatus = root.closest('main').querySelector('[data-selection-status]');
   const sideButtons = [...root.querySelectorAll('[data-side]')];
-  let selected = projects[0];
+  let selected = null;
   let transport = null;
   let audioContext = null;
   let loadToken = 0;
@@ -139,13 +139,21 @@ function mountPortfolio(root) {
   let activeSide = 'before';
   let loading = false;
   const coarsePointer = window.matchMedia('(pointer: coarse)');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function setStatus(text, visible = false) {
+    status.textContent = text;
+    status.classList.toggle('is-visible', visible);
+  }
 
   function paintTransport() {
     const elapsed = transport?.currentTime ?? 0;
     const length = transport?.duration ?? 0;
+    const percent = length ? (elapsed / length) * 100 : 0;
     currentTime.textContent = formatTime(elapsed);
     durationTime.textContent = formatTime(length);
-    seek.value = length ? String((elapsed / length) * 100) : '0';
+    seek.value = String(percent);
+    seek.style.setProperty('--progress', `${percent}%`);
     playButton.setAttribute('aria-label', transport?.playing ? 'Pause' : 'Play');
     root.classList.toggle('is-playing', Boolean(transport?.playing));
     if (transport?.playing) frame = requestAnimationFrame(paintTransport);
@@ -166,34 +174,49 @@ function mountPortfolio(root) {
     return audioContext.decodeAudioData(await response.arrayBuffer());
   }
 
+  function applyProjectIdentity(project) {
+    title.textContent = project.title;
+    artist.textContent = project.artist;
+    contribution.textContent = project.contribution;
+    updateHeroArtwork(project);
+  }
+
   async function loadProject(project) {
     const token = ++loadToken;
+    const shouldSwap = Boolean(selected && selected.id !== project.id && !reducedMotion.matches);
     transport?.dispose();
     transport = null;
     selected = project;
     activeSide = 'before';
     loading = false;
     root.classList.remove('is-playing');
-    title.textContent = project.title;
-    artist.textContent = project.artist;
-    contribution.textContent = project.contribution;
+    root.dataset.activeSide = activeSide;
     comparison.dataset.activeSide = activeSide;
     for (const button of sideButtons) button.setAttribute('aria-pressed', String(button.dataset.side === activeSide));
-    updateHeroArtwork(project);
+    if (shouldSwap) {
+      root.classList.add('is-swapping');
+      setTimeout(() => {
+        if (token !== loadToken) return;
+        applyProjectIdentity(project);
+        root.classList.remove('is-swapping');
+      }, 160);
+    } else {
+      root.classList.remove('is-swapping');
+      applyProjectIdentity(project);
+    }
     for (const button of document.querySelectorAll('[data-project-id]')) {
       const isSelected = button.dataset.projectId === project.id;
       button.closest('.portfolio-project').classList.toggle('is-selected', isSelected);
       button.setAttribute('aria-pressed', String(isSelected));
-      button.closest('.portfolio-project').classList.remove('is-armed');
     }
     selectionStatus.textContent = `Loaded ${project.title} by ${project.artist}. ${project.contribution}.`;
     if (!project.audio?.before || !project.audio?.after) {
-      status.textContent = '';
+      setStatus('Before and after coming soon', true);
       updateAvailability();
       return;
     }
     loading = true;
-    status.textContent = 'Loading both versions…';
+    setStatus('Loading both versions…', true);
     updateAvailability();
     try {
       const Context = window.AudioContext || window.webkitAudioContext;
@@ -202,14 +225,14 @@ function mountPortfolio(root) {
       const [beforeBuffer, afterBuffer] = await Promise.all([decodeTrack(project.audio.before), decodeTrack(project.audio.after)]);
       if (token !== loadToken) return;
       transport = createABTransport(audioContext, beforeBuffer, afterBuffer, {onended: () => {
-        status.textContent = 'Playback finished';
+        setStatus('Playback finished');
         paintTransport();
       }});
       transport.setSide(activeSide);
-      status.textContent = 'Ready to play';
+      setStatus('Ready to play');
     } catch (error) {
       if (token !== loadToken) return;
-      status.textContent = `${error.message} Try selecting the project again.`;
+      setStatus(`${error.message} Try selecting the project again.`, true);
     } finally {
       if (token === loadToken) { loading = false; updateAvailability(); }
     }
@@ -226,40 +249,28 @@ function mountPortfolio(root) {
     }
   }
 
-  for (const button of document.querySelectorAll('[data-project-id]')) button.addEventListener('click', event => {
+  for (const button of document.querySelectorAll('[data-project-id]')) button.addEventListener('click', () => {
     const project = byId.get(button.dataset.projectId);
     if (!project) return;
-    if (coarsePointer.matches && event.detail > 0) {
-      const item = button.closest('.portfolio-project');
-      if (!item.classList.contains('is-armed')) {
-        for (const other of document.querySelectorAll('.portfolio-project.is-armed')) other.classList.remove('is-armed');
-        item.classList.add('is-armed');
-        selectionStatus.textContent = `${project.title} by ${project.artist}. ${project.contribution}. Tap again to load.`;
-        return;
-      }
-    }
     loadProject(project);
-    if (coarsePointer.matches) root.scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
-  });
-  document.addEventListener('click', event => {
-    if (event.target.closest('.portfolio-project')) return;
-    for (const item of document.querySelectorAll('.portfolio-project.is-armed')) item.classList.remove('is-armed');
+    if (coarsePointer.matches) root.scrollIntoView({behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'start'});
   });
 
   for (const button of sideButtons) button.addEventListener('click', () => {
     activeSide = button.dataset.side;
+    root.dataset.activeSide = activeSide;
     comparison.dataset.activeSide = activeSide;
-    for (const item of sideButtons) item.setAttribute('aria-pressed', String(item === button));
+    for (const item of sideButtons) item.setAttribute('aria-pressed', String(item.dataset.side === activeSide));
     transport?.setSide(activeSide);
   });
   playButton.addEventListener('click', async () => {
     if (!transport) return;
     try {
       await audioContext.resume();
-      if (transport.playing) { transport.pause(); status.textContent = 'Paused'; }
-      else { transport.play(); status.textContent = 'Playing'; }
+      if (transport.playing) { transport.pause(); setStatus('Paused'); }
+      else { transport.play(); setStatus('Playing'); }
       paintTransport();
-    } catch { status.textContent = 'Playback could not start. Try again.'; }
+    } catch { setStatus('Playback could not start. Try again.', true); }
   });
   seek.addEventListener('input', () => {
     if (!transport) return;
@@ -267,7 +278,7 @@ function mountPortfolio(root) {
     paintTransport();
   });
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden && transport?.playing) { transport.pause(); status.textContent = 'Paused'; paintTransport(); }
+    if (document.hidden && transport?.playing) { transport.pause(); setStatus('Paused'); paintTransport(); }
   });
   window.addEventListener('pagehide', () => { loadToken++; transport?.dispose(); audioContext?.close(); });
   loadProject(projects[0]);

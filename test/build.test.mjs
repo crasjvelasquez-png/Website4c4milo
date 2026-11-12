@@ -156,18 +156,30 @@ test('hidden signup omits the early-listen box while keeping page spacing',async
   assert.match(html,/id="releases"/);
 }));
 
-test('portfolio builds a 15-project grid and leaves incomplete paired audio disabled',async()=>fixture(async({directory})=>{
+test('portfolio builds a project grid and leaves incomplete paired audio disabled',async()=>fixture(async({directory,content,save})=>{
   await buildSite({directory});
-  const html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
-  assert.equal((html.match(/class="portfolio-project(?: is-selected)?"/g) ?? []).length,15);
+  let html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
+  assert.equal((html.match(/class="portfolio-project(?: is-selected)?"/g) ?? []).length,3);
+  assert.match(html,/<p>3 projects<\/p>/);
+  assert.match(html,/data-audio-ready="false"/);
+  assert.match(html,/aria-label="Load Spark by Ayush; Mixing; before and after coming soon"/);
+  assert.match(html,/<span class="portfolio-row-state">Coming soon<\/span>/);
   assert.match(html,/data-active-side="before"/);
+  assert.match(html,/<button type="button" class="portfolio-side portfolio-side-before" data-side="before" aria-pressed="true" aria-label="Listen to the before version">/);
+  assert.match(html,/<button type="button" class="portfolio-side portfolio-side-after" data-side="after" aria-pressed="false" aria-label="Listen to the after version">/);
   assert.match(html,/data-side="before" aria-pressed="true"/);
   assert.match(html,/data-side="after" aria-pressed="false"/);
   assert.match(html,/data-play aria-label="Play" disabled/);
   assert.match(html,/<p class="portfolio-audio-status" data-audio-status role="status" aria-live="polite"><\/p>/);
   assert.doesNotMatch(html,/Audio pending/);
   assert.match(html,/portfolio-player\.js/);
-  assert.match(html,/Project 01/);
+  assert.match(html,/Forest/);
+  content.portfolio.projects = [content.portfolio.projects[0]];
+  await save();
+  await buildSite({directory});
+  html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
+  assert.equal((html.match(/class="portfolio-project(?: is-selected)?"/g) ?? []).length,1);
+  assert.match(html,/<p>1 project<\/p>/);
 }));
 
 test('portfolio audio is enabled only after both configured MP3s exist and content stays escaped',async()=>fixture(async({directory,content,save})=>{
@@ -177,6 +189,8 @@ test('portfolio audio is enabled only after both configured MP3s exist and conte
   await buildSite({directory});
   let html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
   assert.doesNotMatch(html,/Audio pending/);
+  assert.match(html,/data-audio-ready="false"/);
+  assert.match(html,/aria-label="Load &lt;Song&gt; by Paco; Mixing; before and after coming soon"/);
   await writeFile(join(directory,'public/assets/before.mp3'),'before');
   await writeFile(join(directory,'public/assets/after.mp3'),'after');
   await buildSite({directory});
@@ -185,18 +199,27 @@ test('portfolio audio is enabled only after both configured MP3s exist and conte
   const before = html.match(/"before":"(\/_assets\/assets\/before\.[a-f0-9]{12}\.mp3)"/);
   assert.match(html,/"after":"\/_assets\/assets\/after\.[a-f0-9]{12}\.mp3"/);
   assert.ok(before);
+  assert.match(html,/data-audio-ready="true"/);
+  assert.match(html,/<span class="portfolio-row-state">Before \/ After<\/span>/);
+  assert.match(html,/aria-label="Load &lt;Song&gt; by Paco; Mixing"/);
+  assert.doesNotMatch(html,/Load &lt;Song&gt; by Paco; Mixing; before and after coming soon/);
   assert.match(html,/data-play aria-label="Play" disabled/);
   assert.equal(await readFile(join(directory,'dist'+before[1]),'utf8'),'before');
 }));
 
-test('portfolio requires exactly 15 uniquely identified projects and MP3 tracks',()=>{
+test('portfolio requires between 1 and 15 uniquely identified projects and MP3 tracks',()=>{
   const content = structuredClone(baseline);
   content.releases = content.releases.filter(r => r.id !== 'how-deep-is-your-love');
   content.featuredReleaseId = 'querida';
   content.portfolio = {projects:[]};
-  assert.throws(()=>validateContent(content),/exactly 15 projects/);
+  assert.throws(()=>validateContent(content),/between 1 and 15 projects/);
+  content.portfolio.projects = Array.from({length:16},(_,i)=>({id:`p${i}`,title:`P${i}`,artist:'Artist',contribution:'Mixing',artwork:'',audio:{before:'',after:''}}));
+  assert.throws(()=>validateContent(content),/between 1 and 15 projects/);
   content.portfolio.projects = Array.from({length:15},(_,i)=>({id:`p${i}`,title:`P${i}`,artist:'Artist',contribution:'Mixing',artwork:'',audio:{before:'',after:''}}));
-  content.portfolio.projects[1].audio.before = '/assets/track.wav';
+  assert.doesNotThrow(()=>validateContent(content));
+  content.portfolio.projects = Array.from({length:1},(_,i)=>({id:`p${i}`,title:`P${i}`,artist:'Artist',contribution:'Mixing',artwork:'',audio:{before:'',after:''}}));
+  assert.doesNotThrow(()=>validateContent(content));
+  content.portfolio.projects[0].audio.before = '/assets/track.wav';
   assert.throws(()=>validateContent(content),/needs a local MP3/);
 });
 

@@ -12,21 +12,9 @@
   "unlock": {"enabled": false},
   "portfolio": {
     "projects": [
-      {"id":"project-01","title":"Project 01","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-02","title":"Project 02","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-03","title":"Project 03","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-04","title":"Project 04","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-05","title":"Project 05","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-06","title":"Project 06","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-07","title":"Project 07","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-08","title":"Project 08","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-09","title":"Project 09","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-10","title":"Project 10","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-11","title":"Project 11","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-12","title":"Project 12","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-13","title":"Project 13","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-14","title":"Project 14","artist":"Artist placeholder","contribution":"Mixing & Mastering","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}},
-      {"id":"project-15","title":"Project 15","artist":"Artist placeholder","contribution":"Mixing","artwork":"","artworkAlt":"","placeholder":true,"audio":{"before":"","after":""}}
+      {"id":"forest","title":"Forest","artist":"Paco","contribution":"Mixing","artwork":"/assets/portfolio/forest-paco.webp","artworkAlt":"Forest cover","audio":{"before":"/assets/portfolio/forest-paco-before.mp3","after":"/assets/portfolio/forest-paco-after.mp3"}},
+      {"id":"fall-this-way","title":"Fall This Way","artist":"Zenny","contribution":"Mixing","artwork":"/assets/portfolio/fall-this-way-zenny.webp","artworkAlt":"Fall This Way cover","audio":{"before":"","after":""}},
+      {"id":"spark","title":"Spark","artist":"Ayush","contribution":"Mixing","artwork":"/assets/portfolio/spark-ayush.webp","artworkAlt":"Spark cover","audio":{"before":"","after":""}}
     ]
   },
   "services": {

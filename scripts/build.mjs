@@ -150,13 +150,17 @@ function portfolioPage() {
   const cover = (project, side) => project.artwork
     ? `<img class="portfolio-art" data-cover-${side} src="${e(project.artwork)}" alt="${e(project.artworkAlt || `${project.title} cover`)}" width="800" height="800" decoding="async">`
     : `<div class="portfolio-art portfolio-art-empty" data-cover-${side} role="img" aria-label="${e(project.title)} cover artwork placeholder"><span>Artwork pending</span></div>`;
-  const cards = projects.map((project, index) => `<li class="portfolio-project${index === 0 ? ' is-selected' : ''}">
-    <button class="portfolio-project-button" type="button" data-project-id="${e(project.id)}" aria-label="Load ${e(project.title)} by ${e(project.artist)}; ${e(project.contribution)}" aria-pressed="${index === 0}">
+  const cards = projects.map((project, index) => {
+    const ready = Boolean(project.audio?.before && project.audio?.after);
+    return `<li class="portfolio-project${index === 0 ? ' is-selected' : ''}" data-audio-ready="${ready}">
+    <button class="portfolio-project-button" type="button" data-project-id="${e(project.id)}" aria-label="Load ${e(project.title)} by ${e(project.artist)}; ${e(project.contribution)}${ready ? '' : '; before and after coming soon'}" aria-pressed="${index === 0}">
+      <span class="portfolio-row-index">${String(index + 1).padStart(2, '0')}</span>
       <span class="portfolio-thumb">${project.artwork ? `<img src="${e(project.artwork)}" alt="" width="800" height="800" loading="lazy" decoding="async">` : `<span class="portfolio-thumb-empty" aria-hidden="true"></span>`}</span>
-      <span class="portfolio-credit"><span class="portfolio-credit-title">${e(project.title)}</span><span>${e(project.artist)}</span><span>${e(project.contribution)}</span></span>
-      <span class="portfolio-tap-hint">Tap again to load</span>
+      <span class="portfolio-credit"><span class="portfolio-credit-title">${e(project.title)}</span><span class="portfolio-credit-meta">${e(project.artist)} · ${e(project.contribution)}</span></span>
+      <span class="portfolio-row-state">${ready ? 'Before / After' : 'Coming soon'}</span>
     </button>
-  </li>`).join('');
+  </li>`;
+  }).join('');
   const data = JSON.stringify(projects).replace(/</g, '\\u003c');
   return `<!doctype html>
 <html lang="en" class="no-js">
@@ -169,12 +173,12 @@ function portfolioPage() {
 <body class="portfolio-page">
   ${backgroundMarkup}<a class="skip-link" href="#main">Skip to content</a>
   <main id="main" class="portfolio-main">
-    <a class="portfolio-home" href="/" aria-label="Back to c4milo home">c4milo</a>
-    <section class="portfolio-hero" id="portfolio-player" aria-labelledby="portfolio-title" data-portfolio-player>
+    <header class="portfolio-top"><a class="portfolio-home" href="/" aria-label="Back to c4milo home">c4milo</a><p class="portfolio-top-note">Mixing and mastering</p></header>
+    <section class="portfolio-hero" id="portfolio-player" aria-labelledby="portfolio-title" data-portfolio-player data-active-side="before">
       <div class="portfolio-identity"><h1 id="portfolio-title">${e(first.title)}</h1><p><span data-project-artist>${e(first.artist)}</span><span aria-hidden="true"> · </span><span data-project-contribution>${e(first.contribution)}</span></p></div>
       <div class="portfolio-comparison" data-active-side="before" aria-label="Before and after artwork">
-        <div class="portfolio-side portfolio-side-before"><span class="portfolio-side-label">Before</span>${cover(first, 'before')}</div>
-        <div class="portfolio-side portfolio-side-after"><span class="portfolio-side-label">After</span>${cover(first, 'after')}</div>
+        <button type="button" class="portfolio-side portfolio-side-before" data-side="before" aria-pressed="true" aria-label="Listen to the before version"><span class="portfolio-side-label">Before</span>${cover(first, 'before')}</button>
+        <button type="button" class="portfolio-side portfolio-side-after" data-side="after" aria-pressed="false" aria-label="Listen to the after version"><span class="portfolio-side-label">After</span>${cover(first, 'after')}</button>
       </div>
       <div class="portfolio-transport">
         <button class="portfolio-play" type="button" data-play aria-label="Play" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path data-icon-play d="m8 5 12 7-12 7Z"/><path data-icon-pause d="M8 5v14M16 5v14"/></svg></button>
@@ -183,7 +187,7 @@ function portfolioPage() {
       </div>
       <p class="portfolio-audio-status" data-audio-status role="status" aria-live="polite"></p>
     </section>
-    <section class="portfolio-work" aria-labelledby="portfolio-work-title"><div class="portfolio-work-heading"><h2 id="portfolio-work-title">Selected work</h2><p>15 projects</p></div><ul class="portfolio-grid">${cards}</ul></section>
+    <section class="portfolio-work" aria-labelledby="portfolio-work-title"><div class="portfolio-work-heading"><h2 id="portfolio-work-title">Selected work</h2><p>${projects.length} ${projects.length === 1 ? 'project' : 'projects'}</p></div><ul class="portfolio-grid">${cards}</ul></section>
     <p class="sr-only" data-selection-status role="status" aria-live="polite"></p>
     <script type="application/json" data-project-data>${data}</script>
   </main>
