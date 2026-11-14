@@ -137,7 +137,48 @@ for (const project of portfolioProjects) for (const path of [project.artwork, pr
   try { await access(`${root}public${path}`); portfolioAssets.add(path); }
   catch { /* Missing portfolio assets keep their explicit placeholder state. */ }
 }
+function portfolioServices(services) {
+  if (!services?.enabled) return { invite: '', rates: '' };
+  const minutes = services.consultMinutes ?? 15;
+  const pct = services.payment?.depositPercent ?? 50;
+  const currency = services.currency || 'USD';
+  const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  const money = n => fmt.format(n);
+  const mailto = (subject, body) => `mailto:${services.bookingEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const consultHref = externalUrl(services.consultUrl) || mailto(`Project inquiry`, `Hi c4milo,\n\nI'd love to tell you about my project and set up a free ${minutes}-minute call.\n\nLink to demo / rough mix:\nReference tracks:\nTimes that work for me:\n`);
+  const depositHref = tier => externalUrl(tier.depositUrl) || mailto(`${tier.label} booking`, `Hi c4milo,\n\nI'm ready to book a ${tier.label}.\n\nLink to rough / stems:\nNumber of songs:\nTarget release date:\n`);
+  const invite = `<section class="portfolio-invite" aria-label="Project inquiry"><a class="portfolio-book" href="${e(consultHref)}">Tell me about your project</a><p class="portfolio-invite-note">Send your demo link. Free ${e(minutes)} min call</p></section>`;
+  const tierItems = services.tiers.map(tier => {
+    const depUrl = externalUrl(tier.depositUrl);
+    const deposit = tier.pricePerSong * pct / 100;
+    const label = depUrl
+      ? `Book a ${tier.label}: pay the ${pct}% deposit, ${money(deposit)} per song`
+      : `Email to book a ${tier.label}, ${money(tier.pricePerSong)} per song`;
+    return `<li class="portfolio-rate-item"><a class="portfolio-rate" href="${e(depositHref(tier))}" aria-label="${e(label)}"><span class="portfolio-rate-label">${e(tier.label)}</span><span class="portfolio-rate-price"><span class="portfolio-rate-amount">${e(money(tier.pricePerSong))}</span><span class="portfolio-rate-deposit">${e(money(deposit))} to lock in</span></span><span class="portfolio-rate-action">Book<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></a></li>`;
+  }).join('\n');
+  const terms = [
+    services.payment?.depositPercent != null ? `<li>${e(pct)}% deposit to lock in, balance before final delivery</li>` : '',
+    services.revisionsIncluded != null && services.extraRevisionPrice != null ? `<li>${e(services.revisionsIncluded)} revisions included, then ${e(money(services.extraRevisionPrice))} each</li>` : '',
+    services.turnaround ? `<li>${e(services.turnaround)}</li>` : '',
+    services.rushFee?.description && services.rushFee?.price != null
+      ? `<li>Rush: ${e(String(services.rushFee.description).replace(/^./, ch => ch.toLowerCase()))}, +${e(money(services.rushFee.price))}</li>`
+      : ''
+  ].filter(Boolean).join('');
+  const deliverables = Array.isArray(services.deliverables) && services.deliverables.length
+    ? `<ul>${services.deliverables.map(item => `<li>${e(item)}</li>`).join('')}</ul>`
+    : '';
+  const addOns = Array.isArray(services.addOns) && services.addOns.length
+    ? `<p>Add-ons: ${services.addOns.map(item => `${e(item.label)} +${e(money(item.price))}`).join(', ')}</p>`
+    : '';
+  const trackLimit = services.trackLimit ? `<p>${e(services.trackLimit)}</p>` : '';
+  const policyText = [services.payment?.depositTerms, services.payment?.refundPolicy].filter(Boolean).join(' ');
+  const policy = policyText ? `<p>${e(policyText)}</p>` : '';
+  const questions = `<p>Questions: <a href="mailto:${e(services.bookingEmail)}">${e(services.bookingEmail)}</a></p>`;
+  const rates = `<section class="portfolio-rates" id="rates" aria-labelledby="portfolio-rates-title"><div class="portfolio-work-heading"><h2 id="portfolio-rates-title">Rates</h2><p>Per song · ${e(currency)}</p></div><ul class="portfolio-rate-list">${tierItems}</ul>${terms ? `<ul class="portfolio-terms">${terms}</ul>` : ''}<details class="portfolio-details"><summary>Details<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary><div class="portfolio-details-body">${deliverables}${addOns}${trackLimit}${policy}${questions}</div></details><p class="portfolio-rates-fallback">Questions? <a href="${e(consultHref)}">Let's get in touch</a></p></section>`;
+  return { invite, rates };
+}
 function portfolioPage() {
+  const { invite, rates } = portfolioServices(c.services);
   const projects = portfolioProjects.map(project => ({
     ...project,
     artwork: portfolioAssets.has(project.artwork) ? project.artwork : '',
@@ -186,7 +227,9 @@ function portfolioPage() {
       </div>
       <p class="portfolio-audio-status" data-audio-status role="status" aria-live="polite"></p>
     </section>
+    ${invite}
     <section class="portfolio-work" aria-labelledby="portfolio-work-title"><div class="portfolio-work-heading"><h2 id="portfolio-work-title">Selected work</h2><p>${projects.length} ${projects.length === 1 ? 'project' : 'projects'}</p></div><ul class="portfolio-grid">${cards}</ul></section>
+    ${rates}
     <p class="sr-only" data-selection-status role="status" aria-live="polite"></p>
     <script type="application/json" data-project-data>${data}</script>
   </main>

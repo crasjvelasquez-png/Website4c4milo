@@ -18,13 +18,15 @@
     ]
   },
   "services": {
-    "enabled": false,
+    "enabled": true,
     "bookingEmail": "info@c4milo.com",
+    "consultMinutes": 15,
+    "consultUrl": "",
     "currency": "USD",
     "tiers": [
-      {"id": "master", "label": "Master", "pricePerSong": 100},
-      {"id": "mix", "label": "Mix", "pricePerSong": 150},
-      {"id": "mix-master", "label": "Mix + Master", "pricePerSong": 220}
+      {"id": "master", "label": "Master", "pricePerSong": 100, "depositUrl": ""},
+      {"id": "mix", "label": "Mix", "pricePerSong": 150, "depositUrl": ""},
+      {"id": "mix-master", "label": "Mix + Master", "pricePerSong": 220, "depositUrl": ""}
     ],
     "trackLimit": "Depends on the project; agreed on the consult call.",
     "rushFee": {"price": 100, "description": "First mix within 48 hours"},

@@ -243,3 +243,47 @@ test('secret release enables playback and a local MP3 download only when its fil
   content.upcomingRelease.audio = '/assets/secret.wav';
   assert.throws(()=>validateContent(content),/upcomingRelease.audio needs a local MP3/);
 }));
+
+test('portfolio renders booking invite and rates with mailto fallbacks by default',async()=>fixture(async({directory})=>{
+  await buildSite({directory});
+  const html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
+  assert.match(html,/<section class="portfolio-hero"[\s\S]*?<\/section>\s*<section class="portfolio-invite"/);
+  assert.match(html,/href="mailto:info@c4milo\.com\?subject=Project%20inquiry[^"]*"/);
+  assert.equal((html.match(/class="portfolio-rate"/g) ?? []).length,3);
+  for (const amount of ['$100','$150','$220']) assert.match(html,new RegExp(`class="portfolio-rate-amount">\\${amount}<`));
+  for (const deposit of ['$50 to lock in','$75 to lock in','$110 to lock in']) assert.match(html,new RegExp(`class="portfolio-rate-deposit">\\${deposit}<`));
+}));
+
+test('portfolio uses configured Cal.com and Stripe deposit URLs when supplied',async()=>fixture(async({directory,content,save})=>{
+  content.services.consultUrl = 'https://cal.com/example/15min';
+  content.services.tiers[1].depositUrl = 'https://buy.stripe.com/test_123';
+  await save();
+  await buildSite({directory});
+  const html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
+  assert.match(html,/class="portfolio-book" href="https:\/\/cal\.com\/example\/15min"/);
+  assert.match(html,/class="portfolio-rates-fallback"[\s\S]*href="https:\/\/cal\.com\/example\/15min"/);
+  assert.match(html,/href="https:\/\/buy\.stripe\.com\/test_123" aria-label="Book a Mix: pay the 50% deposit, \$75 per song"/);
+}));
+
+test('disabling services omits both booking invite and rates sections',async()=>fixture(async({directory,content,save})=>{
+  content.services.enabled = false;
+  await save();
+  await buildSite({directory});
+  const html = await readFile(join(directory,'dist/portafolio.html'),'utf8');
+  assert.doesNotMatch(html,/class="portfolio-invite"|class="portfolio-rates"/);
+}));
+
+test('services validation rejects unsafe consultUrl, depositUrl, and invalid bookingEmail',()=>{
+  const badConsult = structuredClone(baseline);
+  badConsult.services.consultUrl = 'http://x.com';
+  assert.throws(()=>validateContent(badConsult),/services\.consultUrl needs a full https/);
+
+  const badDeposit = structuredClone(baseline);
+  badDeposit.services.tiers[0].depositUrl = 'javascript:alert(1)';
+  assert.throws(()=>validateContent(badDeposit),/depositUrl needs a full https/);
+
+  const badEmail = structuredClone(baseline);
+  badEmail.services.bookingEmail = 'bad';
+  assert.throws(()=>validateContent(badEmail),/services\.bookingEmail needs an email address/);
+});
+

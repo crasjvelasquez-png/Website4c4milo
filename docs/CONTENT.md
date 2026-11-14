@@ -57,6 +57,16 @@ Both MP3s are required to enable playback. Keep their export start, duration and
 
 Optional `date` uses `YYYY-MM-DD` and displays a full date for the featured release. Optional `statusLabel` overrides its introductory label, such as "Out now".
 
+### Booking and rates
+
+`/portafolio.html` renders the free-call invite and the Rates section from `services` in `content.json` when `services.enabled` is `true`.
+
+- Paste the Cal.com 15-minute event link into `services.consultUrl`.
+- Paste each tier's Stripe Payment Link into `services.tiers[].depositUrl` (set the Stripe link to 50% of the tier price per song, with "Let customers adjust quantity" enabled for the number of songs).
+- Any empty `consultUrl` or `depositUrl` automatically falls back to a prefilled `mailto:` link to `services.bookingEmail`.
+- The remaining balance is sent separately later as a Stripe invoice before final files are delivered.
+- Run `npm run build` after updating `content.json`.
+
 ## Music embeds
 
 Copy the **src URL from the provider's official iframe embed code**, not the entire iframe or an ordinary share URL. Set `embed.provider` and `embed.url` on the relevant release.

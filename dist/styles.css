@@ -507,10 +507,46 @@ main>section#early-listen,main>section#page-links{display:none}
 .portfolio-credit{display:grid;gap:2px;min-width:0}
 .portfolio-credit-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 1.0625rem/1.25 Georgia,"Times New Roman",serif}
 .portfolio-credit-meta{color:#ffffffa6;font-size:.8125rem;line-height:1.35}
+.portfolio-main .portfolio-invite{width:min(100%,780px);margin:40px auto 0;display:grid;justify-items:center;gap:16px;text-align:center}
+.portfolio-invite h2{font:400 clamp(1.25rem,2.2vw,1.6rem)/1.25 Georgia,"Times New Roman",serif;margin:0}
+.portfolio-book{display:inline-grid;place-items:center;min-height:56px;padding:12px 32px;border:1px solid #fff;border-radius:var(--cover-radius,14px);background:#fff;color:var(--bg);font:400 1.125rem/1.4 Georgia,"Times New Roman",serif;transition:background-color 150ms ease-out,color 150ms ease-out,transform 140ms ease-out}
+.portfolio-book:hover{text-decoration:none}
+.portfolio-book:active{transform:scale(.98)}
+.portfolio-book:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.portfolio-invite-note{margin:0;font-size:.8125rem;color:#ffffffa6}
+.portfolio-main .portfolio-rates{width:min(100%,780px);margin-inline:auto;margin-top:clamp(56px,8vw,96px)}
+.portfolio-rate-list{list-style:none;padding:0;margin:0}
+.portfolio-rate-item{border-top:1px solid #ffffff2e}
+.portfolio-rate-item:last-child{border-bottom:1px solid #ffffff2e}
+.portfolio-rate{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:24px;min-height:72px;padding:12px;border-radius:10px;color:#fff;transition:background-color 150ms ease-out}
+.portfolio-rate:hover{text-decoration:none}
+.portfolio-rate:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+.portfolio-rate-label{font:400 1.0625rem/1.25 Georgia,"Times New Roman",serif}
+.portfolio-rate-price{display:grid;justify-items:end;gap:2px}
+.portfolio-rate-amount{font-size:1.0625rem;font-variant-numeric:tabular-nums}
+.portfolio-rate-deposit{font-size:.75rem;color:#ffffffa6;font-variant-numeric:tabular-nums}
+.portfolio-rate-action{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:4px 12px;border:1px solid #ffffffbd;border-radius:8px;font-size:.8125rem}
+.portfolio-rate-action svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:transform 150ms ease-out}
+.portfolio-terms{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:4px;color:#ffffffa6;font-size:.8125rem;line-height:1.5}
+.portfolio-details{margin-top:16px;border-top:1px solid #ffffff2e}
+.portfolio-details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 12px;cursor:pointer;font-size:.875rem}
+.portfolio-details summary::-webkit-details-marker{display:none}
+.portfolio-details summary svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:transform 200ms cubic-bezier(.22,1,.36,1)}
+.portfolio-details[open] summary svg{transform:rotate(180deg)}
+.portfolio-details-body{padding:0 12px 16px;font-size:.8125rem;color:#fff}
+.portfolio-details-body ul{padding-left:18px;margin:0 0 12px}
+.portfolio-details-body p{margin:0 0 8px}
+.portfolio-details-body a{text-decoration:underline;text-underline-offset:.25em}
+.portfolio-rates-fallback{max-width:none;margin:24px 0 0;text-align:center;font-size:.875rem;color:#ffffffa6}
+.portfolio-rates-fallback a{color:#fff;text-decoration:underline;text-underline-offset:.25em}
+.portfolio-book,.portfolio-rate,.portfolio-details summary{-webkit-tap-highlight-color:transparent}
 @media(hover:hover) and (pointer:fine){
   .portfolio-play:hover:not(:disabled){background:#fff;color:var(--bg)}
   .portfolio-project-button:hover{background:#ffffff14;color:#fff}
   .portfolio-project.is-selected .portfolio-project-button:hover{background:#ffffff1f}
+  .portfolio-book:hover{background:transparent;color:#fff;text-decoration:none}
+  .portfolio-rate:hover{background:#ffffff14;text-decoration:none}
+  .portfolio-rate:hover .portfolio-rate-action svg{transform:translateX(2px)}
 }
 @media(pointer:coarse){.portfolio-progress-wrap input{height:32px}}
 @media(max-width:760px){
@@ -522,13 +558,20 @@ main>section#early-listen,main>section#page-links{display:none}
 @media(max-width:560px){
   .portfolio-row-index{display:none}
   .portfolio-project-button{grid-template-columns:48px minmax(0,1fr) auto;gap:12px;padding:12px 8px}
+  .portfolio-rate{gap:12px;padding:12px 8px}
+  .portfolio-book{width:100%;max-width:360px}
 }
 @media(max-width:480px){
   .portfolio-work-heading{margin-bottom:18px}
+  .portfolio-book{padding-inline:20px;font-size:1rem;white-space:nowrap}
 }
-@media(max-width:320px){.portfolio-transport{gap:8px}}
+@media(max-width:320px){
+  .portfolio-transport{gap:8px}
+  .portfolio-rate{grid-template-columns:minmax(0,1fr) auto}
+  .portfolio-rate-action{display:none}
+}
 @media(prefers-reduced-motion:reduce){
-  .portfolio-identity,.portfolio-comparison,.portfolio-side,.portfolio-side::after,.portfolio-play,.portfolio-play path,.portfolio-switch::before,.portfolio-switch,.portfolio-switch span,.portfolio-project-button{transition:none}
+  .portfolio-identity,.portfolio-comparison,.portfolio-side,.portfolio-side::after,.portfolio-play,.portfolio-play path,.portfolio-switch::before,.portfolio-switch,.portfolio-switch span,.portfolio-project-button,.portfolio-book,.portfolio-rate,.portfolio-rate-action svg,.portfolio-details summary svg{transition:none}
   .portfolio-side{transform:none}
 }
 
